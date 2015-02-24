@@ -5,6 +5,11 @@ unfalse.stekcosm = {
     
     COMPUTER: 0,
     USER: 1,
+    
+    MAXX: 20,
+    MAXY: 20,
+    BEGX: 20,
+    BEGY: 20,
 
     cswArr:[],
 
@@ -97,7 +102,38 @@ function csw(){
             if(m){
                 self.speed = 0;
                 if(ism){
-                    // TODO: дописать
+                    ux = (-(d >> 1)| 1)*((d & 1) ^ 1);
+                    uy = (-(d >> 1)| 1)*((d & 1) & 1);
+                    
+                    if(((self.x+ux)>unfalse.stekcosm.MAXX)||((self.x+ux)<1)){
+                        ux = 0;
+                    }
+                    
+                    if(((self.y+uy)>unfalse.stekcosm.MAXY)||((self.y+uy)<1)){
+                        uy = 0;
+                    }
+                    
+                    if((ux!=0)||(uy!=0)){
+                        if(checkcsw(self.x+ux, self.y+uy)){
+                            ux = 0;
+                            uy = 0;
+                            // SetColor(black);
+                            // outtextxy(self.x*20+40,self.y*20,'*');
+                            // setcolor(random(16));
+                            // outtextxy(self.x*20+40,self.y*20,'*');
+                        }
+                    }
+                    
+                    //erase();
+                    self.x = self.x + ux;
+                    self.y = self.y + uy;
+                    
+                    //draw();
+                    self.dn = d;
+                    ism = false;
+                    if(self.life>unfalse.stekcosm.MAXLIFES){
+                        self.life = 0;
+                    }
                 }
             }
         }
