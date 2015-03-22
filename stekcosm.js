@@ -1,5 +1,4 @@
-BTank = {
-
+CONST ={
     MAXLIFES: 10,
     MAXSPEED: 1,
     
@@ -9,9 +8,12 @@ BTank = {
     MAXX: 20,
     MAXY: 20,
     BEGX: 20,
-    BEGY: 20,
+    BEGY: 20
+}
 
-    cswArr:[],
+BTank = {
+    cswArr: [],
+	drawContext: null,
 
     checkCSW: function(x,y){
         return 
@@ -58,8 +60,9 @@ BTank = {
     
     destroyAll: function(){
         this.cswArr = [];
-    }
+    },
 
+	// use: new csw()
     function csw(){
         var self = this;
         this.b = new bullet();
@@ -69,7 +72,7 @@ BTank = {
             self.x = mx;
             self.y = my;
             self.pow = 5;
-            self.life = unfalse.MAXLIFES;
+            self.life = CONST.MAXLIFES;
             self.dn = 0; // { 0 - right< , 1 - down^, 2 - left>, 3 - up }
             self.b.isfire = false;
             self.iam = who;
@@ -79,7 +82,7 @@ BTank = {
         },
         
         this.draw = function(){
-            if(self.iam==unfalse.stekcosm.USER){
+            if(self.iam==CONST.USER){
                 // drawcswmt9(self.x-1, self.y-1)
             }
             else{
@@ -111,12 +114,12 @@ BTank = {
                 self.fly();
             }
             
-            if((self.life==0)||(self.life>unfalse.stekcosm.MAXLIFES)){
+            if((self.life==0)||(self.life>CONST.MAXLIFES)){
                 self.life = 0;
             }
             else{
-                if(self.iam==unfalse.stekcosm.COMPUTER){
-                    if(self.speed<unfalse.stekcosm.MAXSPEED){
+                if(self.iam==CONST.COMPUTER){
+                    if(self.speed<CONST.MAXSPEED){
                         speed++;
                         m = false;
                     }
@@ -131,16 +134,16 @@ BTank = {
                         ux = (-(d >> 1)| 1)*((d & 1) ^ 1);
                         uy = (-(d >> 1)| 1)*((d & 1) & 1);
                         
-                        if(((self.x+ux)>unfalse.stekcosm.MAXX)||((self.x+ux)<1)){
+                        if(((self.x+ux)>CONST.MAXX)||((self.x+ux)<1)){
                             ux = 0;
                         }
                         
-                        if(((self.y+uy)>unfalse.stekcosm.MAXY)||((self.y+uy)<1)){
+                        if(((self.y+uy)>CONST.MAXY)||((self.y+uy)<1)){
                             uy = 0;
                         }
                         
                         if((ux!=0)||(uy!=0)){
-                            if(checkCSW(self.x+ux, self.y+uy)){
+                            if(getCSW(self.x+ux, self.y+uy)){
                                 ux = 0;
                                 uy = 0;
                                 // SetColor(black);
@@ -157,7 +160,7 @@ BTank = {
                         //draw();
                         self.dn = d;
                         ism = false;
-                        if(self.life>unfalse.stekcosm.MAXLIFES){
+                        if(self.life>CONST.MAXLIFES){
                             self.life = 0;
                         }
                     }
@@ -179,28 +182,30 @@ BTank = {
             self.d = d1;
         };
         
-        this.draw = function(x,y){
+        this.draw = function(){
             // putpixel(x*20+10, y*20+10, yellow)
+			BTank.drawContext.fillRect((self.x*20)+8, (self.y*20)+8, 4, 4);
         };
         
-        this.erase = function(x,y){
+        this.erase = function(){
             // putpixel(x*20+10, y*20+10, 0)
+			BTank.drawContext.clearRect((self.x*20)+8, (self.y*20)+8, 4, 4);
         };
         
         this.fly = function(){
             var vx = (-(d >> 1)| 1)*((d & 1) ^ 1);
             var vy = (-(d >> 1)| 1)*((d & 1) & 1);
             if(self.isfire){
-                // self.erase();
+                self.erase();
                 self.x = self.x + vx;
                 self.y = self.y + vy;
-                // self.draw();
+                self.draw();
                 
-                if((self.x>Maxx)||(x<1)){
+                if((self.x>CONST.MAXX)||(x<1)){
                     self.isfire = false;
                 }
                 
-                if((self.y>Maxy)||(y<1)){
+                if((self.y>CONST.MAXY)||(y<1)){
                     self.isfire = false;
                 }
                 
