@@ -1,16 +1,27 @@
 Utils = {
-	// event.type должен быть keypress
-		getChar: function(event) {
-		if (event.which == null) {  // IE
-    		if (event.keyCode < 32) return null; // спец. символ
-    		return String.fromCharCode(event.keyCode) 
-  		}
+  // event.type РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ keypress
+  getChar: function(event) {
+    if (event.which == null) {  // IE
+      if (event.keyCode < 32)
+        return null; // СЃРїРµС†. СЃРёРјРІРѕР»
+      return String.fromCharCode(event.keyCode) 
+    }
 
-		if (event.which!=0 && event.charCode!=0) { // все кроме IE
-    		if (event.which < 32) return null; // спец. символ
-		    return String.fromCharCode(event.which); // остальные
-		}
+    if (event.which!=0 && event.charCode!=0) { // РІСЃРµ РєСЂРѕРјРµ IE
+      if (event.which < 32) return null; // СЃРїРµС†. СЃРёРјРІРѕР»
+        return String.fromCharCode(event.which); // РѕСЃС‚Р°Р»СЊРЅС‹Рµ
+    }
 
-		return null; // спец. символ
-	}
+    return null; // СЃРїРµС†. СЃРёРјРІРѕР»
+  },
+  
+  // РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ Math.round() РґР°СЃС‚ РЅРµСЂР°РІРЅРѕРјРµСЂРЅРѕРµ СЂР°СЃРїСЂРµРґРµР»РµРЅРёРµ!
+  getRandomInt: function(min, max)
+  {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  },
+  
+  text: function(str){
+    console.log(str);
+  }
 }
