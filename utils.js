@@ -1,4 +1,12 @@
 Utils = {
+  KEY_CODE: {
+    LEFT: 37,
+    UP: 38,
+    RIGHT: 39,
+    DOWN: 40,
+    a_KEY: 65
+  },
+
   // event.type должен быть keypress
   getChar: function(event) {
     if (event.which == null) {  // IE
