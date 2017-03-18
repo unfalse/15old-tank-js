@@ -1,3 +1,6 @@
+// -----------------------------
+//        Основная логика
+// -----------------------------
 GAME = {
   mainIntervalId: null,
   speed: 1,
@@ -5,7 +8,7 @@ GAME = {
   key: null,
   cpuKey: null,
   player1: null,
-  cpu: null,
+  cpu: [],
   scripts: ['stekcosm.js', 'utils.js'],
   move: false, // флаг того, что игрок двигается
   playerFire: false, // флаг того, что игрок выстрелил
@@ -21,81 +24,102 @@ GAME = {
   start: function(){
     //ShowHelp();
     //text('Battle Tank!');
-    var gameField     = document.getElementById('gameField');
-    gameField.height  = 500;
-    gameField.width   = 500;
-    
-    var gameInfo      = document.getElementById('gameInfo');
-    
-    //this.loadScripts();
-    BTank.drawContext = gameField.getContext('2d');
-    BTank.infoContext = gameInfo.getContext('2d');
+    BTank.init();
     BTank.showLogo();
     BTank.showNames();
-    BTank.DrawGameField();
     
     this.player1 = BTank.createCSW(1, 1, CONST.USER, 1);
-    this.cpu = BTank.createCSW(5, 4, CONST.COMPUTER, 1);
+    
+    this.cpu[0] = BTank.createCSW(5, 4, CONST.COMPUTER, 1);
+    // this.cpu[1] = BTank.createCSW(6, 4, CONST.COMPUTER, 1);
+    // this.cpu[2] = BTank.createCSW(7, 4, CONST.COMPUTER, 1);
+    // this.cpu[3] = BTank.createCSW(8, 4, CONST.COMPUTER, 1);
+    // this.cpu[4] = BTank.createCSW(9, 4, CONST.COMPUTER, 1);
+    // this.cpu[5] = BTank.createCSW(10, 4, CONST.COMPUTER, 1);
+    // this.cpu[6] = BTank.createCSW(9, 5, CONST.COMPUTER, 1);
+    // this.cpu[7] = BTank.createCSW(9, 6, CONST.COMPUTER, 1);
+    // this.cpu[8] = BTank.createCSW(9, 7, CONST.COMPUTER, 1);
+    // this.cpu[9] = BTank.createCSW(9, 8, CONST.COMPUTER, 1);
+    // this.cpu[10] = BTank.createCSW(3, 2, CONST.COMPUTER, 1);
+    // this.cpu[11] = BTank.createCSW(2, 3, CONST.COMPUTER, 1);
+
+
     this.stop = false;
-    document.addEventListener("keydown", this.keysHandler);
-    this.mainIntervalId = setInterval(this.mainCycle, this.speed);
+    document.addEventListener("keydown", this.keysHandler.bind(this));
+    document.addEventListener("keyup", this.keysHandler.bind(this));
+    this.mainIntervalId = setInterval(this.mainCycle.bind(this), this.speed);
   },
 
   mainCycle: function(){
-    BTank.DrawGameField();
-    GAME.player1.update(GAME.key, GAME.move);
-    GAME.move = false;
+    this.player1.update(this.key, this.move);
     
-    if(GAME.playerFire){
-      GAME.player1.fire();
-      GAME.playerFire = false;
+    if(this.playerFire){
+      this.player1.fire();
     }
     
-    GAME.cpuKey = Utils.getRandomInt(0,3);
-    GAME.cpu.update(GAME.cpuKey, true); // true чтобы CPU двигался
-    GAME.cpu.fire();
+    var self = this;
+    this.cpu.filter(function(cpu){
+      self.cpuKey = Utils.getRandomInt(0,3);
+      cpu.update(self.cpuKey, true); // true чтобы CPU двигался
+      cpu.fire();
+    });
 
-    GAME.player1.displayLife();
-    GAME.cpu.displayLife();
+    BTank.displayLifeBar(this.player1);
+    BTank.displayLifeBar(this.cpu[0]);
 
-    if(GAME.player1.life==0){
+    if(this.player1.life==0){
       Utils.text('GAME OVER');
-      GAME.stop = true; 
+      this.stop = true; 
     }
 
-    if(GAME.cpu.life<=0){
+
+    if(this.cpu[0].life<=0){
       Utils.text('YOU WIN');
-      GAME.stop = true;
+      this.stop = true;
     }
 
-    if(GAME.stop){
-      clearInterval(GAME.mainIntervalId);
-      BTank.showGameOver(GAME.player1.life);
+
+    if(this.stop){
+      clearInterval(this.mainIntervalId);
+      BTank.showGameOver(this.player1.life);
     }
   },
 
   keysHandler: function(event){
-    switch(event.keyCode) {
-      case Utils.KEY_CODE.LEFT:
-        GAME.key = 2;
-        GAME.move = true;
-      break;
-      case Utils.KEY_CODE.UP:
-        GAME.key = 3;
-        GAME.move = true;
-      break;
-      case Utils.KEY_CODE.RIGHT:
-        GAME.key = 0;
-        GAME.move = true;
-      break;
-      case Utils.KEY_CODE.DOWN:
-        GAME.key = 1;
-        GAME.move = true;
-      break;
-      case Utils.KEY_CODE.a_KEY:
-        GAME.playerFire = true;
-      break;
-      default:
+    if(event.type=="keydown"){
+      switch(event.keyCode) {
+        case Utils.KEY_CODE.LEFT:
+          this.key = 2;
+          this.move = true;
+        break;
+        case Utils.KEY_CODE.UP:
+          this.key = 3;
+          this.move = true;
+        break;
+        case Utils.KEY_CODE.RIGHT:
+          this.key = 0;
+          this.move = true;
+        break;
+        case Utils.KEY_CODE.DOWN:
+          this.key = 1;
+          this.move = true;
+        break;
+        case Utils.KEY_CODE.a_KEY:
+          this.playerFire = true;
+        break;
+        default:
+      }
+    }
+
+    if(event.type=="keyup"){
+      switch(event.keyCode) {
+        case Utils.KEY_CODE.a_KEY:
+          this.playerFire = false;
+        break;
+        default:
+          this.move = false;
+          break;
+      }
     }
   },
   
