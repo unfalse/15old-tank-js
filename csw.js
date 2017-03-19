@@ -36,7 +36,7 @@ function csw(){
     if(self.life!=0){
       if(!self.b.isfire){
         self.b.isfire = true;
-        self.b.init(self.x, self.y, self.dn);
+        self.b.init(self.x, self.y, self.dn, self);
       }
     }
   }
@@ -44,10 +44,13 @@ function csw(){
   this.update = function(direction, isMoving){
     var ux = 0;
     var uy = 0;
-    var m = true;
+    var makeMove = true;
         
     if(self.b.isfire){
       // TODO: переписать
+      // объект "пуля" летит благодаря функции "танка" update.
+      // Если танка не будет, пуля перестанет лететь.
+      // Нужно завести отдельный массив пуль.
       self.b.fly();
     }
         
@@ -58,14 +61,14 @@ function csw(){
       //if(self.iam==CONST.COMPUTER){
         if(self.speed<CONST.MAXSPEED){
           self.speed++;
-          m = false;
+          makeMove = false;
         }
         else{
-          m = true;
+          makeMove = true;
         }
       //}
 
-      if(m){
+      if(makeMove){
         self.speed = 0;
         if(isMoving){
           ux = (-(direction >> 1)| 1)*((direction & 1) ^ 1);
