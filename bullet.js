@@ -2,7 +2,7 @@
 function bullet(){
     var self = this;
     self.steps = 0;
-    self.STEPSTOMOVE = 15;
+    self.STEPSTOMOVE = 8;
     
     this.init = function(nx,ny,d1,parentTank){
         self.x = nx;
