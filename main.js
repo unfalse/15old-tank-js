@@ -1,36 +1,41 @@
+console.log('main!');
+
 // -----------------------------
 //        Основная логика
 // -----------------------------
-GAME = {
-  mainIntervalId: null,
-  speed: 1,
-  stop: false,
-  key: null,
-  cpuKey: null,
-  player1: null,
-  cpu: [],
-  scripts: ['stekcosm.js', 'utils.js'],
-  move: false, // флаг того, что игрок двигается
-  playerFire: false, // флаг того, что игрок выстрелил
+BattleTankGame.deps.game = function(CONST, BTank, Utils) {
+//GAME = {
+  let mainIntervalId = null;
+  let speed = 1;
+  let stop = false;
+  let key = null;
+  let cpuKey = null;
+  let player1 = null;
+  let cpu = [];
+  // scripts: ['stekcosm.js', 'utils.js', 'csw.js', 'bullet.js'],
+  let move = false; // флаг того, что игрок двигается
+  let playerFire = false; // флаг того, что игрок выстрелил
 
-  loadScripts: function(){
-    for(var src in this.scripts){
-      var script = document.createElement('script');
-      script.src = this.scripts[src];
-      document.head.appendChild(script);
-    }
-  },
+  // loadScripts: function(){
+  //   for(var src in this.scripts){
+  //     var script = document.createElement('script');
+  //     script.src = this.scripts[src];
+  //     document.head.appendChild(script);
+  //   }
+  // },
   
-  start: function(){
+  this.start = function(){
+    //this.loadScripts();
     //ShowHelp();
     //text('Battle Tank!');
+//    console.log(BattleTankGame);
     BTank.init();
     BTank.showLogo();
     BTank.showNames();
     
-    this.player1 = BTank.createCSW(1, 1, CONST.USER, 1);
+    player1 = BTank.createCSW(1, 1, CONST.USER, 1);
     
-    this.cpu[0] = BTank.createCSW(5, 4, CONST.COMPUTER, 1);
+    cpu[0] = BTank.createCSW(5, 4, CONST.COMPUTER, 1);
     // this.cpu[1] = BTank.createCSW(6, 4, CONST.COMPUTER, 1);
     // this.cpu[2] = BTank.createCSW(7, 4, CONST.COMPUTER, 1);
     // this.cpu[3] = BTank.createCSW(8, 4, CONST.COMPUTER, 1);
@@ -44,68 +49,68 @@ GAME = {
     // this.cpu[11] = BTank.createCSW(2, 3, CONST.COMPUTER, 1);
 
 
-    this.stop = false;
+    stop = false;
     document.addEventListener("keydown", this.keysHandler.bind(this));
     document.addEventListener("keyup", this.keysHandler.bind(this));
-    this.mainIntervalId = setInterval(this.mainCycle.bind(this), this.speed);
+    mainIntervalId = setInterval(this.mainCycle.bind(this), speed);
   },
 
-  mainCycle: function(){
-    this.player1.update(this.key, this.move);
+  this.mainCycle = function(){
+    player1.update(key, move);
     
-    if(this.playerFire){
-      this.player1.fire();
+    if(playerFire){
+      player1.fire();
     }
     
-    var self = this;
-    this.cpu.filter(function(cpu){
-      self.cpuKey = Utils.getRandomInt(0,3);
-      cpu.update(self.cpuKey, true); // true чтобы CPU двигался
+    // var self = this;
+    cpu.filter(function(cpu){
+      cpuKey = Utils.getRandomInt(0,3);
+      cpu.update(cpuKey, true); // true чтобы CPU двигался
       cpu.fire();
     });
 
-    BTank.displayLifeBar(this.player1);
-    BTank.displayLifeBar(this.cpu[0]);
+    BTank.displayLifeBar(player1);
+    BTank.displayLifeBar(cpu[0]);
 
-    if(this.player1.life==0){
+    if(player1.life===0){
       Utils.text('GAME OVER');
-      this.stop = true; 
+      stop = true; 
     }
 
 
-    if(this.cpu[0].life<=0){
+    if(cpu[0].life<=0){
       Utils.text('YOU WIN');
-      this.stop = true;
+      stop = true;
     }
 
 
-    if(this.stop){
-      clearInterval(this.mainIntervalId);
-      BTank.showGameOver(this.player1.life);
+    if(stop){
+      clearInterval(mainIntervalId);
+      BTank.showGameOver(player1.life);
     }
   },
 
-  keysHandler: function(event){
+  this.keysHandler = function(event) {
     if(event.type=="keydown"){
       switch(event.keyCode) {
         case Utils.KEY_CODE.LEFT:
-          this.key = 2;
-          this.move = true;
+          key = 2;
+          move = true;
         break;
         case Utils.KEY_CODE.UP:
-          this.key = 3;
-          this.move = true;
+          key = 3;
+          move = true;
         break;
         case Utils.KEY_CODE.RIGHT:
-          this.key = 0;
-          this.move = true;
+          key = 0;
+          move = true;
         break;
         case Utils.KEY_CODE.DOWN:
-          this.key = 1;
-          this.move = true;
+          key = 1;
+          move = true;
         break;
         case Utils.KEY_CODE.a_KEY:
-          this.playerFire = true;
+          playerFire = true;
         break;
         default:
       }
@@ -114,19 +119,29 @@ GAME = {
     if(event.type=="keyup"){
       switch(event.keyCode) {
         case Utils.KEY_CODE.a_KEY:
-          this.playerFire = false;
+          playerFire = false;
         break;
         default:
-          this.move = false;
+          move = false;
           break;
       }
     }
-  },
+  };
   
-  readKeys: function(event){
-    this.key = Utils.getChar(event);
-    this.move = true;
+  this.readKeys = function(event) {
+    key = Utils.getChar(event);
+    move = true;
   }
 }
 
+BattleTankGame.gameInstance = new BattleTankGame.deps.game(
+  BattleTankGame.deps.const,
+  new BattleTankGame.deps.stekcosm(
+    BattleTankGame.deps.const,
+    BattleTankGame.deps.csw,
+    BattleTankGame.deps.bullet
+  ),
+  BattleTankGame.deps.utils
+);
+BattleTankGame.gameInstance.start();
 //document.onload = GAME.start();

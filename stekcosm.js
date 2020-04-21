@@ -1,4 +1,5 @@
-CONST = {
+console.log('stekcosm!');
+BattleTankGame.deps.const = {
   MAXLIFES: 10,
   MAXSPEED: 10,
   
@@ -9,17 +10,33 @@ CONST = {
   MAXY: 20,
   BEGX: 20,
   BEGY: 20
-}
+};
+// -------------------------------------
+//    TOFIX! bullet dep propagation
+// -------------------------------------
+BattleTankGame.deps.stekcosm = function(CONST, csw, bullet) {
+// const CONST = {
+//   MAXLIFES: 10,
+//   MAXSPEED: 10,
+  
+//   COMPUTER: 0,
+//   USER: 1,
+  
+//   MAXX: 20,
+//   MAXY: 20,
+//   BEGX: 20,
+//   BEGY: 20
+// };
 
 // -----------------------------
 //        Отрисовка, а ещё менеджер танков (зачем?)
 // -----------------------------
-BTank = {
-  cswArr: [],
-	drawContext: null,
-  infoContext: null,
+// BTank = {
+  let cswArr = [];
+	this.drawContext = null;
+  this.infoContext = null;
 
-  init: function() {
+  this.init = function() {
     var gameField     = document.getElementById('gameField');
     gameField.height  = 420;
     gameField.width   = 420;
@@ -29,92 +46,92 @@ BTank = {
     //this.loadScripts();
     this.drawContext = gameField.getContext('2d');
     this.infoContext = gameInfo.getContext('2d');
-  },
+  };
 
-  checkCSW: function(x,y){
-    return 
-      cswArr.filter(function(csw){
+  this.checkCSW = function(x,y) {
+    const result = cswArr.filter(function(csw) {
         return ((csw.x==x)&&(csw.y==y))
       }).length>0;
-  },
+    return result.length>0;
+  };
 
-  changeCSW: function(x1, y1){
-      return 
-          cswArr.filter(function(csw){
-              return ((csw.x==x1)&&(csw.y==y1))
-          })[0];
-  },
+  this.changeCSW = function(x1, y1){
+    const result = cswArr.filter(function(csw){
+      return ((csw.x==x1)&&(csw.y==y1))
+    });
+    return (result && result.length) ? result[0] : null;
+  };
 
-  createCSW: function(x, y, who, num){
-      var c1 = new csw();
-      c1.init(x,y,who,num, this);
-      this.cswArr.push(c1);
+  this.createCSW = function(x, y, who, num) {
+      var c1 = new csw(CONST, bullet);
+      c1.init(x, y, who, num, this);
+      cswArr.push(c1);
       return c1;
   },
   
-  deleteCSW: function(x, y){
+  this.deleteCSW = function(x, y){
       var ca = 0;
-      while(1){
-          if((this.cswArr[ca].x==x)&&(this.cswArr[ca].y==y)){
-              this.cswArr.splice(ca,1);
+      while(1) {
+          if((cswArr[ca].x==x)&&(cswArr[ca].y==y)){
+              cswArr.splice(ca,1);
               break;
           }
           ca++;
-          if(ca==this.cswArr.length){
+          if(ca==cswArr.length){
               break;
           }
       }
-  },
+  };
   
   // Returns CSW on coords in params
   // old: changeCSW
   // also used instead of checkCSW
-  getCSW: function(x1, y1){
-      var tArr = this.cswArr.filter(function(c){
+  this.getCSW = function(x1, y1) {
+      var tArr = cswArr.filter(function(c){
             return (c.x==x1)&&(c.y==y1);
         });
       
       return tArr.length ? tArr[0] : null;
-  },
+  };
   
-  destroyAll: function(){
-      this.cswArr = [];
-  },
+  this.destroyAll = function(){
+      cswArr = [];
+  };
   
   // user
-  drawcswmt9: function(x,y){
+  this.drawcswmt9 = function(x,y) {
     this.drawContext.fillStyle = "#0F0"
     this.drawContext.fillRect((x*20), (y*20), 20, 20);
-  },
-  
+  };
+
   // cpu
-  drawcswmt5: function(x,y){
+  this.drawcswmt5 = function(x,y){
     this.drawContext.fillStyle = "#F00";
     this.drawContext.fillRect((x*20), (y*20), 20, 20);
-  },
+  };
   
-  DrawBlack: function(x,y){
+  this.DrawBlack = function(x,y){
     this.drawContext.clearRect((x*20), (y*20), 20, 20);
-  },
+  };
   
-  DrawCrash: function(x,y){
+  this.DrawCrash = function(x,y){
     this.drawContext.fillStyle = "yellow";
     this.drawContext.fillRect((x*20), (y*20), 20, 20);
-  },
+  };
   
-  DrawGameField: function(){
+  this.DrawGameField = function(){
     this.drawContext.strokeStyle = '#000';
     this.drawContext.strokeRect(0,0,420,420);
-  },
+  };
   
-  showLogo: function(){
+  this.showLogo = function() {
     this.infoContext.fillStyle = "#000";
     this.infoContext.strokeStyle = "#F00";
     this.infoContext.font = "30pt Arial";
     this.infoContext.fillText("Battle Tank!", 0, 30);
-  },
+  };
   
-  showNames: function(){
+  this.showNames = function() {
     this.infoContext.fillStyle = "#00f";
     this.infoContext.strokeStyle = "#F00";
     this.infoContext.font = "20pt Arial";
@@ -124,9 +141,9 @@ BTank = {
     this.infoContext.strokeStyle = "#F00";
     this.infoContext.font = "20pt Arial";
     this.infoContext.fillText("cpu life:", 0, 90);
-  },
+  };
   
-  showGameOver: function(won){
+  this.showGameOver = function(won) {
     if(won){
       this.drawContext.fillStyle = "#00f";
       this.drawContext.strokeStyle = "#F00";
@@ -139,9 +156,9 @@ BTank = {
       this.drawContext.font = "bold 25pt Comic";
       this.drawContext.fillText("GAME OVER", 100, 200);
     }
-  },
+  };
 
-  displayLifeBar: function(player) {
+  this.displayLifeBar = function(player) {
     // TODO: плохо! BTank не должен знать про csw
     if(player.iam){ // player
       this.infoContext.fillStyle = "#FFF";
