@@ -1,38 +1,38 @@
-// Использовать вместо функций паттерн IIFE
-function bullet(){
-    var self = this;
-    self.steps = 0;
-    self.STEPSTOMOVE = 8;
+console.log('bullet!');
+BattleTankGame.deps.bullet = function(CONST, BTankInst){
+    // var self = this;
+    this.steps = 0;
+    this.STEPSTOMOVE = 8;
     
     this.init = function(nx,ny,d1,parentTank){
-        self.x = nx;
-        self.y = ny;
-        self.d = d1;
-        self.parentTank = parentTank;
+        this.x = nx;
+        this.y = ny;
+        this.d = d1;
+        this.parentTank = parentTank;
     };
 
     this.draw = function(){
         // putpixel(x*20+10, y*20+10, yellow)
-        BTank.drawContext.fillRect((self.x*20)+8, (self.y*20)+8, 4, 4);
+        BTankInst.drawContext.fillRect((this.x*20)+8, (this.y*20)+8, 4, 4);
     };
 
     this.erase = function(){
         // putpixel(x*20+10, y*20+10, 0)
-        BTank.drawContext.clearRect((self.x*20)+8, (self.y*20)+8, 4, 4);
+        BTankInst.drawContext.clearRect((this.x*20)+8, (this.y*20)+8, 4, 4);
     };
 
     this.fly = function(){
-        var d = self.d;
+        var d = this.d;
         var vx = (-(d >> 1)| 1)*((d & 1) ^ 1);
         var vy = (-(d >> 1)| 1)*((d & 1) & 1);
         var makeMove = false;
         
         // TODO: дописать
         // Проверка попадания в танк
-        if(self.isfire){
+        if(this.isfire){
             // TODO: убрать сильную связанность с BTank
-            var curCSW = BTank.getCSW(self.x, self.y);
-            if(curCSW && curCSW!=self.parentTank){
+            var curCSW = BTankInst.getCSW(this.x, this.y);
+            if(curCSW && curCSW!=this.parentTank){
                 var vx1 = vx;
                 var vy1 = vy;
                 vx = 0;
@@ -45,8 +45,8 @@ function bullet(){
                 else{
                     curCSW.life--;
                     curCSW.erase();
-                    BTank.DrawCrash(curCSW.x, curCSW.y);
-                    self.isfire = false;
+                    BTankInst.DrawCrash(curCSW.x, curCSW.y);
+                    this.isfire = false;
                     //console.log((curCSW.iam?'(1P)':'(CPU)')+'HIT! Life = ', curCSW.life);
                 }
             
@@ -58,31 +58,31 @@ function bullet(){
         // TODO: добавить поле MaxSpeed в класс bullet и использовать
         // вместо MAXSPEED. Переименовать в StepsToGo
         // Поле speed переименовать в steps
-        if(self.steps < self.STEPSTOMOVE){
-            self.steps++;
+        if(this.steps < this.STEPSTOMOVE){
+            this.steps++;
             makeMove = false;
         }
         else{
             makeMove = true;
         }
 
-        if(self.isfire && makeMove){
-            self.steps = 0;
-            self.erase();
-            self.x = self.x + vx;
-            self.y = self.y + vy;
+        if(this.isfire && makeMove){
+            this.steps = 0;
+            this.erase();
+            this.x = this.x + vx;
+            this.y = this.y + vy;
             
-            if((self.x>CONST.MAXX)||(self.x<0)){
-                self.isfire = false;
+            if((this.x>CONST.MAXX)||(this.x<0)){
+                this.isfire = false;
             }
         
-            if((self.y>CONST.MAXY)||(self.y<0)){
-                self.isfire = false;
+            if((this.y>CONST.MAXY)||(this.y<0)){
+                this.isfire = false;
             }
         }
 
-        if(self.isfire) {
-            self.draw();
+        if(this.isfire) {
+            this.draw();
         }
         
     };

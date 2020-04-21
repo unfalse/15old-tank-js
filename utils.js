@@ -1,14 +1,16 @@
-Utils = {
-  KEY_CODE: {
+console.log('utils!');
+BattleTankGame.deps.utils = new function() {
+//Utils = {
+  this.KEY_CODE = {
     LEFT: 37,
     UP: 38,
     RIGHT: 39,
     DOWN: 40,
     a_KEY: 65
-  },
+  };
 
   // event.type должен быть keypress
-  getChar: function(event) {
+  this.getChar = function(event) {
     if (event.which == null) {  // IE
       if (event.keyCode < 32)
         return null; // спец. символ
@@ -21,15 +23,15 @@ Utils = {
     }
 
     return null; // спец. символ
-  },
+  };
   
   // использование Math.round() даст неравномерное распределение!
-  getRandomInt: function(min, max)
+  this.getRandomInt = function(min, max)
   {
     return Math.floor(Math.random() * (max - min + 1)) + min;
-  },
+  };
   
-  text: function(str){
+  this.text = function(str){
     console.log(str);
   }
-}
+};
