@@ -2,13 +2,17 @@ console.log('bullet!');
 BattleTankGame.deps.bullet = function(CONST, BTankInst){
     // var self = this;
     this.steps = 0;
-    //this.STEPSTOMOVE = 8;
-    this.STEPSTOMOVE = 5;
+    this.STEPSTOMOVE = 20;
     
     this.init = function(nx,ny,nd,parentTank){
         this.__proto__.init.call(this, nx, ny, nd);
+        this.isfire = false;
         this.parentTank = parentTank;
     };
+
+    this.setCoords = function(nx, ny, nd) {
+        this.__proto__.init.call(this, nx, ny, nd);
+    }
 
     this.draw = function(){
         BTankInst.drawContext.fillRect((this.x*20)+8, (this.y*20)+8, 4, 4);
@@ -29,7 +33,8 @@ BattleTankGame.deps.bullet = function(CONST, BTankInst){
         if(this.isfire) {
             // TODO: убрать сильную связанность с BTank
             var curCSW = BTankInst.getCSW(this.x, this.y);
-            if(curCSW && curCSW!=this.parentTank){
+            // a bullet can't hurt it's master! :)
+            if(curCSW && curCSW!=this.parentTank) {
                 var vx1 = vx;
                 var vy1 = vy;
                 vx = 0;

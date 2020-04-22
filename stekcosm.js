@@ -3,6 +3,7 @@ console.log('stekcosm!');
 BattleTankGame.deps.const = {
   MAXLIFES: 10,
   MAXSPEED: 10,
+  MAXBULLETS: 10,
   
   COMPUTER: 0,
   USER: 1,
