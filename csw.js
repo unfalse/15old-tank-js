@@ -1,4 +1,6 @@
 console.log('csw!');
+// TODO: csw: cosmo ship war, the old title
+// the new title - sws: space war ship
 BattleTankGame.deps.csw = function (CONST, bullet) {
   // var self = this;
   
@@ -7,13 +9,13 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
   
   // TODO: place code from init above!
   this.init = function(mx, my, who, num, BTankInst){
-      this.x = mx;
-      this.y = my;
+      this.__proto__.init.call(this, mx, my, 0);
       this.pow = 5;
       this.life = CONST.MAXLIFES;
-      this.dn = 0; // { 0 - right< , 1 - down^, 2 - left>, 3 - up }
+      // this.dn = 0; // { 0 - right< , 1 - down^, 2 - left>, 3 - up }
       this.iam = who;
-      this.speed = 0;
+      this.speed = 0; // make speed more precise
+                      // rename speed variable
       // draw;
       this.n = num;
       this.btank = BTankInst;
@@ -61,11 +63,11 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
     }
     else{
       //if(self.iam==CONST.COMPUTER){
-        if(this.speed<CONST.MAXSPEED){
+        if(this.speed < CONST.MAXSPEED){
           this.speed++;
           makeMove = false;
         }
-        else{
+        else {
           makeMove = true;
         }
       //}
@@ -119,6 +121,7 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
   }
 
 }
+BattleTankGame.deps.csw.prototype = BattleTankGame.deps.baseCoordinates;
 
 function players() {
 

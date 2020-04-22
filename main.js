@@ -6,7 +6,7 @@ console.log('main!');
 BattleTankGame.deps.game = function(CONST, BTank, Utils) {
 //GAME = {
   let mainIntervalId = null;
-  let speed = 1;
+  let speed = 0;
   let stop = false;
   let key = null;
   let cpuKey = null;
@@ -90,6 +90,7 @@ BattleTankGame.deps.game = function(CONST, BTank, Utils) {
     }
   },
 
+  // TODO: try to use https://stackoverflow.com/questions/29118791/how-to-move-an-element-via-arrow-keys-continuously-smoothly
   this.keysHandler = function(event) {
     if(event.type=="keydown"){
       switch(event.keyCode) {
