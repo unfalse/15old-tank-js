@@ -60,9 +60,10 @@ BattleTankGame.deps.game = function(CONST, BTank, Utils) {
     
     if(playerFire){
       player1.fire();
+      playerFire = false;
     }
     
-    // var self = this;
+    // random AI
     cpu.filter(function(cpu){
       cpuKey = Utils.getRandomInt(0,3);
       cpu.update(cpuKey, true); // true чтобы CPU двигался
