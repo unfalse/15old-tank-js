@@ -1,4 +1,5 @@
 console.log('stekcosm!');
+// TODO: rename stekcosm to tankman or something else
 BattleTankGame.deps.const = {
   MAXLIFES: 10,
   MAXSPEED: 10,
@@ -14,24 +15,10 @@ BattleTankGame.deps.const = {
 // -------------------------------------
 //    TOFIX! bullet dep propagation
 // -------------------------------------
-BattleTankGame.deps.stekcosm = function(CONST, csw, bullet) {
-// const CONST = {
-//   MAXLIFES: 10,
-//   MAXSPEED: 10,
-  
-//   COMPUTER: 0,
-//   USER: 1,
-  
-//   MAXX: 20,
-//   MAXY: 20,
-//   BEGX: 20,
-//   BEGY: 20
-// };
 
-// -----------------------------
-//        Отрисовка, а ещё менеджер танков (зачем?)
-// -----------------------------
-// BTank = {
+// Tanks manager and draw manager
+BattleTankGame.deps.stekcosm = function(CONST, csw, bullet) {
+
   let cswArr = [];
 	this.drawContext = null;
   this.infoContext = null;

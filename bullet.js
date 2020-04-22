@@ -2,34 +2,31 @@ console.log('bullet!');
 BattleTankGame.deps.bullet = function(CONST, BTankInst){
     // var self = this;
     this.steps = 0;
-    this.STEPSTOMOVE = 8;
+    //this.STEPSTOMOVE = 8;
+    this.STEPSTOMOVE = 5;
     
-    this.init = function(nx,ny,d1,parentTank){
-        this.x = nx;
-        this.y = ny;
-        this.d = d1;
+    this.init = function(nx,ny,nd,parentTank){
+        this.__proto__.init.call(this, nx, ny, nd);
         this.parentTank = parentTank;
     };
 
     this.draw = function(){
-        // putpixel(x*20+10, y*20+10, yellow)
         BTankInst.drawContext.fillRect((this.x*20)+8, (this.y*20)+8, 4, 4);
     };
 
     this.erase = function(){
-        // putpixel(x*20+10, y*20+10, 0)
         BTankInst.drawContext.clearRect((this.x*20)+8, (this.y*20)+8, 4, 4);
     };
 
     this.fly = function(){
-        var d = this.d;
-        var vx = (-(d >> 1)| 1)*((d & 1) ^ 1);
-        var vy = (-(d >> 1)| 1)*((d & 1) & 1);
+        var nvxy = this.getVXY(this.d);
+        var vx = nvxy.vx;
+        var vy = nvxy.vy;
         var makeMove = false;
         
         // TODO: дописать
         // Проверка попадания в танк
-        if(this.isfire){
+        if(this.isfire) {
             // TODO: убрать сильную связанность с BTank
             var curCSW = BTankInst.getCSW(this.x, this.y);
             if(curCSW && curCSW!=this.parentTank){
@@ -42,16 +39,13 @@ BattleTankGame.deps.bullet = function(CONST, BTankInst){
                     vx = vx1;
                     vy = vy1;
                 }
-                else{
+                else {
                     curCSW.life--;
                     curCSW.erase();
                     BTankInst.DrawCrash(curCSW.x, curCSW.y);
                     this.isfire = false;
                     //console.log((curCSW.iam?'(1P)':'(CPU)')+'HIT! Life = ', curCSW.life);
-                }
-            
-            // text('HIT!');
-            // eraseText('HIT!');
+                }            
             }
         }
 
@@ -87,3 +81,4 @@ BattleTankGame.deps.bullet = function(CONST, BTankInst){
         
     };
 }
+BattleTankGame.deps.bullet.prototype = BattleTankGame.deps.baseCoordinates;
