@@ -8,7 +8,7 @@ BattleTankGame.deps.game = function(CONST, BTank, Utils) {
   let mainIntervalId = null;
   let speed = 0;
   let stop = false;
-  let key = null;
+  let key = -1;
   let cpuKey = null;
   let player1 = null;
   let cpu = [];
@@ -48,7 +48,6 @@ BattleTankGame.deps.game = function(CONST, BTank, Utils) {
     // this.cpu[10] = BTank.createCSW(3, 2, CONST.COMPUTER, 1);
     // this.cpu[11] = BTank.createCSW(2, 3, CONST.COMPUTER, 1);
 
-
     stop = false;
     document.addEventListener("keydown", this.keysHandler.bind(this));
     document.addEventListener("keyup", this.keysHandler.bind(this));
@@ -56,12 +55,15 @@ BattleTankGame.deps.game = function(CONST, BTank, Utils) {
   },
 
   this.mainCycle = function(){
-    player1.update(key, move);
+    // TODO: refactor to make a separate function to move player's tank
+    // place the move function call directly into the keysHandler
+    this.detectMovement();
+    player1.update();
     
-    if(playerFire){
-      player1.fire();
-      playerFire = false;
-    }
+    // if(playerFire){
+    //   player1.fire();
+    //   playerFire = false;
+    // }
     
     // random AI
     cpu.filter(function(cpu){
@@ -93,43 +95,59 @@ BattleTankGame.deps.game = function(CONST, BTank, Utils) {
 
   // TODO: try to use https://stackoverflow.com/questions/29118791/how-to-move-an-element-via-arrow-keys-continuously-smoothly
   this.keysHandler = function(event) {
-    if(event.type=="keydown"){
-      switch(event.keyCode) {
+    if (event.preventDefault) {
+      event.preventDefault();
+    } else {
+      event.returnValue = false;
+    }
+    if(event.type === "keyup") {
+      key = -1;
+    }
+    if(event.type==="keydown") {
+      var kc = event.keyCode;
+      switch(kc) {
         case Utils.KEY_CODE.LEFT:
           key = 2;
-          move = true;
+          // move = true;
         break;
         case Utils.KEY_CODE.UP:
           key = 3;
-          move = true;
+          // move = true;
         break;
         case Utils.KEY_CODE.RIGHT:
           key = 0;
-          move = true;
+          // move = true;
         break;
         case Utils.KEY_CODE.DOWN:
           key = 1;
-          move = true;
+          // move = true;
         break;
         case Utils.KEY_CODE.a_KEY:
-          playerFire = true;
+          player1.fire();
+          // playerFire = true;
         break;
         default:
       }
     }
-
-    if(event.type=="keyup"){
-      switch(event.keyCode) {
-        case Utils.KEY_CODE.a_KEY:
-          playerFire = false;
-        break;
-        default:
-          move = false;
-          break;
-      }
-    }
+    // player1.move(key);
+    // if(event.type=="keyup"){
+    //   switch(event.keyCode) {
+    //     case Utils.KEY_CODE.a_KEY:
+    //       playerFire = false;
+    //     break;
+    //     default:
+    //       move = false;
+    //       break;
+    //   }
+    // }
   };
   
+  this.detectMovement = function() {
+    if (key >= 0) {
+      player1.move(key);
+    }
+  }
+
   this.readKeys = function(event) {
     key = Utils.getChar(event);
     move = true;
