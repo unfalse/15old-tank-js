@@ -52,9 +52,9 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
   }
 
   this.fire = function() {
-    if(this.life!=0) {
+    // if(this.life!=0) {
       this.createNewBullet(this.x, this.y, this.d);
-    }
+    // }
     // if(this.life!=0){
     //   if(!this.b.isfire){
     //     this.b.isfire = true;
@@ -103,9 +103,9 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
     this.draw();
     this.d = direction;
 
-    if(this.life>0){
+    // if(this.life>0){
       this.draw();
-    }
+    // }
   }
 
   this.update = function(direction, isMoving){
@@ -116,10 +116,7 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
     this.updateBullets();
     
     if (this.iam === CONST.COMPUTER) {
-    if((this.life==0)||(this.life>CONST.MAXLIFES)){
-      this.life = 0;
-    }
-    else{
+
       //if(self.iam==CONST.COMPUTER){
         if(this.speed < CONST.MAXSPEED){
           this.speed++;
@@ -158,17 +155,10 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
           this.draw();
           this.d = direction;
           isMoving = false;
-          if(this.life>CONST.MAXLIFES){
-            this.life = 0;
-          }
         }
       }
-    }
   }
-        
-    if(this.life>0){
       this.draw();
-    }
   },
     
   this.destroy = function(){

@@ -19,9 +19,10 @@ BattleTankGame.deps.game = function(CONST, BTank, Utils) {
   }
   let cpuKey = null;
   let player1 = null;
-  let cpu = [];
+  let cpus = [];
   // scripts: ['stekcosm.js', 'utils.js', 'csw.js', 'bullet.js'],
   let move = false; // флаг того, что игрок двигается
+  let startTime;
 
   // loadScripts: function(){
   //   for(var src in this.scripts){
@@ -42,26 +43,29 @@ BattleTankGame.deps.game = function(CONST, BTank, Utils) {
     
     player1 = BTank.createCSW(1, 1, CONST.USER, 1);
     
-    cpu[0] = BTank.createCSW(5, 4, CONST.COMPUTER, 1);
-    // this.cpu[1] = BTank.createCSW(6, 4, CONST.COMPUTER, 1);
-    // this.cpu[2] = BTank.createCSW(7, 4, CONST.COMPUTER, 1);
-    // this.cpu[3] = BTank.createCSW(8, 4, CONST.COMPUTER, 1);
-    // this.cpu[4] = BTank.createCSW(9, 4, CONST.COMPUTER, 1);
-    // this.cpu[5] = BTank.createCSW(10, 4, CONST.COMPUTER, 1);
-    // this.cpu[6] = BTank.createCSW(9, 5, CONST.COMPUTER, 1);
-    // this.cpu[7] = BTank.createCSW(9, 6, CONST.COMPUTER, 1);
-    // this.cpu[8] = BTank.createCSW(9, 7, CONST.COMPUTER, 1);
-    // this.cpu[9] = BTank.createCSW(9, 8, CONST.COMPUTER, 1);
-    // this.cpu[10] = BTank.createCSW(3, 2, CONST.COMPUTER, 1);
-    // this.cpu[11] = BTank.createCSW(2, 3, CONST.COMPUTER, 1);
+    cpus[0] = BTank.createCSW(5, 4, CONST.COMPUTER, 1);
+    // cpus[1] = BTank.createCSW(6, 4, CONST.COMPUTER, 2);
+    // cpus[2] = BTank.createCSW(7, 4, CONST.COMPUTER, 3);
+    // cpus[3] = BTank.createCSW(8, 4, CONST.COMPUTER, 4);
+    // cpus[4] = BTank.createCSW(9, 4, CONST.COMPUTER, 5);
+    // cpus[5] = BTank.createCSW(10, 4, CONST.COMPUTER, 6);
+    // cpus[6] = BTank.createCSW(9, 5, CONST.COMPUTER, 7);
+    // cpus[7] = BTank.createCSW(9, 6, CONST.COMPUTER, 8);
+    // cpus[8] = BTank.createCSW(9, 7, CONST.COMPUTER, 9);
+    // cpus[9] = BTank.createCSW(9, 8, CONST.COMPUTER, 10);
+    // cpus[10] = BTank.createCSW(3, 2, CONST.COMPUTER, 11);
+    // cpus[11] = BTank.createCSW(2, 3, CONST.COMPUTER, 12);
 
     stop = false;
     document.addEventListener("keydown", this.keysHandler.bind(this));
     document.addEventListener("keyup", this.keysHandler.bind(this));
-    mainIntervalId = setInterval(this.mainCycle.bind(this), speed);
+    mainIntervalId = window.requestAnimationFrame(this.mainCycle.bind(this)); // setInterval(this.mainCycle.bind(this), speed);
   },
 
-  this.mainCycle = function(){
+  this.mainCycle = function(timestamp) {
+    // console.log('start!');
+    if (!startTime) startTime = timestamp;
+    const progress = timestamp - startTime;
     // TODO: refactor to make a separate function to move player's tank
     // place the move function call directly into the keysHandler
     this.detectMovement();
@@ -73,29 +77,35 @@ BattleTankGame.deps.game = function(CONST, BTank, Utils) {
     // }
     
     // random AI
-    cpu.filter(function(cpu){
+    cpus.filter(function(cpu){
       cpuKey = Utils.getRandomInt(0,3);
       cpu.update(cpuKey, true); // true чтобы CPU двигался
       cpu.fire();
     });
 
     BTank.displayLifeBar(player1);
-    BTank.displayLifeBar(cpu[0]);
+    BTank.displayLifeBar(cpus[0]);
 
     if(player1.life===0){
       Utils.text('GAME OVER');
       stop = true; 
     }
 
-    if(cpu[0].life<=0){
+    if(cpus[0].life<=0){
       Utils.text('YOU WIN');
       stop = true;
     }
 
-    if(stop){
-      clearInterval(mainIntervalId);
-      BTank.showGameOver(player1.life);
-    }
+    // if(stop){
+    //   clearInterval(mainIntervalId);
+    //   BTank.showGameOver(player1.life);
+    // }
+
+    // console.log(progress);
+    // console.log('next!');
+    // if (progress < 2000) {
+      mainIntervalId = window.requestAnimationFrame(this.mainCycle.bind(this));
+    // }
   },
 
   // TODO: try to use https://stackoverflow.com/questions/29118791/how-to-move-an-element-via-arrow-keys-continuously-smoothly

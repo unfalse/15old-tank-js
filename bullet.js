@@ -2,7 +2,7 @@ console.log('bullet!');
 BattleTankGame.deps.bullet = function(CONST, BTankInst){
     // var self = this;
     this.steps = 0;
-    this.STEPSTOMOVE = 20;
+    this.STEPSTOMOVE = 0;
     
     this.init = function(nx,ny,nd,parentTank){
         this.__proto__.init.call(this, nx, ny, nd);
