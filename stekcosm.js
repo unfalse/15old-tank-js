@@ -2,7 +2,7 @@ console.log('stekcosm!');
 // TODO: rename stekcosm to tankman or something else
 BattleTankGame.deps.const = {
   MAXLIFES: 10,
-  MAXSPEED: 10,
+  MAXSPEED: 0,
   MAXBULLETS: 10,
   
   COMPUTER: 0,
@@ -113,19 +113,19 @@ BattleTankGame.deps.stekcosm = function(CONST, csw, bullet) {
   };
   
   this.showLogo = function() {
-    this.infoContext.fillStyle = "#000";
+    this.infoContext.fillStyle = "lightgreen";
     this.infoContext.strokeStyle = "#F00";
     this.infoContext.font = "30pt Arial";
     this.infoContext.fillText("Battle Tank!", 0, 30);
   };
   
   this.showNames = function() {
-    this.infoContext.fillStyle = "#00f";
+    this.infoContext.fillStyle = "gray";
     this.infoContext.strokeStyle = "#F00";
     this.infoContext.font = "20pt Arial";
     this.infoContext.fillText("p1 life:", 0, 60);  
 
-    this.infoContext.fillStyle = "#00f";
+    this.infoContext.fillStyle = "gray";
     this.infoContext.strokeStyle = "#F00";
     this.infoContext.font = "20pt Arial";
     this.infoContext.fillText("cpu life:", 0, 90);
@@ -149,7 +149,7 @@ BattleTankGame.deps.stekcosm = function(CONST, csw, bullet) {
   this.displayLifeBar = function(player) {
     // TODO: плохо! BTank не должен знать про csw
     if(player.iam){ // player
-      this.infoContext.fillStyle = "#FFF";
+      this.infoContext.fillStyle = "#000";
       this.infoContext.fillRect(100, 40, 200, 20);
 
       this.infoContext.fillStyle = "#0F0";
@@ -158,7 +158,7 @@ BattleTankGame.deps.stekcosm = function(CONST, csw, bullet) {
       this.infoContext.fillRect(100, 40, 20 * player.life, 20);
     }
     else{
-      this.infoContext.fillStyle = "#FFF";
+      this.infoContext.fillStyle = "#000";
       this.infoContext.fillRect(100, 70, 200, 20);
 
       this.infoContext.fillStyle = "#F00";
