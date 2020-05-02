@@ -1,3 +1,14 @@
 body {
-    background-color: black;
+  background-color: black;
+}
+
+#playAgainBtn {
+  width: 100px;
+  height: 20px;
+  position: absolute;
+  top: 320px;
+  display: none;
+  background-color: black;
+  color: white;
+  border: 1px solid green;
 }
