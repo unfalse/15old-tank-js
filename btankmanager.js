@@ -22,6 +22,7 @@ BattleTankGame.deps.BTankManager = function(CONST, csw, bullet) {
   let cswArr = [];
 	this.drawContext = null;
   this.infoContext = null;
+  this.againBtn = document.querySelector('#playAgainBtn');
 
   this.init = function() {
     var gameField     = document.getElementById('gameField');
@@ -142,17 +143,18 @@ BattleTankGame.deps.BTankManager = function(CONST, csw, bullet) {
   
   this.showGameOver = function(won) {
     if(won){
-      this.drawContext.fillStyle = "#00f";
+      this.drawContext.fillStyle = "#fff";
       this.drawContext.strokeStyle = "#F00";
       this.drawContext.font = "bold 25pt Comic";
-      this.drawContext.fillText("YOU WIN", 100, 200);
+      this.drawContext.fillText("YOU WIN", 130, 200);
     }
     else{
-      this.drawContext.fillStyle = "#00f";
+      this.drawContext.fillStyle = "#fff";
       this.drawContext.strokeStyle = "#F00";
       this.drawContext.font = "bold 25pt Comic";
       this.drawContext.fillText("GAME OVER", 100, 200);
     }
+    this.againBtn.style.display = 'block';
   };
 
   this.displayLifeBar = function(player) {

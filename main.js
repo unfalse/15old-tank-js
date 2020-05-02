@@ -75,10 +75,9 @@ BattleTankGame.deps.game = function(CONST, BTank, Utils) {
       stop = true;
     }
 
-    // if(stop){
-    //   clearInterval(mainIntervalId);
-    //   BTank.showGameOver(player1.life);
-    // }
+    if(stop){
+      BTank.showGameOver(player1.life);
+    }
 
     // console.log(progress);
     // console.log('next!');
