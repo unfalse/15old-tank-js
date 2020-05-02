@@ -1,40 +1,40 @@
-// Bullet that is flying every step per cell
+// Bullet that is flying every step per pixel
 
-console.log('bullet!');
-BattleTankGame.deps.bullet = function(CONST, BTankInst){
-    // var self = this;
-    this.steps = 0;
-    this.STEPSTOMOVE = 0;
-    
-    this.init = function(nx,ny,nd,parentTank){
-        this.__proto__.init.call(this, nx, ny, nd);
+console.log('bulletPixel!');
+BattleTankGame.deps.bulletPixel = function(CONST, BTankInst){
+    this.bulletNum = -1;
+    const BULLETSPEED = 3;
+
+    this.init = function(nx, ny, nd, parentTank, bnum){
+        // starts from a cell near tank
+        this.__proto__.init.call(this, (nx*20)+8, (ny*20)+8, nd);
         this.isfire = false;
         this.parentTank = parentTank;
+        this.bulletNum = bnum;
     };
 
     this.setCoords = function(nx, ny, nd) {
-        this.__proto__.init.call(this, nx, ny, nd);
+        this.__proto__.init.call(this, (nx*20)+8, (ny*20)+8, nd);
     }
 
     this.draw = function(){
-        BTankInst.drawContext.fillRect((this.x*20)+8, (this.y*20)+8, 4, 4);
+        BTankInst.drawContext.fillRect(this.x, this.y, 4, 4);
     };
 
     this.erase = function(){
-        BTankInst.drawContext.clearRect((this.x*20)+8, (this.y*20)+8, 4, 4);
+        BTankInst.drawContext.clearRect(this.x, this.y, 4, 4);
     };
 
     this.fly = function(){
         var nvxy = this.getVXY(this.d);
-        var vx = nvxy.vx;
-        var vy = nvxy.vy;
-        var makeMove = false;
+        var vx = nvxy.vx * BULLETSPEED;
+        var vy = nvxy.vy * BULLETSPEED;
         
         // TODO: дописать
         // Проверка попадания в танк
         if(this.isfire) {
             // TODO: убрать сильную связанность с BTank
-            var curCSW = BTankInst.getCSW(this.x, this.y);
+            var curCSW = BTankInst.getCSWWithPixelPrecision(this.x, this.y);
             // a bullet can't hurt it's master! :)
             if(curCSW && curCSW!=this.parentTank) {
                 var vx1 = vx;
@@ -59,33 +59,25 @@ BattleTankGame.deps.bullet = function(CONST, BTankInst){
         // TODO: добавить поле MaxSpeed в класс bullet и использовать
         // вместо MAXSPEED. Переименовать в StepsToGo
         // Поле speed переименовать в steps
-        if(this.steps < this.STEPSTOMOVE){
-            this.steps++;
-            makeMove = false;
-        }
-        else{
-            makeMove = true;
-        }
-
-        if(this.isfire && makeMove){
-            this.steps = 0;
+        if(this.isfire){
             this.erase();
             this.x = this.x + vx;
             this.y = this.y + vy;
-            
-            if((this.x>CONST.MAXX)||(this.x<0)){
+            // console.log("bullet: [num, x, y]", [this.bulletNum, this.x, this.y]);
+            this.draw();
+
+            if((this.x > CONST.MAXX * 20 + 20) || (this.x < 0)){
                 this.isfire = false;
             }
         
-            if((this.y>CONST.MAXY)||(this.y<0)){
+            if((this.y > CONST.MAXY * 20 + 20) || (this.y < 0)){
                 this.isfire = false;
             }
         }
 
-        if(this.isfire) {
-            this.draw();
+        if(!this.isfire) {
+            this.erase();
         }
-        
     };
 }
-BattleTankGame.deps.bullet.prototype = BattleTankGame.deps.baseCoordinates;
+BattleTankGame.deps.bulletPixel.prototype = BattleTankGame.deps.baseCoordinates;
