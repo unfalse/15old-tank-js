@@ -1,11 +1,12 @@
 console.log('csw!');
 // TODO: csw: cosmo ship war, the old title
-// the new title - sws: space war ship
+// TODO: rename csw to something more understandable - tank?
 BattleTankGame.deps.csw = function (CONST, bullet) {
   // var self = this;
   
   this.iam = new players();
   this.btank = null;
+  this.lastBulletTimeStamp = 0;
   
   // TODO: place code from init above!
   this.init = function(mx, my, who, num, BTankInst){
@@ -25,7 +26,7 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
       this.bulletsArray = [];
       for(var bc = 0; bc < CONST.MAXBULLETS; bc++) {
         const newBullet = new bullet(CONST, BTankInst);
-        newBullet.init(mx, my, 0, this);
+        newBullet.init(mx, my, 0, this, bc);
         this.bulletsArray.push(newBullet);
       }
   };
@@ -45,28 +46,36 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
 
   this.createNewBullet = function(startX, startY, startD) {
     const freeBullet = this.bulletsArray.find(b => !b.isfire);
+
+    // if (this.iam !== CONST.COMPUTER) console.log(freeBullet);
+
     if (freeBullet) {
+
+      // if (this.iam !== CONST.COMPUTER) console.log(['setCoords!', startX, startY, startD]);
+    
       freeBullet.setCoords(startX, startY, startD);
       freeBullet.isfire = true;
     }
   }
 
-  this.fire = function() {
-    // if(this.life!=0) {
-      this.createNewBullet(this.x, this.y, this.d);
-    // }
-    // if(this.life!=0){
-    //   if(!this.b.isfire){
-    //     this.b.isfire = true;
-    //     this.b.init(this.x, this.y, this.d, this);
-    //   }
-    // }
+  this.fire = function(timestamp) {
+      // if (this.iam !== CONST.COMPUTER) console.log(['timestamp, lastBulletTimestamp: ', timestamp, this.lastBulletTimeStamp, timestamp - this.lastBulletTimeStamp]);
+      if (timestamp - this.lastBulletTimeStamp >= 100) {
+        this.lastBulletTimeStamp = timestamp;
+        this.createNewBullet(this.x, this.y, this.d);
+      }
   }
     
   this.updateBullets = function() {
-    this.bulletsArray.forEach(b => { if (b.isfire) b.fly(); });
+    this.bulletsArray.forEach(b => {
+      if (b.isfire) {
+        // if (this.iam !== CONST.COMPUTER) console.log('b.fly!');
+        b.fly();
+      }
+    });
   }
 
+  // TODO: remove this function and use only update
   this.move = function(direction) {
     if(this.speed < CONST.MAXSPEED){
       this.speed++;
@@ -104,7 +113,7 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
     this.d = direction;
 
     // if(this.life>0){
-      this.draw();
+      // this.draw();
     // }
   }
 
@@ -113,6 +122,7 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
     var uy = 0;
     var makeMove = true;
 
+    // if (this.iam !== CONST.COMPUTER) console.log('update!');
     this.updateBullets();
     
     if (this.iam === CONST.COMPUTER) {

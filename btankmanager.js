@@ -1,5 +1,4 @@
-console.log('stekcosm!');
-// TODO: rename stekcosm to tankman or something else
+console.log('BTankManager!');
 BattleTankGame.deps.const = {
   MAXLIFES: 10,
   MAXSPEED: 0,
@@ -18,7 +17,7 @@ BattleTankGame.deps.const = {
 // -------------------------------------
 
 // Tanks manager and draw manager
-BattleTankGame.deps.stekcosm = function(CONST, csw, bullet) {
+BattleTankGame.deps.BTankManager = function(CONST, csw, bullet) {
 
   let cswArr = [];
 	this.drawContext = null;
@@ -36,6 +35,15 @@ BattleTankGame.deps.stekcosm = function(CONST, csw, bullet) {
     this.infoContext = gameInfo.getContext('2d');
   };
 
+  // x, y - coordinates of pixels, not cells
+  this.checkCSWWithPixelPrecision = function(x, y) {
+    const result = cswArr.filter(function(csw) {
+      return ( (x >= (csw.x*20) && x <= (csw.x*20) + 20) &&
+        (y >= (csw.y*20) && y <= (csw.y*20) + 20));
+    }).length>0;
+  return result.length>0;
+  }
+
   this.checkCSW = function(x,y) {
     const result = cswArr.filter(function(csw) {
         return ((csw.x==x)&&(csw.y==y))
@@ -43,11 +51,23 @@ BattleTankGame.deps.stekcosm = function(CONST, csw, bullet) {
     return result.length>0;
   };
 
-  this.changeCSW = function(x1, y1){
-    const result = cswArr.filter(function(csw){
-      return ((csw.x==x1)&&(csw.y==y1))
+  // Returns CSW on coords in params
+  this.getCSWWithPixelPrecision = function(x, y) {
+    const tArr = cswArr.filter(function(csw) {
+        return ( (x >= (csw.x*20) && x <= (csw.x*20) + 20) &&
+          (y >= (csw.y*20) && y <= (csw.y*20) + 20));
     });
-    return (result && result.length) ? result[0] : null;
+    
+    return tArr.length ? tArr[0] : null;
+  };
+
+  // Returns CSW on coords in params
+  this.getCSW = function(x1, y1) {
+    const tArr = cswArr.filter(function(c){
+        return (c.x==x1)&&(c.y==y1);
+    });
+    
+    return tArr.length ? tArr[0] : null;
   };
 
   this.createCSW = function(x, y, who, num) {
@@ -69,17 +89,6 @@ BattleTankGame.deps.stekcosm = function(CONST, csw, bullet) {
               break;
           }
       }
-  };
-  
-  // Returns CSW on coords in params
-  // old: changeCSW
-  // also used instead of checkCSW
-  this.getCSW = function(x1, y1) {
-      var tArr = cswArr.filter(function(c){
-            return (c.x==x1)&&(c.y==y1);
-        });
-      
-      return tArr.length ? tArr[0] : null;
   };
   
   this.destroyAll = function(){
