@@ -30,6 +30,7 @@ BattleTankGame.deps.BTankManager = function(CONST, csw, bullet, images) {
   this.playerImage = null;
   this.cpuImage = null;
   this.crashImage = null;
+  this.backgroundImage = null;
 
   this.init = function() {
     var gameField     = document.getElementById('gameField');
@@ -54,6 +55,7 @@ BattleTankGame.deps.BTankManager = function(CONST, csw, bullet, images) {
     this.playerImage = new images(this, 'images/csw-mt9.png');
     this.cpuImage = new images(this, 'images/csw-mt5.png');
     this.crashImage = new images(this, 'images/crash.png');
+    this.backgroundImage = new images(this, 'images/space_back.jpg');
   };
 
   // x, y - coordinates of pixels, not cells
@@ -148,6 +150,10 @@ BattleTankGame.deps.BTankManager = function(CONST, csw, bullet, images) {
     this.drawContext.strokeRect(0,0,420,420);
   };
   
+  this.drawBackground = function() {
+    this.backgroundImage.draw(0, 0);
+  }
+
   this.showLogo = function() {
     this.infoContext.fillStyle = "lightgreen";
     this.infoContext.strokeStyle = "#F00";

@@ -49,6 +49,7 @@ BattleTankGame.deps.game = function(CONST, BTank, Utils) {
   this.mainCycle = function(timestamp) {
     BTank.drawContext.fillStyle = "black";
     BTank.drawContext.fillRect(0, 0, 420, 420);
+    BTank.drawBackground();
     // console.log('start!');
     if (!startTime) startTime = timestamp;
     const progress = timestamp - startTime;
