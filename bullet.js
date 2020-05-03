@@ -49,7 +49,8 @@ BattleTankGame.deps.bullet = function(CONST, BTankInst){
                 else {
                     curCSW.life--;
                     curCSW.erase();
-                    BTankInst.DrawCrash(curCSW.x, curCSW.y);
+                    // BTankInst.DrawCrash(curCSW.x, curCSW.y);
+                    curCSW.setCrash();
                     this.isfire = false;
                     //console.log((curCSW.iam?'(1P)':'(CPU)')+'HIT! Life = ', curCSW.life);
                 }            

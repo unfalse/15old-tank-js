@@ -47,8 +47,8 @@ BattleTankGame.deps.game = function(CONST, BTank, Utils) {
   },
 
   this.mainCycle = function(timestamp) {
-    // BTank.drawContext.fillStyle = "black";
-    // BTank.drawContext.fillRect(0, 0, 420, 420);
+    BTank.drawContext.fillStyle = "black";
+    BTank.drawContext.fillRect(0, 0, 420, 420);
     // console.log('start!');
     if (!startTime) startTime = timestamp;
     const progress = timestamp - startTime;
@@ -121,7 +121,8 @@ BattleTankGame.gameInstance = new BattleTankGame.deps.game(
     BattleTankGame.deps.const,
     BattleTankGame.deps.csw,
     // BattleTankGame.deps.bullet
-    BattleTankGame.deps.bulletPixel
+    BattleTankGame.deps.bulletPixel,
+    BattleTankGame.deps.images
   ),
   BattleTankGame.deps.utils
 );
