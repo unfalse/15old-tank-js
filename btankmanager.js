@@ -1,4 +1,5 @@
 console.log("BTankManager!");
+
 BattleTankGame.deps.const = {
     MAXLIFES: 10,
     MAXSPEED: 0,
@@ -66,7 +67,7 @@ BattleTankGame.deps.BTankManager = function (CONST, csw, bullet, images) {
         return result.length > 0;
     };
 
-    // Returns CSW on coords in params
+    // Returns CSW on coords in params (by pixel)
     this.getCSWWithPixelPrecision = function (x, y) {
         const tArr = cswArr.filter(function (csw) {
             return (
@@ -80,7 +81,7 @@ BattleTankGame.deps.BTankManager = function (CONST, csw, bullet, images) {
         return tArr.length ? tArr[0] : null;
     };
 
-    // Returns CSW on coords in params
+    // Returns CSW on coords in params (by cell)
     this.getCSW = function (x1, y1) {
         const tArr = cswArr.filter(function (c) {
             return c.x == x1 && c.y == y1;
@@ -89,25 +90,26 @@ BattleTankGame.deps.BTankManager = function (CONST, csw, bullet, images) {
         return tArr.length ? tArr[0] : null;
     };
 
-    (this.createCSW = function (x, y, who, num) {
+    this.createCSW = function (x, y, who, num) {
         var c1 = new csw(CONST, bullet);
         c1.init(x, y, who, num, this);
         cswArr.push(c1);
         return c1;
-    }),
-        (this.deleteCSW = function (x, y) {
-            var ca = 0;
-            while (1) {
-                if (cswArr[ca].x == x && cswArr[ca].y == y) {
-                    cswArr.splice(ca, 1);
-                    break;
-                }
-                ca++;
-                if (ca == cswArr.length) {
-                    break;
-                }
+    };
+
+    this.deleteCSW = function (x, y) {
+        var ca = 0;
+        while (1) {
+            if (cswArr[ca].x == x && cswArr[ca].y == y) {
+                cswArr.splice(ca, 1);
+                break;
             }
-        });
+            ca++;
+            if (ca == cswArr.length) {
+                break;
+            }
+        }
+    };
 
     this.destroyAll = function () {
         cswArr = [];
@@ -175,7 +177,6 @@ BattleTankGame.deps.BTankManager = function (CONST, csw, bullet, images) {
     };
 
     this.displayLifeBar = function (player) {
-        // TODO: плохо! BTank не должен знать про csw
         if (player.iam) {
             // player
             this.infoContext.fillStyle = "#000";

@@ -1,6 +1,6 @@
 console.log("utils!");
 BattleTankGame.deps.utils = new (function () {
-    //Utils = {
+
     this.KEY_CODE = {
         LEFT: 37,
         UP: 38,

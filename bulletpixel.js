@@ -45,11 +45,8 @@ BattleTankGame.deps.bulletPixel.prototype.fly = function () {
                 vy = vy1;
             } else {
                 curCSW.life--;
-                // curCSW.erase();
-                //BTankInst.DrawCrash(curCSW.x, curCSW.y);
                 curCSW.setCrash();
                 this.isfire = false;
-                //console.log((curCSW.iam?'(1P)':'(CPU)')+'HIT! Life = ', curCSW.life);
             }
         }
     }
@@ -58,10 +55,8 @@ BattleTankGame.deps.bulletPixel.prototype.fly = function () {
     // вместо MAXSPEED. Переименовать в StepsToGo
     // Поле speed переименовать в steps
     if (this.isfire) {
-        // this.erase();
         this.x = this.x + vx;
         this.y = this.y + vy;
-        // console.log("bullet: [num, x, y]", [this.bulletNum, this.x, this.y]);
         this.draw();
 
         if (this.x > this.CONST.MAXX * 20 + 20 || this.x < 0) {
@@ -71,10 +66,6 @@ BattleTankGame.deps.bulletPixel.prototype.fly = function () {
         if (this.y > this.CONST.MAXY * 20 + 20 || this.y < 0) {
             this.isfire = false;
         }
-    }
-
-    if (!this.isfire) {
-        // this.erase();
     }
 };
 

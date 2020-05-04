@@ -3,8 +3,8 @@ const BattleTankGame = {
         baseCoordinates: {
             //x: 0, // x coordinate
             //y: 0, // y coordinate
-            //d: 0,  // direction (0/1/2/3)
-            getVXY: function (d) {
+            //d: 0,  // direction { 0 - right< , 1 - down^, 2 - left>, 3 - up }
+            getVXY: function (d) {         
                 // returns direction where to go
                 return {
                     vx: (-(d >> 1) | 1) * ((d & 1) ^ 1),

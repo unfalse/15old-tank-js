@@ -4,6 +4,7 @@ BattleTankGame.deps.images = function (BTankInst, src) {
     this.loaded = false;
 
     this.init = function (src) {
+
         this.image.addEventListener(
             "load",
             function () {
@@ -11,6 +12,7 @@ BattleTankGame.deps.images = function (BTankInst, src) {
             }.bind(this),
             false
         );
+
         this.image.src = src;
     };
 
@@ -18,18 +20,21 @@ BattleTankGame.deps.images = function (BTankInst, src) {
         const delay = delayParam || 0;
         if (this.loaded) {
             let startTime = 0;
+
             const delayedDraw = function (timestamp) {
                 if (!startTime) startTime = timestamp;
+            
                 const timePassed = timestamp - startTime;
-                // if (timePassed) console.log(timePassed);
-                // debugger;
+            
                 BTankInst.drawContext.drawImage(this.image, x, y);
+            
                 if (delay > 0 && timePassed <= delay) {
                     window.requestAnimationFrame(delayedDraw.bind(this));
                 } else {
                     if (onDelayEnd) onDelayEnd();
                 }
             };
+
             delayedDraw.call(this, 0);
         }
     };
