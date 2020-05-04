@@ -19,7 +19,7 @@ BattleTankGame.deps.const = {
 
 // Tanks manager and draw manager
 BattleTankGame.deps.BTankManager = function (CONST, csw, bullet, images) {
-    let cswArr = [];
+    this.cswArr = [];
     this.drawContext = null;
     this.infoContext = null;
     this.againBtn = null;
@@ -28,172 +28,192 @@ BattleTankGame.deps.BTankManager = function (CONST, csw, bullet, images) {
     this.crashImage = null;
     this.backgroundImage = null;
 
-    this.init = function () {
-        var gameField = document.getElementById("gameField");
-        gameField.height = 420;
-        gameField.width = 420;
+    this.CONST = CONST;
+    this.csw = csw;
+    this.bullet = bullet;
+    this.images = images;
+};
 
-        var gameInfo = document.getElementById("gameInfo");
+BattleTankGame.deps.BTankManager.prototype.init = function () {
+    const gameField = document.getElementById("gameField");
+    gameField.height = 420;
+    gameField.width = 420;
 
-        this.drawContext = gameField.getContext("2d");
-        this.infoContext = gameInfo.getContext("2d");
-        this.againBtn = document.querySelector("#playAgainBtn");
+    const gameInfo = document.getElementById("gameInfo");
 
-        this.playerImage = new images(this, "images/csw-mt9.png");
-        this.cpuImage = new images(this, "images/csw-mt5.png");
-        this.crashImage = new images(this, "images/crash.png");
-        this.backgroundImage = new images(this, "images/space_back.jpg");
-    };
+    this.drawContext = gameField.getContext("2d");
+    this.infoContext = gameInfo.getContext("2d");
+    this.againBtn = document.querySelector("#playAgainBtn");
 
-    // x, y - coordinates of pixels, not cells
-    this.checkCSWWithPixelPrecision = function (x, y) {
-        const result =
-            cswArr.filter(function (csw) {
-                return (
-                    x >= csw.x * 20 &&
-                    x <= csw.x * 20 + 20 &&
-                    y >= csw.y * 20 &&
-                    y <= csw.y * 20 + 20
-                );
-            }).length > 0;
-        return result.length > 0;
-    };
+    this.playerImage = new this.images(this, "images/csw-mt9.png");
+    this.cpuImage = new this.images(this, "images/csw-mt5.png");
+    this.crashImage = new this.images(this, "images/crash.png");
+    this.backgroundImage = new this.images(this, "images/space_back.jpg");
+};
 
-    this.checkCSW = function (x, y) {
-        const result =
-            cswArr.filter(function (csw) {
-                return csw.x == x && csw.y == y;
-            }).length > 0;
-        return result.length > 0;
-    };
-
-    // Returns CSW on coords in params (by pixel)
-    this.getCSWWithPixelPrecision = function (x, y) {
-        const tArr = cswArr.filter(function (csw) {
+// x, y - coordinates of pixels, not cells
+BattleTankGame.deps.BTankManager.prototype.checkCSWWithPixelPrecision = function (
+    x,
+    y
+) {
+    const result =
+        this.cswArr.filter(function (csw) {
             return (
                 x >= csw.x * 20 &&
                 x <= csw.x * 20 + 20 &&
                 y >= csw.y * 20 &&
                 y <= csw.y * 20 + 20
             );
-        });
+        }).length > 0;
+    return result.length > 0;
+};
 
-        return tArr.length ? tArr[0] : null;
-    };
+BattleTankGame.deps.BTankManager.prototype.checkCSW = function (x, y) {
+    const result =
+        this.cswArr.filter(function (csw) {
+            return csw.x == x && csw.y == y;
+        }).length > 0;
+    return result.length > 0;
+};
 
-    // Returns CSW on coords in params (by cell)
-    this.getCSW = function (x1, y1) {
-        const tArr = cswArr.filter(function (c) {
-            return c.x == x1 && c.y == y1;
-        });
+// Returns CSW on coords in params (by pixel)
+BattleTankGame.deps.BTankManager.prototype.getCSWWithPixelPrecision = function (
+    x,
+    y
+) {
+    const tArr = this.cswArr.filter(function (csw) {
+        return (
+            x >= csw.x * 20 &&
+            x <= csw.x * 20 + 20 &&
+            y >= csw.y * 20 &&
+            y <= csw.y * 20 + 20
+        );
+    });
 
-        return tArr.length ? tArr[0] : null;
-    };
+    return tArr.length ? tArr[0] : null;
+};
 
-    this.createCSW = function (x, y, who, num) {
-        var c1 = new csw(CONST, bullet);
-        c1.init(x, y, who, num, this);
-        cswArr.push(c1);
-        return c1;
-    };
+// Returns CSW on coords in params (by cell)
+BattleTankGame.deps.BTankManager.prototype.getCSW = function (x1, y1) {
+    const tArr = this.cswArr.filter(function (c) {
+        return c.x == x1 && c.y == y1;
+    });
 
-    this.deleteCSW = function (x, y) {
-        var ca = 0;
-        while (1) {
-            if (cswArr[ca].x == x && cswArr[ca].y == y) {
-                cswArr.splice(ca, 1);
-                break;
-            }
-            ca++;
-            if (ca == cswArr.length) {
-                break;
-            }
+    return tArr.length ? tArr[0] : null;
+};
+
+BattleTankGame.deps.BTankManager.prototype.createCSW = function (
+    x,
+    y,
+    who,
+    num
+) {
+    const c1 = new this.csw(this.CONST, this.bullet);
+    c1.init(x, y, who, num, this);
+    this.cswArr.push(c1);
+    return c1;
+};
+
+BattleTankGame.deps.BTankManager.prototype.deleteCSW = function (x, y) {
+    let ca = 0;
+    while (1) {
+        if (this.cswArr[ca].x == x && this.cswArr[ca].y == y) {
+            this.cswArr.splice(ca, 1);
+            break;
         }
-    };
-
-    this.destroyAll = function () {
-        cswArr = [];
-    };
-
-    // user
-    this.drawcswmt9 = function (x, y) {
-        this.playerImage.draw(x * 20, y * 20);
-    };
-
-    // cpu
-    this.drawcswmt5 = function (x, y) {
-        this.cpuImage.draw(x * 20, y * 20);
-    };
-
-    this.DrawBlack = function (x, y) {
-        this.drawContext.clearRect(x * 20, y * 20, 20, 20);
-    };
-
-    this.DrawCrash = function (x, y, onDelayEnd) {
-        this.crashImage.draw(x * 20, y * 20, 100, onDelayEnd);
-    };
-
-    this.DrawGameField = function () {
-        this.drawContext.strokeStyle = "#000";
-        this.drawContext.strokeRect(0, 0, 420, 420);
-    };
-
-    this.drawBackground = function () {
-        this.backgroundImage.draw(0, 0);
-    };
-
-    this.showLogo = function () {
-        this.infoContext.fillStyle = "lightgreen";
-        this.infoContext.strokeStyle = "#F00";
-        this.infoContext.font = "30pt Arial";
-        this.infoContext.fillText("Battle Tank!", 0, 30);
-    };
-
-    this.showNames = function () {
-        this.infoContext.fillStyle = "gray";
-        this.infoContext.strokeStyle = "#F00";
-        this.infoContext.font = "20pt Arial";
-        this.infoContext.fillText("p1 life:", 0, 60);
-
-        this.infoContext.fillStyle = "gray";
-        this.infoContext.strokeStyle = "#F00";
-        this.infoContext.font = "20pt Arial";
-        this.infoContext.fillText("cpu life:", 0, 90);
-    };
-
-    this.showGameOver = function (won) {
-        if (won) {
-            this.drawContext.fillStyle = "#fff";
-            this.drawContext.strokeStyle = "#F00";
-            this.drawContext.font = "bold 25pt Comic";
-            this.drawContext.fillText("YOU WIN", 130, 200);
-        } else {
-            this.drawContext.fillStyle = "#fff";
-            this.drawContext.strokeStyle = "#F00";
-            this.drawContext.font = "bold 25pt Comic";
-            this.drawContext.fillText("GAME OVER", 100, 200);
+        ca++;
+        if (ca == this.cswArr.length) {
+            break;
         }
-        this.againBtn.style.display = "block";
-    };
+    }
+};
 
-    this.displayLifeBar = function (player) {
-        if (player.iam) {
-            // player
-            this.infoContext.fillStyle = "#000";
-            this.infoContext.fillRect(100, 40, 200, 20);
+BattleTankGame.deps.BTankManager.prototype.destroyAll = function () {
+    this.cswArr = [];
+};
 
-            this.infoContext.fillStyle = "#0F0";
-            this.infoContext.strokeStyle = "#0F0";
-            this.infoContext.strokeRect(100, 40, 200, 20);
-            this.infoContext.fillRect(100, 40, 20 * player.life, 20);
-        } else {
-            this.infoContext.fillStyle = "#000";
-            this.infoContext.fillRect(100, 70, 200, 20);
+// user
+BattleTankGame.deps.BTankManager.prototype.drawcswmt9 = function (x, y) {
+    this.playerImage.draw(x * 20, y * 20);
+};
 
-            this.infoContext.fillStyle = "#F00";
-            this.infoContext.strokeStyle = "#F00";
-            this.infoContext.strokeRect(100, 70, 200, 20);
-            this.infoContext.fillRect(100, 70, 20 * player.life, 20);
-        }
-    };
+// cpu
+BattleTankGame.deps.BTankManager.prototype.drawcswmt5 = function (x, y) {
+    this.cpuImage.draw(x * 20, y * 20);
+};
+
+BattleTankGame.deps.BTankManager.prototype.DrawBlack = function (x, y) {
+    this.drawContext.clearRect(x * 20, y * 20, 20, 20);
+};
+
+BattleTankGame.deps.BTankManager.prototype.DrawCrash = function (
+    x,
+    y,
+    onDelayEnd
+) {
+    this.crashImage.draw(x * 20, y * 20, 100, onDelayEnd);
+};
+
+BattleTankGame.deps.BTankManager.prototype.DrawGameField = function () {
+    this.drawContext.strokeStyle = "#000";
+    this.drawContext.strokeRect(0, 0, 420, 420);
+};
+
+BattleTankGame.deps.BTankManager.prototype.drawBackground = function () {
+    this.backgroundImage.draw(0, 0);
+};
+
+BattleTankGame.deps.BTankManager.prototype.showLogo = function () {
+    this.infoContext.fillStyle = "lightgreen";
+    this.infoContext.strokeStyle = "#F00";
+    this.infoContext.font = "30pt Arial";
+    this.infoContext.fillText("Battle Tank!", 0, 30);
+};
+
+BattleTankGame.deps.BTankManager.prototype.showNames = function () {
+    this.infoContext.fillStyle = "gray";
+    this.infoContext.strokeStyle = "#F00";
+    this.infoContext.font = "20pt Arial";
+    this.infoContext.fillText("p1 life:", 0, 60);
+
+    this.infoContext.fillStyle = "gray";
+    this.infoContext.strokeStyle = "#F00";
+    this.infoContext.font = "20pt Arial";
+    this.infoContext.fillText("cpu life:", 0, 90);
+};
+
+BattleTankGame.deps.BTankManager.prototype.showGameOver = function (won) {
+    if (won) {
+        this.drawContext.fillStyle = "#fff";
+        this.drawContext.strokeStyle = "#F00";
+        this.drawContext.font = "bold 25pt Comic";
+        this.drawContext.fillText("YOU WIN", 130, 200);
+    } else {
+        this.drawContext.fillStyle = "#fff";
+        this.drawContext.strokeStyle = "#F00";
+        this.drawContext.font = "bold 25pt Comic";
+        this.drawContext.fillText("GAME OVER", 100, 200);
+    }
+    this.againBtn.style.display = "block";
+};
+
+BattleTankGame.deps.BTankManager.prototype.displayLifeBar = function (player) {
+    if (player.iam) {
+        // player
+        this.infoContext.fillStyle = "#000";
+        this.infoContext.fillRect(100, 40, 200, 20);
+
+        this.infoContext.fillStyle = "#0F0";
+        this.infoContext.strokeStyle = "#0F0";
+        this.infoContext.strokeRect(100, 40, 200, 20);
+        this.infoContext.fillRect(100, 40, 20 * player.life, 20);
+    } else {
+        this.infoContext.fillStyle = "#000";
+        this.infoContext.fillRect(100, 70, 200, 20);
+
+        this.infoContext.fillStyle = "#F00";
+        this.infoContext.strokeStyle = "#F00";
+        this.infoContext.strokeRect(100, 70, 200, 20);
+        this.infoContext.fillRect(100, 70, 20 * player.life, 20);
+    }
 };
