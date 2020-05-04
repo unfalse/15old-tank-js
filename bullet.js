@@ -2,7 +2,6 @@
 
 console.log('bullet!');
 BattleTankGame.deps.bullet = function(CONST, BTankInst){
-    // var self = this;
     this.steps = 0;
     this.STEPSTOMOVE = 0;
     
@@ -48,7 +47,7 @@ BattleTankGame.deps.bullet = function(CONST, BTankInst){
                 }
                 else {
                     curCSW.life--;
-                    curCSW.erase();
+                    // curCSW.erase();
                     // BTankInst.DrawCrash(curCSW.x, curCSW.y);
                     curCSW.setCrash();
                     this.isfire = false;
@@ -70,7 +69,7 @@ BattleTankGame.deps.bullet = function(CONST, BTankInst){
 
         if(this.isfire && makeMove){
             this.steps = 0;
-            this.erase();
+            // this.erase();
             this.x = this.x + vx;
             this.y = this.y + vy;
             

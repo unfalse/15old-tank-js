@@ -23,10 +23,6 @@ BattleTankGame.deps.BTankManager = function(CONST, csw, bullet, images) {
 	this.drawContext = null;
   this.infoContext = null;
   this.againBtn = null;
-  // this.cpuImage = new Image();
-  // this.cpuImageIsLoaded = false;
-  // this.playerImage = new Image();
-  // this.playerImageIsLoaded = false;
   this.playerImage = null;
   this.cpuImage = null;
   this.crashImage = null;
@@ -39,19 +35,10 @@ BattleTankGame.deps.BTankManager = function(CONST, csw, bullet, images) {
     
     var gameInfo      = document.getElementById('gameInfo');
     
-    //this.loadScripts();
     this.drawContext = gameField.getContext('2d');
     this.infoContext = gameInfo.getContext('2d');
     this.againBtn = document.querySelector('#playAgainBtn');
 
-    // this.cpuImage.addEventListener('load', (function() {
-    //   this.cpuImageIsLoaded = true;
-    // }).bind(this), false);
-    // this.playerImage.addEventListener('load', (function() {
-    //   this.playerImageIsLoaded = true;
-    // }).bind(this), false);
-    // this.playerImage.src = 'images/csw-mt9.png';
-    // this.cpuImage.src = 'images/csw-mt5.png';
     this.playerImage = new images(this, 'images/csw-mt9.png');
     this.cpuImage = new images(this, 'images/csw-mt5.png');
     this.crashImage = new images(this, 'images/crash.png');
@@ -120,18 +107,11 @@ BattleTankGame.deps.BTankManager = function(CONST, csw, bullet, images) {
   
   // user
   this.drawcswmt9 = function(x,y) {
-    //this.drawContext.fillStyle = "#0F0"
-    //this.drawContext.fillRect((x*20), (y*20), 20, 20);
-
-    // if (this.playerImageIsLoaded) this.drawContext.drawImage(this.playerImage, (x*20), (y*20));
     this.playerImage.draw(x*20, y*20);
   };
 
   // cpu
   this.drawcswmt5 = function(x,y){
-    // this.drawContext.fillStyle = "#F00";
-    // this.drawContext.fillRect((x*20), (y*20), 20, 20);
-    // if (this.cpuImageIsLoaded) this.drawContext.drawImage(this.cpuImage, (x*20), (y*20));
     this.cpuImage.draw(x*20, y*20);
   };
   
@@ -140,8 +120,6 @@ BattleTankGame.deps.BTankManager = function(CONST, csw, bullet, images) {
   };
   
   this.DrawCrash = function(x, y, onDelayEnd){
-    // this.drawContext.fillStyle = "yellow";
-    // this.drawContext.fillRect((x*20), (y*20), 20, 20);
     this.crashImage.draw(x*20, y*20, 100, onDelayEnd);
   };
   
