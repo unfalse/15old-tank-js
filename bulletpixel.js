@@ -2,13 +2,16 @@
 
 console.log("bulletPixel!");
 BattleTankGame.deps.bulletPixel = function (CONST, BTankInst) {
+    BattleTankGame.deps.baseCoordinates.call(this);
     this.bulletNum = -1;
     this.BULLETSPEED = 3;
+
     this.CONST = CONST;
     this.BTankInst = BTankInst;
 };
 
-BattleTankGame.deps.bulletPixel.prototype = BattleTankGame.deps.baseCoordinates;
+BattleTankGame.deps.bulletPixel.prototype = Object.create(BattleTankGame.deps.baseCoordinates.prototype);
+BattleTankGame.deps.bulletPixel.prototype.constructor = BattleTankGame.deps.bulletPixel;
 
 BattleTankGame.deps.bulletPixel.prototype.setCoords = function (nx, ny, nd) {
     this.initCoords(nx * 20 + 8, ny * 20 + 8, nd);

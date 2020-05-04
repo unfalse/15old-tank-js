@@ -19,7 +19,6 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     let cpuKey = null;
     let player1 = null;
     let cpus = [];
-    let startTime;
 
     this.start = function () {
         BTank.init();
