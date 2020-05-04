@@ -1,4 +1,4 @@
-var BattleTankGame = {
+const BattleTankGame = {
     deps: {
         baseCoordinates: {
             //x: 0, // x coordinate
@@ -10,7 +10,7 @@ var BattleTankGame = {
                     vy: (-(d >> 1)| 1)*((d & 1) & 1)
                 }
             },
-            init: function(nx, ny, nd) {
+            initCoords: function(nx, ny, nd) {
                 this.x = nx;
                 this.y = ny;
                 this.d = nd;

@@ -1,29 +1,26 @@
 console.log("csw!");
+
 // TODO: csw: cosmo ship war, the old title
 // TODO: rename csw to something more understandable - tank?
 BattleTankGame.deps.csw = function (CONST, bullet) {
-    // var self = this;
 
     this.btank = null;
     this.lastBulletTimeStamp = 0;
 
     // TODO: place code from init above!
     this.init = function (mx, my, who, num, BTankInst) {
-        this.__proto__.init.call(this, mx, my, 0);
+        this.initCoords(mx, my, 0);
         this.pow = 5;
         this.life = CONST.MAXLIFES;
         // this.dn = 0; // { 0 - right< , 1 - down^, 2 - left>, 3 - up }
         this.iam = who;
         this.speed = 0; // make speed more precise
-        // rename speed variable
-        // draw;
         this.n = num;
         this.btank = BTankInst;
         this.crashed = false;
-        // this.b = new bullet(CONST, BTankInst);
-        // this.b.isfire = false;
         this.bulletsCount = 0;
         this.bulletsArray = [];
+
         for (var bc = 0; bc < CONST.MAXBULLETS; bc++) {
             const newBullet = new bullet(CONST, BTankInst);
             newBullet.init(mx, my, 0, this, bc);
@@ -54,18 +51,13 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
     this.createNewBullet = function (startX, startY, startD) {
         const freeBullet = this.bulletsArray.find((b) => !b.isfire);
 
-        // if (this.iam !== CONST.COMPUTER) console.log(freeBullet);
-
         if (freeBullet) {
-            // if (this.iam !== CONST.COMPUTER) console.log(['setCoords!', startX, startY, startD]);
-
             freeBullet.setCoords(startX, startY, startD);
             freeBullet.isfire = true;
         }
     };
 
     this.fire = function (timestamp) {
-        // if (this.iam !== CONST.COMPUTER) console.log(['timestamp, lastBulletTimestamp: ', timestamp, this.lastBulletTimeStamp, timestamp - this.lastBulletTimeStamp]);
         if (timestamp - this.lastBulletTimeStamp >= 100) {
             this.lastBulletTimeStamp = timestamp;
             this.createNewBullet(this.x, this.y, this.d);
@@ -75,7 +67,6 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
     this.updateBullets = function () {
         this.bulletsArray.forEach((b) => {
             if (b.isfire) {
-                // if (this.iam !== CONST.COMPUTER) console.log('b.fly!');
                 b.fly();
             }
         });
@@ -90,9 +81,6 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
         var ux = 0;
         var uy = 0;
         this.speed = 0;
-        // if(this.speed < CONST.MAXSPEED){
-        //   this.speed++;
-        // }
         var ux = (-(direction >> 1) | 1) * ((direction & 1) ^ 1);
         var uy = (-(direction >> 1) | 1) * (direction & 1 & 1);
 
@@ -111,7 +99,7 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
             }
         }
 
-        this.erase();
+        // this.erase();
         this.x = this.x + ux;
         this.y = this.y + uy;
 
@@ -162,7 +150,7 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
                         }
                     }
 
-                    this.erase();
+                    // this.erase();
                     this.x = this.x + ux;
                     this.y = this.y + uy;
 

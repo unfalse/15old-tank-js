@@ -89,7 +89,7 @@ BattleTankGame.deps.game = function(CONST, BTank, Utils) {
 
   this.keysHandler = function(event) {
     if (event.preventDefault) {
-      //event.preventDefault();
+      event.preventDefault();
     } else {
       event.returnValue = false;
     }
