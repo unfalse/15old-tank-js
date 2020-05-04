@@ -3,7 +3,6 @@ console.log("csw!");
 // TODO: csw: cosmo ship war, the old title
 // TODO: rename csw to something more understandable - tank?
 BattleTankGame.deps.csw = function (CONST, bullet) {
-
     this.btank = null;
     this.lastBulletTimeStamp = 0;
 
@@ -34,7 +33,13 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
 
     this.draw = function () {
         if (this.crashed) {
-            this.btank.DrawCrash(this.x, this.y, (function() { this.crashed = false; }).bind(this));
+            this.btank.DrawCrash(
+                this.x,
+                this.y,
+                function () {
+                    this.crashed = false;
+                }.bind(this)
+            );
         } else {
             if (this.iam === CONST.USER) {
                 this.btank.drawcswmt9(this.x, this.y);
