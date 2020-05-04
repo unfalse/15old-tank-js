@@ -5,9 +5,9 @@ console.log("main!");
 // -----------------------------
 BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     let mainIntervalId = null;
-    let speed = 0;
     let stop = false;
     let keys = {};
+
     const controlsMap = {
         [Utils.KEY_CODE.UP]: 3,
         [Utils.KEY_CODE.LEFT]: 2,
@@ -15,12 +15,13 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         [Utils.KEY_CODE.DOWN]: 1,
         [Utils.KEY_CODE.a_KEY]: 4,
     };
+
     let cpuKey = null;
     let player1 = null;
     let cpus = [];
     let startTime;
 
-    (this.start = function () {
+    this.start = function () {
         BTank.init();
         BTank.showLogo();
         BTank.showNames();
@@ -41,63 +42,63 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         // cpus[11] = BTank.createCSW(2, 3, CONST.COMPUTER, 12);
 
         stop = false;
+
         document.addEventListener("keydown", this.keysHandler.bind(this));
         document.addEventListener("keyup", this.keysHandler.bind(this));
+
         mainIntervalId = window.requestAnimationFrame(
             this.mainCycle.bind(this)
         );
-    }),
-        (this.mainCycle = function (timestamp) {
-            BTank.drawContext.fillStyle = "black";
-            BTank.drawContext.fillRect(0, 0, 420, 420);
-            BTank.drawBackground();
-            // console.log('start!');
-            if (!startTime) startTime = timestamp;
-            const progress = timestamp - startTime;
-            this.detectMovement(timestamp);
-            player1.update();
+    };
 
-            // random AI
-            cpus.filter(function (cpu) {
-                cpuKey = Utils.getRandomInt(0, 3);
-                cpu.update(cpuKey, true); // true чтобы CPU двигался
-                cpu.fire(timestamp);
-            });
+    this.mainCycle = function (timestamp) {
+        BTank.drawContext.fillStyle = "black";
+        BTank.drawContext.fillRect(0, 0, 420, 420);
+        BTank.drawBackground();
+        
+        this.detectMovement(timestamp);
+        player1.update();
 
-            BTank.displayLifeBar(player1);
-            BTank.displayLifeBar(cpus[0]);
-
-            if (player1.life === 0) {
-                Utils.text("GAME OVER");
-                stop = true;
-            }
-
-            if (cpus[0].life <= 0) {
-                Utils.text("YOU WIN");
-                stop = true;
-            }
-
-            if (stop) {
-                BTank.showGameOver(player1.life);
-            }
-
-            // console.log(progress);
-            // console.log('next!');
-            if (!stop) {
-                mainIntervalId = window.requestAnimationFrame(
-                    this.mainCycle.bind(this)
-                );
-            }
-        }),
-        (this.keysHandler = function (event) {
-            if (event.preventDefault) {
-                event.preventDefault();
-            } else {
-                event.returnValue = false;
-            }
-            var kc = event.keyCode || event.which;
-            keys[kc] = event.type == "keydown";
+        // random AI
+        cpus.filter(function (cpu) {
+            cpuKey = Utils.getRandomInt(0, 3);
+            cpu.update(cpuKey, true); // true чтобы CPU двигался
+            cpu.fire(timestamp);
         });
+
+        BTank.displayLifeBar(player1);
+        BTank.displayLifeBar(cpus[0]);
+
+        if (player1.life === 0) {
+            Utils.text("GAME OVER");
+            stop = true;
+        }
+
+        if (cpus[0].life <= 0) {
+            Utils.text("YOU WIN");
+            stop = true;
+        }
+
+        if (stop) {
+            BTank.showGameOver(player1.life);
+        }
+
+        if (!stop) {
+            mainIntervalId = window.requestAnimationFrame(
+                this.mainCycle.bind(this)
+            );
+        }
+    };
+
+    this.keysHandler = function (event) {
+        if (event.preventDefault) {
+            event.preventDefault();
+        } else {
+            event.returnValue = false;
+        }
+        const kc = event.keyCode || event.which;
+        keys[kc] = event.type == "keydown";
+    };
 
     this.detectMovement = function (timestamp) {
         if (keys[Utils.KEY_CODE.UP]) {
@@ -129,5 +130,5 @@ BattleTankGame.gameInstance = new BattleTankGame.deps.game(
     ),
     BattleTankGame.deps.utils
 );
+
 BattleTankGame.gameInstance.start();
-//document.onload = GAME.start();

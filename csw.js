@@ -11,7 +11,6 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
         this.initCoords(mx, my, 0);
         this.pow = 5;
         this.life = CONST.MAXLIFES;
-        // this.dn = 0; // { 0 - right< , 1 - down^, 2 - left>, 3 - up }
         this.iam = who;
         this.speed = 0; // make speed more precise
         this.n = num;
@@ -104,35 +103,26 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
             }
         }
 
-        // this.erase();
         this.x = this.x + ux;
         this.y = this.y + uy;
-
         this.draw();
         this.d = direction;
-
-        // if(this.life>0){
-        // this.draw();
-        // }
     };
 
-    (this.update = function (direction, isMoving) {
+    this.update = function (direction, isMoving) {
         var ux = 0;
         var uy = 0;
         var makeMove = true;
 
-        // if (this.iam !== CONST.COMPUTER) console.log('update!');
         this.updateBullets();
 
         if (this.iam === CONST.COMPUTER) {
-            //if(self.iam==CONST.COMPUTER){
             if (this.speed < CONST.MAXSPEED) {
                 this.speed++;
                 makeMove = false;
             } else {
                 makeMove = true;
             }
-            //}
 
             if (makeMove) {
                 this.speed = 0;
@@ -155,7 +145,6 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
                         }
                     }
 
-                    // this.erase();
                     this.x = this.x + ux;
                     this.y = this.y + uy;
 
@@ -166,9 +155,6 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
             }
         }
         this.draw();
-    }),
-        (this.destroy = function () {
-            // erase();
-        });
+    };
 };
 BattleTankGame.deps.csw.prototype = BattleTankGame.deps.baseCoordinates;
