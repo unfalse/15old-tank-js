@@ -4,7 +4,7 @@ console.log("bulletPixel!");
 BattleTankGame.deps.bulletPixel = function (CONST, BTankInst) {
     BattleTankGame.deps.baseCoordinates.call(this);
     this.bulletNum = -1;
-    this.BULLETSPEED = 3;
+    this.BULLETSPEED = 5;
 
     this.CONST = CONST;
     this.BTankInst = BTankInst;
@@ -14,7 +14,7 @@ BattleTankGame.deps.bulletPixel.prototype = Object.create(BattleTankGame.deps.ba
 BattleTankGame.deps.bulletPixel.prototype.constructor = BattleTankGame.deps.bulletPixel;
 
 BattleTankGame.deps.bulletPixel.prototype.setCoords = function (nx, ny, nd) {
-    this.initCoords(nx * 20 + 8, ny * 20 + 8, nd);
+    this.initCoords(nx + 8, ny + 8, nd);
 };
 
 BattleTankGame.deps.bulletPixel.prototype.draw = function () {
@@ -80,7 +80,7 @@ BattleTankGame.deps.bulletPixel.prototype.init = function (
     bnum
 ) {
     // starts from a cell near tank
-    this.initCoords(nx * 20 + 8, ny * 20 + 8, nd);
+    this.initCoords(nx + 8, ny + 8, nd);
     this.isfire = false;
     this.parentTank = parentTank;
     this.bulletNum = bnum;

@@ -27,7 +27,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
 
         player1 = BTank.createCSW(1, 1, CONST.USER, 1);
 
-        cpus[0] = BTank.createCSW(5, 4, CONST.COMPUTER, 1);
+        cpus[0] = BTank.createCSW(250, 340, CONST.COMPUTER, 1);
         // cpus[1] = BTank.createCSW(6, 4, CONST.COMPUTER, 2);
         // cpus[2] = BTank.createCSW(7, 4, CONST.COMPUTER, 3);
         // cpus[3] = BTank.createCSW(8, 4, CONST.COMPUTER, 4);
