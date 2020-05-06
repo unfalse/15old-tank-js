@@ -15,6 +15,16 @@ BattleTankGame.deps.baseCoordinates.prototype.getVXY = function (d) {
     };
 };
 
+BattleTankGame.deps.baseCoordinates.prototype.getVXYAndAngle = function (d) {
+    const mapDirections = {
+        0: { vx: 1,  vy: 0,  angle: 90   },
+        1: { vx: 0,  vy: 1,  angle: 180  },
+        2: { vx: -1, vy: 0,  angle: 270 },
+        3: { vx: 0,  vy: -1, angle: 0 },
+    };
+    return mapDirections[d];
+};
+
 BattleTankGame.deps.baseCoordinates.prototype.initCoords = function (
     nx,
     ny,

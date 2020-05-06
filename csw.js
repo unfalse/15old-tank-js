@@ -6,6 +6,7 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
     BattleTankGame.deps.baseCoordinates.call(this);
     this.lastBulletTimeStamp = 0;
     this.bulletsArray = [];
+    this.CSWSPEED = 4;
 
     this.CONST = CONST;
     this.bullet = bullet;
@@ -25,8 +26,9 @@ BattleTankGame.deps.csw.prototype.init = function (
 ) {
     this.initCoords(mx, my, 0);
     this.pow = 5;
-    this.life = this.CONST.MAXLIFES;
     this.iam = who;
+    this.maxlife = this.iam === this.CONST.USER ? this.CONST.MAXLIFES * 10 : this.CONST.MAXLIFES * 50;
+    this.life = this.maxlife;
     this.speed = 0; // make speed more precise
     this.n = num;
     this.crashed = false;
@@ -56,9 +58,9 @@ BattleTankGame.deps.csw.prototype.draw = function () {
         );
     } else {
         if (this.iam === this.CONST.USER) {
-            this.BTankInst.drawcswmt9(this.x, this.y);
+            this.BTankInst.drawcswmt9(this.x, this.y, this.d);
         } else {
-            this.BTankInst.drawcswmt5(this.x, this.y);
+            this.BTankInst.drawcswmt5(this.x, this.y, this.d);
         }
     }
 };
@@ -97,21 +99,16 @@ BattleTankGame.deps.csw.prototype.updateBullets = function () {
 
 // TODO: remove this function and use only update
 BattleTankGame.deps.csw.prototype.move = function (direction) {
-    if (this.speed < this.CONST.MAXSPEED) {
-        this.speed++;
-        return;
-    }
-    let ux = 0;
-    let uy = 0;
-    this.speed = 0;
-    ux = (-(direction >> 1) | 1) * ((direction & 1) ^ 1);
-    uy = (-(direction >> 1) | 1) * (direction & 1 & 1);
+    const nvxy = this.getVXY(direction);
+    let ux = nvxy.vx * this.CSWSPEED;
+    let uy = nvxy.vy * this.CSWSPEED;
+    this.d = direction;
 
-    if (this.x + ux > this.CONST.MAXX || this.x + ux < 0) {
+    if (this.x + ux > this.CONST.MAXX*20 || this.x + ux < 0) {
         ux = 0;
     }
 
-    if (this.y + uy > this.CONST.MAXY || this.y + uy < 0) {
+    if (this.y + uy > this.CONST.MAXY*20 || this.y + uy < 0) {
         uy = 0;
     }
 
@@ -125,35 +122,35 @@ BattleTankGame.deps.csw.prototype.move = function (direction) {
     this.x = this.x + ux;
     this.y = this.y + uy;
     this.draw();
-    this.d = direction;
 };
 
 BattleTankGame.deps.csw.prototype.update = function (direction, isMoving) {
     let ux = 0;
     let uy = 0;
-    let makeMove = true;
+
 
     this.updateBullets();
 
     if (this.iam === this.CONST.COMPUTER) {
-        if (this.speed < this.CONST.MAXSPEED) {
-            this.speed++;
-            makeMove = false;
-        } else {
-            makeMove = true;
-        }
+        // if (this.speed < this.CONST.MAXSPEED) {
+        //     this.speed++;
+        //     makeMove = false;
+        // } else {
+        //     makeMove = true;
+        // }
 
-        if (makeMove) {
-            this.speed = 0;
+        // if (makeMove) {
+            // this.speed = 0;
             if (isMoving) {
-                ux = (-(direction >> 1) | 1) * ((direction & 1) ^ 1);
-                uy = (-(direction >> 1) | 1) * (direction & 1 & 1);
+                const nvxy = this.getVXY(direction);
+                ux = nvxy.vx * this.CSWSPEED;
+                uy = nvxy.vy * this.CSWSPEED;
 
-                if (this.x + ux > this.CONST.MAXX || this.x + ux < 0) {
+                if (this.x + ux > this.CONST.MAXX*20 || this.x + ux < 0) {
                     ux = 0;
                 }
 
-                if (this.y + uy > this.CONST.MAXY || this.y + uy < 0) {
+                if (this.y + uy > this.CONST.MAXY*20 || this.y + uy < 0) {
                     uy = 0;
                 }
 
@@ -171,7 +168,7 @@ BattleTankGame.deps.csw.prototype.update = function (direction, isMoving) {
                 this.d = direction;
                 isMoving = false;
             }
-        }
+        // }
     }
     this.draw();
 };
