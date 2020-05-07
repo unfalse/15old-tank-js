@@ -7,6 +7,9 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
     this.lastBulletTimeStamp = 0;
     this.bulletsArray = [];
     this.CSWSPEED = 4;
+    // this.accel = 0;
+    this.inertiaDirections = {};
+    this.inertiaTimerIsRunning = false;
 
     this.CONST = CONST;
     this.bullet = bullet;
@@ -45,6 +48,18 @@ BattleTankGame.deps.csw.prototype.init = function (
 
 BattleTankGame.deps.csw.prototype.setCrash = function () {
     this.crashed = true;
+};
+
+BattleTankGame.deps.csw.prototype.setAccel = function (value) {
+    this.accel = value;
+};
+
+BattleTankGame.deps.csw.prototype.addAccel = function (value) {
+    this.accel += value;
+};
+
+BattleTankGame.deps.csw.prototype.getAccel = function () {
+    return this.accel;
 };
 
 BattleTankGame.deps.csw.prototype.draw = function () {
@@ -97,11 +112,13 @@ BattleTankGame.deps.csw.prototype.updateBullets = function () {
     });
 };
 
-// TODO: remove this function and use only update
 BattleTankGame.deps.csw.prototype.move = function (direction) {
     const nvxy = this.getVXY(direction);
-    let ux = nvxy.vx * this.CSWSPEED;
-    let uy = nvxy.vy * this.CSWSPEED;
+    // TODO: use separate acceleration for each direction fro inertiaDirections
+    const acceleration = (this.CSWSPEED + this.accel);
+
+    let ux = nvxy.vx * acceleration;
+    let uy = nvxy.vy * acceleration;
     this.d = direction;
 
     if (this.x + ux > this.CONST.MAXX*20 || this.x + ux < 0) {
@@ -124,12 +141,31 @@ BattleTankGame.deps.csw.prototype.move = function (direction) {
     this.draw();
 };
 
+BattleTankGame.deps.csw.prototype.inertia = function () {
+    if (this.inertiaDirections.sum > 0) {
+        // TODO: think and rewrite move to support inertia/momentum to not call move twice!
+        // code here must use ONLY ACCELERATION
+        this.move();
+        setTimeout(this.inertia.bind(this), 10);
+    } else {
+        this.inertiaTimerIsRunning = false;
+    }
+}
+
+BattleTankGame.deps.csw.prototype.inertiaMove = function () {
+    if (this.inertiaDirections.sum > 0 && !this.inertiaTimerIsRunning) {
+        this.inertiaTimerIsRunning = true;
+        setTimeout(this.inertia.bind(this), 10);
+    }
+}
+
 BattleTankGame.deps.csw.prototype.update = function (direction, isMoving) {
     let ux = 0;
     let uy = 0;
 
 
     this.updateBullets();
+    // this.inertiaMove();
 
     if (this.iam === this.CONST.COMPUTER) {
         // if (this.speed < this.CONST.MAXSPEED) {
