@@ -7,6 +7,8 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     let mainIntervalId = null;
     let stop = false;
     let keys = {};
+    let timeCount = 0;
+    let stopAccel = true;
 
     const controlsMap = {
         [Utils.KEY_CODE.UP]: 3,
@@ -56,6 +58,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         BTank.drawBackground();
         
         this.detectMovement(timestamp);
+        this.inertiaMovement(timestamp);
         player1.update();
 
         // random AI
@@ -89,6 +92,55 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         }
     };
 
+    // ----------- ACCELERATION -----------
+
+    this.accelerateWhileDownAndStopOnceUp = function () {
+        player1.addAccel(0.1);
+        timeCount++;
+        // console.log('accel = ', player1.getAccel());
+        if (!stopAccel) {
+            setTimeout(this.accelerateWhileDownAndStopOnceUp.bind(this), 10);
+        }
+    }
+
+    this.handler_accelerateWhileDownAndStopOnceUp = function (event) {
+        if (event.type == "keydown") {
+            stopAccel = false;
+            setTimeout(this.accelerateWhileDownAndStopOnceUp.bind(this), 10);
+        }
+        if (event.type == "keyup") {
+            stopAccel = true;
+            player1.setAccel(0);
+            timeCount = 0;
+        }
+    }
+
+    this.accelerateWhileDownAndFadeOutOnceUp = function () {
+        player1.addAccel(-0.1);
+        // timeCount++;
+        // console.log('accel = ', player1.getAccel());
+        if (stopAccel) {
+            setTimeout(this.accelerateWhileDownAndFadeOutOnceUp.bind(this), 10);
+        }
+    }
+
+    this.handler_accelerateWhileDownAndFadeOutOnceUp = function (event) {
+        if (event.type == "keydown") {
+            stopAccel = false;
+            setTimeout(this.accelerateWhileDownAndStopOnceUp.bind(this), 10);
+        }
+        if (event.type == "keyup") {
+            stopAccel = true;
+            if (player1.getAccel() < 0) {
+                player1.setAccel(0);
+            }
+            timeCount = 0;
+            setTimeout(this.accelerateWhileDownAndFadeOutOnceUp.bind(this), 10);
+        }
+    }
+
+    // ----------- END -----------
+
     this.keysHandler = function (event) {
         if (event.preventDefault) {
             event.preventDefault();
@@ -97,9 +149,16 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         }
         const kc = event.keyCode || event.which;
         keys[kc] = event.type == "keydown";
+        this.handler_accelerateWhileDownAndStopOnceUp(event);
     };
 
+    this.acceleratedMovement = function (timestamp) {
+        // this.handler_accelerateWhileDownAndStopOnceUp(event);
+    }
+
     this.detectMovement = function (timestamp) {
+        // TODO: think and rewrite move to support inertia/momentum to not call move twice!
+        // code here must change ONLY DIRECTION
         if (keys[Utils.KEY_CODE.UP]) {
             player1.move(controlsMap[Utils.KEY_CODE.UP]);
         }
