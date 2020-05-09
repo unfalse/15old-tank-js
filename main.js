@@ -8,7 +8,6 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     let stop = false;
     let keys = {};
     let timeCount = 0;
-    let stopAccel = true;
 
     const controlsMap = {
         [Utils.KEY_CODE.UP]: 3,
@@ -58,7 +57,6 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         BTank.drawBackground();
         
         this.detectMovement(timestamp);
-        this.inertiaMovement(timestamp);
         player1.update();
 
         // random AI
@@ -97,46 +95,23 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     this.accelerateWhileDownAndStopOnceUp = function () {
         player1.addAccel(0.1);
         timeCount++;
-        // console.log('accel = ', player1.getAccel());
-        if (!stopAccel) {
+        if (!player1.stopAccel) {
             setTimeout(this.accelerateWhileDownAndStopOnceUp.bind(this), 10);
         }
     }
 
-    this.handler_accelerateWhileDownAndStopOnceUp = function (event) {
-        if (event.type == "keydown") {
-            stopAccel = false;
-            setTimeout(this.accelerateWhileDownAndStopOnceUp.bind(this), 10);
-        }
-        if (event.type == "keyup") {
-            stopAccel = true;
+    this.handler_accelerateWhileDownAndStopOnceUp = function () {
+        player1.stopAccel = false;
+        setTimeout(this.accelerateWhileDownAndStopOnceUp.bind(this), 10);
+    }
+
+    this.keyUpHandler = function () {
+        // TODO: keysUp array for keys that are up to know which direction isn't getting acceleration
+        player1.stopAccel = true;
+        if (player1.getAccel() < 0) {
             player1.setAccel(0);
-            timeCount = 0;
         }
-    }
-
-    this.accelerateWhileDownAndFadeOutOnceUp = function () {
-        player1.addAccel(-0.1);
-        // timeCount++;
-        // console.log('accel = ', player1.getAccel());
-        if (stopAccel) {
-            setTimeout(this.accelerateWhileDownAndFadeOutOnceUp.bind(this), 10);
-        }
-    }
-
-    this.handler_accelerateWhileDownAndFadeOutOnceUp = function (event) {
-        if (event.type == "keydown") {
-            stopAccel = false;
-            setTimeout(this.accelerateWhileDownAndStopOnceUp.bind(this), 10);
-        }
-        if (event.type == "keyup") {
-            stopAccel = true;
-            if (player1.getAccel() < 0) {
-                player1.setAccel(0);
-            }
-            timeCount = 0;
-            setTimeout(this.accelerateWhileDownAndFadeOutOnceUp.bind(this), 10);
-        }
+        timeCount = 0;
     }
 
     // ----------- END -----------
@@ -149,30 +124,31 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         }
         const kc = event.keyCode || event.which;
         keys[kc] = event.type == "keydown";
-        this.handler_accelerateWhileDownAndStopOnceUp(event);
+        if (event.type === "keyup") {
+            this.keyUpHandler();
+        }
     };
 
-    this.acceleratedMovement = function (timestamp) {
-        // this.handler_accelerateWhileDownAndStopOnceUp(event);
-    }
-
     this.detectMovement = function (timestamp) {
-        // TODO: think and rewrite move to support inertia/momentum to not call move twice!
         // code here must change ONLY DIRECTION
+        const ACCEL = 0.1;
         if (keys[Utils.KEY_CODE.UP]) {
-            player1.move(controlsMap[Utils.KEY_CODE.UP]);
+            player1.setDirectionAndAccel(controlsMap[Utils.KEY_CODE.UP], ACCEL);
         }
         if (keys[Utils.KEY_CODE.LEFT]) {
-            player1.move(controlsMap[Utils.KEY_CODE.LEFT]);
+            player1.setDirectionAndAccel(controlsMap[Utils.KEY_CODE.LEFT], ACCEL);
         }
         if (keys[Utils.KEY_CODE.RIGHT]) {
-            player1.move(controlsMap[Utils.KEY_CODE.RIGHT]);
+            player1.setDirectionAndAccel(controlsMap[Utils.KEY_CODE.RIGHT], ACCEL);
         }
         if (keys[Utils.KEY_CODE.DOWN]) {
-            player1.move(controlsMap[Utils.KEY_CODE.DOWN]);
+            player1.setDirectionAndAccel(controlsMap[Utils.KEY_CODE.DOWN], ACCEL);
         }
         if (keys[Utils.KEY_CODE.a_KEY]) {
             player1.fire(timestamp);
+        }
+        if (keys[Utils.KEY_CODE.UP] || keys[Utils.KEY_CODE.DOWN] || keys[Utils.KEY_CODE.LEFT] || keys[Utils.KEY_CODE.RIGHT]) {
+            this.handler_accelerateWhileDownAndStopOnceUp();
         }
     };
 };
@@ -182,7 +158,6 @@ BattleTankGame.gameInstance = new BattleTankGame.deps.game(
     new BattleTankGame.deps.BTankManager(
         BattleTankGame.deps.const,
         BattleTankGame.deps.csw,
-        // BattleTankGame.deps.bullet
         BattleTankGame.deps.bulletPixel,
         BattleTankGame.deps.images
     ),

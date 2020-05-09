@@ -8,8 +8,8 @@ BattleTankGame.deps.const = {
     COMPUTER: 0,
     USER: 1,
 
-    MAXX: 20,
-    MAXY: 20,
+    MAXX: 49,
+    MAXY: 35,
     BEGX: 20,
     BEGY: 20,
 };
@@ -39,8 +39,8 @@ BattleTankGame.deps.BTankManager = function (CONST, csw, bullet, images) {
 
 BattleTankGame.deps.BTankManager.prototype.init = function () {
     const gameField = document.getElementById("gameField");
-    gameField.height = 420;
-    gameField.width = 420;
+    gameField.height = this.CONST.MAXY * 20 + 20;
+    gameField.width = this.CONST.MAXX * 20 + 20;
 
     const gameInfo = document.getElementById("gameInfo");
 
@@ -182,7 +182,7 @@ BattleTankGame.deps.BTankManager.prototype.DrawCrash = function (
 
 BattleTankGame.deps.BTankManager.prototype.DrawGameField = function () {
     this.drawContext.strokeStyle = "#000";
-    this.drawContext.strokeRect(0, 0, 420, 420);
+    this.drawContext.strokeRect(0, 0, this.CONST.MAXX * 20 + 20, this.CONST.MAXY * 20 + 20);
 };
 
 BattleTankGame.deps.BTankManager.prototype.drawBackground = function () {
