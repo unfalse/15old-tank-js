@@ -17,29 +17,38 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         [Utils.KEY_CODE.a_KEY]: 4,
     };
 
-    let cpuKey = null;
     let player1 = null;
-    let cpus = [];
+    //let cpus = [];
 
     this.start = function () {
         BTank.init();
         BTank.showLogo();
-        BTank.showNames();
+        BTank.showNames()        
 
         player1 = BTank.createCSW(1, 1, CONST.USER, 1);
 
-        cpus[0] = BTank.createCSW(250, 340, CONST.COMPUTER, 1);
-        // cpus[1] = BTank.createCSW(6, 4, CONST.COMPUTER, 2);
-        // cpus[2] = BTank.createCSW(7, 4, CONST.COMPUTER, 3);
-        // cpus[3] = BTank.createCSW(8, 4, CONST.COMPUTER, 4);
-        // cpus[4] = BTank.createCSW(9, 4, CONST.COMPUTER, 5);
-        // cpus[5] = BTank.createCSW(10, 4, CONST.COMPUTER, 6);
-        // cpus[6] = BTank.createCSW(9, 5, CONST.COMPUTER, 7);
-        // cpus[7] = BTank.createCSW(9, 6, CONST.COMPUTER, 8);
-        // cpus[8] = BTank.createCSW(9, 7, CONST.COMPUTER, 9);
-        // cpus[9] = BTank.createCSW(9, 8, CONST.COMPUTER, 10);
-        // cpus[10] = BTank.createCSW(3, 2, CONST.COMPUTER, 11);
-        // cpus[11] = BTank.createCSW(2, 3, CONST.COMPUTER, 12);
+        setTimeout(() => BTank.createCSW(960, 340, CONST.COMPUTER, 1), 1000);
+        setTimeout(() => BTank.createCSW(980, 360, CONST.COMPUTER, 2), 2030);
+        setTimeout(() => BTank.createCSW(980, 380, CONST.COMPUTER, 3), 3300);
+        setTimeout(() => BTank.createCSW(980, 400, CONST.COMPUTER, 4), 4444);
+        setTimeout(() => BTank.createCSW(250, 420, CONST.COMPUTER, 5), 5005);
+        setTimeout(() => BTank.createCSW(250, 440, CONST.COMPUTER, 6), 6007);
+        setTimeout(() => BTank.createCSW(250, 460, CONST.COMPUTER, 7), 7008);
+        setTimeout(() => BTank.createCSW(250, 480, CONST.COMPUTER, 8), 9001);
+        setTimeout(() => BTank.createCSW(250, 500, CONST.COMPUTER, 9), 11003);
+        setTimeout(() => BTank.createCSW(250, 520, CONST.COMPUTER, 10), 17009);
+        setTimeout(() => BTank.createCSW(250, 540, CONST.COMPUTER, 11), 23005);
+        setTimeout(() => BTank.createCSW(250, 560, CONST.COMPUTER, 12), 41009);
+
+
+        // BTank.createCSW(250, 460, CONST.COMPUTER, 7);
+        // BTank.createCSW(250, 480, CONST.COMPUTER, 8);
+        // BTank.createCSW(250, 500, CONST.COMPUTER, 9);
+        // BTank.createCSW(250, 520, CONST.COMPUTER, 10);
+        // BTank.createCSW(250, 540, CONST.COMPUTER, 11);
+        // BTank.createCSW(250, 560, CONST.COMPUTER, 12);
+
+
 
         stop = false;
 
@@ -60,24 +69,22 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         player1.update();
 
         // random AI
-        cpus.filter(function (cpu) {
-            cpuKey = Utils.getRandomInt(0, 3);
-            cpu.update(cpuKey, true); // true чтобы CPU двигался
-            cpu.fire(timestamp);
+        BTank.getCPUs().filter(function (cpu) {
+            cpu.AI_update(timestamp);
         });
 
         BTank.displayLifeBar(player1);
-        BTank.displayLifeBar(cpus[0]);
+        // BTank.displayLifeBar(cpus[0]);
 
         if (player1.life === 0) {
             Utils.text("GAME OVER");
             stop = true;
         }
 
-        if (cpus[0].life <= 0) {
-            Utils.text("YOU WIN");
-            stop = true;
-        }
+        // if (cpus[0].life <= 0) {
+        //     Utils.text("YOU WIN");
+        //     stop = true;
+        // }
 
         if (stop) {
             BTank.showGameOver(player1.life);
@@ -133,22 +140,22 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         // code here must change ONLY DIRECTION
         const ACCEL = 0.1;
         if (keys[Utils.KEY_CODE.UP]) {
-            player1.setDirectionAndAccel(controlsMap[Utils.KEY_CODE.UP], ACCEL);
+            player1.setDirectionAndAddAccel(controlsMap[Utils.KEY_CODE.UP], ACCEL);
         }
         if (keys[Utils.KEY_CODE.LEFT]) {
-            player1.setDirectionAndAccel(controlsMap[Utils.KEY_CODE.LEFT], ACCEL);
+            player1.setDirectionAndAddAccel(controlsMap[Utils.KEY_CODE.LEFT], ACCEL);
         }
         if (keys[Utils.KEY_CODE.RIGHT]) {
-            player1.setDirectionAndAccel(controlsMap[Utils.KEY_CODE.RIGHT], ACCEL);
+            player1.setDirectionAndAddAccel(controlsMap[Utils.KEY_CODE.RIGHT], ACCEL);
         }
         if (keys[Utils.KEY_CODE.DOWN]) {
-            player1.setDirectionAndAccel(controlsMap[Utils.KEY_CODE.DOWN], ACCEL);
+            player1.setDirectionAndAddAccel(controlsMap[Utils.KEY_CODE.DOWN], ACCEL);
         }
         if (keys[Utils.KEY_CODE.a_KEY]) {
             player1.fire(timestamp);
         }
         if (keys[Utils.KEY_CODE.UP] || keys[Utils.KEY_CODE.DOWN] || keys[Utils.KEY_CODE.LEFT] || keys[Utils.KEY_CODE.RIGHT]) {
-            this.handler_accelerateWhileDownAndStopOnceUp();
+            // this.handler_accelerateWhileDownAndStopOnceUp();
         }
     };
 };
@@ -158,6 +165,8 @@ BattleTankGame.gameInstance = new BattleTankGame.deps.game(
     new BattleTankGame.deps.BTankManager(
         BattleTankGame.deps.const,
         BattleTankGame.deps.csw,
+        // BattleTankGame.deps.cswAI_0,
+        BattleTankGame.deps.cswAI_1,
         BattleTankGame.deps.bulletPixel,
         BattleTankGame.deps.images
     ),

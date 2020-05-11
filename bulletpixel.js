@@ -18,7 +18,7 @@ BattleTankGame.deps.bulletPixel.prototype.setCoords = function (nx, ny, nd) {
 };
 
 BattleTankGame.deps.bulletPixel.prototype.draw = function () {
-    this.BTankInst.drawContext.fillStyle = "#F00";
+    this.BTankInst.drawContext.fillStyle = this.parentTank.iam === this.CONST.USER ? "#F00" : "#FF0";
     this.BTankInst.drawContext.fillRect(this.x, this.y, 4, 4);
 };
 
@@ -27,19 +27,19 @@ BattleTankGame.deps.bulletPixel.prototype.erase = function () {
 };
 
 BattleTankGame.deps.bulletPixel.prototype.fly = function () {
-    var nvxy = this.getVXY(this.d);
-    var vx = nvxy.vx * this.BULLETSPEED;
-    var vy = nvxy.vy * this.BULLETSPEED;
+    const nvxy = this.getVXY(this.d);
+    let vx = nvxy.vx * this.BULLETSPEED;
+    let vy = nvxy.vy * this.BULLETSPEED;
 
     // TODO: дописать
     // Проверка попадания в танк
     if (this.isfire) {
         // TODO: убрать сильную связанность с BTank
-        var curCSW = this.BTankInst.getCSWWithPixelPrecision(this.x, this.y);
+        const curCSW = this.BTankInst.getCSWWithPixelPrecision(this.x, this.y);
         // a bullet can't hurt it's master! :)
         if (curCSW && curCSW != this.parentTank) {
-            var vx1 = vx;
-            var vy1 = vy;
+            const vx1 = vx;
+            const vy1 = vy;
             vx = 0;
             vy = 0;
 
@@ -47,8 +47,10 @@ BattleTankGame.deps.bulletPixel.prototype.fly = function () {
                 vx = vx1;
                 vy = vy1;
             } else {
-                curCSW.life--;
-                curCSW.setCrash();
+                if (curCSW.iam !== this.parentTank.iam) {
+                    curCSW.life--;
+                }
+                // curCSW.setCrash();
                 this.isfire = false;
             }
         }
