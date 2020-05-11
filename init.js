@@ -32,7 +32,7 @@ BattleTankGame.deps.baseCoordinates.prototype.initCoords = function (
 ) {
     //x: 0, // x coordinate
     //y: 0, // y coordinate
-    //d: 0,  // direction { 0 - right< , 1 - down^, 2 - left>, 3 - up }
+    //d: 0,  // direction { 0 - right > , 1 - down v, 2 - left <, 3 - up ^ }
 
     this.x = nx;
     this.y = ny;
