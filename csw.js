@@ -20,7 +20,7 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
     this.d = 0; // direction
     this.stopAccel = true;
     this.PLAYER_BULLETS_INTERVAL = 1500;
-    this.MAXIMUM_ACCELERATION = 2;
+    this.MAXIMUM_ACCELERATION = 8;
 
     this.CONST = CONST;
     this.bullet = bullet;
@@ -204,16 +204,37 @@ BattleTankGame.deps.csw.prototype.inertia = function () {
             this.move(d);
         }
         this.draw();
-        setTimeout(this.inertia.bind(this), 10);
+        // setTimeout(this.inertia.bind(this), 10);
+        this.waitAndCall(this.inertia.bind(this), 10, this.waitInertia);
     } else {
         this.inertiaTimerIsRunning = false;
     }
 };
 
+BattleTankGame.deps.csw.prototype.waitAndCall = function (callback, ms, waitStart) {
+    const doThings = function (timestamp) {
+        // console.log(timestamp);
+        if (waitStart == null) {
+            waitStart = timestamp;
+        }
+        // naive
+        if ((timestamp - waitStart) >= ms) {
+            waitStart = null;
+            callback();
+        } else {
+            window.requestAnimationFrame(doThings.bind(this));
+        }
+    };
+    window.requestAnimationFrame(doThings.bind(this));
+    // doThings();
+    // this.waitStart = 
+}
+
 BattleTankGame.deps.csw.prototype.inertiaStartAttempt = function () {
     if (this.getDirSum() > 0 && !this.inertiaTimerIsRunning && this.stopAccel) {
         this.inertiaTimerIsRunning = true;
-        setTimeout(this.inertia.bind(this), 10);
+        // setTimeout(this.inertia.bind(this), 10);
+        this.waitAndCall(this.inertia.bind(this), 10, this.waitInertiaStartAttempt);
     }
 };
 

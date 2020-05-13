@@ -62,16 +62,16 @@ BattleTankGame.deps.BTankManager.prototype.init = function () {
     this.againBtn = document.querySelector("#playAgainBtn");
 
     this.playerImages = {
-        0: new this.images(this, "images/csw-mt9_0.png"),
-        90: new this.images(this, "images/csw-mt9_90.png"),
-        180: new this.images(this, "images/csw-mt9_180.png"),
-        270: new this.images(this, "images/csw-mt9_270.png"),
+        0: new this.images(this, "images/csw-mt9bigger2x_0.png"),
+        90: new this.images(this, "images/csw-mt9bigger2x_90.png"),
+        180: new this.images(this, "images/csw-mt9bigger2x_180.png"),
+        270: new this.images(this, "images/csw-mt9bigger2x_270.png"),
     };
     this.cpuImages = {
-        0: new this.images(this, "images/csw-mt5_0.png"),
-        90: new this.images(this, "images/csw-mt5_90.png"),
-        180: new this.images(this, "images/csw-mt5_180.png"),
-        270: new this.images(this, "images/csw-mt5_270.png"),
+        0: new this.images(this, "images/csw-mt5bigger2x_0.png"),
+        90: new this.images(this, "images/csw-mt5bigger2x_90.png"),
+        180: new this.images(this, "images/csw-mt5bigger2x_180.png"),
+        270: new this.images(this, "images/csw-mt5bigger2x_270.png"),
     };
     this.crashImage = new this.images(this, "images/crash.png");
     this.backgroundImage = new this.images(
