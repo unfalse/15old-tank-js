@@ -20,7 +20,7 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
     this.d = 0; // direction
     this.stopAccel = true;
     this.PLAYER_BULLETS_INTERVAL = 1500;
-    this.MAXIMUM_ACCELERATION = 1;
+    this.MAXIMUM_ACCELERATION = 2;
 
     this.CONST = CONST;
     this.bullet = bullet;
@@ -174,7 +174,7 @@ BattleTankGame.deps.csw.prototype.setDirectionAndAccel = function (d, accel, ms)
             case 3: return 'up';
         }
     }
-    console.log(humanDir(d), ', ', accel, ', ', ms);
+    // console.log(humanDir(d), ', ', accel, ', ', ms);
     this.d = d;
     this.inertiaDirections[d] = accel;
 };
