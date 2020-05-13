@@ -61,6 +61,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     };
 
     this.mainCycle = function (timestamp) {
+        // console.log(timestamp);
         BTank.drawContext.fillStyle = "black";
         BTank.drawContext.fillRect(0, 0, 420, 420);
         BTank.drawBackground();
