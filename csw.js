@@ -140,34 +140,7 @@ BattleTankGame.deps.csw.prototype.updateBullets = function () {
     });
 };
 
-BattleTankGame.deps.csw.prototype.move = function (direction) {
-    const nvxy = this.getVXY(direction);
-    const acceleration = this.CSWSPEED + this.inertiaDirections[direction];
 
-    let ux = nvxy.vx * acceleration;
-    let uy = nvxy.vy * acceleration;
-
-    if (this.x + ux > this.CONST.MAXX * 20 || this.x + ux < 0) {
-        ux = 0;
-        this.inertiaDirections[direction] = 0;
-    }
-
-    if (this.y + uy > this.CONST.MAXY * 20 || this.y + uy < 0) {
-        uy = 0;
-        this.inertiaDirections[direction] = 0;
-    }
-
-    if (ux != 0 || uy != 0) {
-        if (this.BTankInst.getCSW(this.x + ux, this.y + uy)) {
-            ux = 0;
-            uy = 0;
-        }
-    }
-
-    this.x = this.x + ux;
-    this.y = this.y + uy;
-    // this.draw();
-};
 
 // TODO: maybe move acceleration, direction and inertia control functions into the separate class
 BattleTankGame.deps.csw.prototype.setDirectionAndAddAccel = function (d, accel) {
@@ -242,6 +215,47 @@ BattleTankGame.deps.csw.prototype.inertiaStartAttempt = function () {
         this.inertiaTimerIsRunning = true;
         setTimeout(this.inertia.bind(this), 10);
     }
+};
+
+/*
+
+    TODO: make this.x and this.y as the center of csw
+    Right now this.x and this.y is point o (upper left point)
+
+    o----------
+    |
+    |
+    |
+    |
+
+*/
+BattleTankGame.deps.csw.prototype.move = function (direction) {
+    const nvxy = this.getVXY(direction);
+    const acceleration = this.CSWSPEED + this.inertiaDirections[direction];
+
+    let ux = nvxy.vx * acceleration;
+    let uy = nvxy.vy * acceleration;
+
+    if (this.x + ux > this.CONST.MAXX * 20 || this.x + ux < 0) {
+        ux = 0;
+        this.inertiaDirections[direction] = 0;
+    }
+
+    if (this.y + uy > this.CONST.MAXY * 20 || this.y + uy < 0) {
+        uy = 0;
+        this.inertiaDirections[direction] = 0;
+    }
+
+    if (ux != 0 || uy != 0) {
+        if (this.BTankInst.getCSW(this.x + ux, this.y + uy)) {
+            ux = 0;
+            uy = 0;
+        }
+    }
+
+    this.x = this.x + ux;
+    this.y = this.y + uy;
+    // this.draw();
 };
 
 BattleTankGame.deps.csw.prototype.update = function () {
