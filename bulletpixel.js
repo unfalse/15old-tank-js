@@ -14,7 +14,13 @@ BattleTankGame.deps.bulletPixel.prototype = Object.create(BattleTankGame.deps.ba
 BattleTankGame.deps.bulletPixel.prototype.constructor = BattleTankGame.deps.bulletPixel;
 
 BattleTankGame.deps.bulletPixel.prototype.setCoords = function (nx, ny, nd) {
-    this.initCoords(nx + 8, ny + 8, nd);
+    const vxy = this.getVXY(nd);
+    const { width, height } = this.parentTank.dimensions[nd];
+    this.initCoords(
+        nx + (vxy.vx * width) + (vxy.vx === 0 ? width/2 : 0),
+        ny + (vxy.vy * height)  + (vxy.vy === 0 ? height/2 : 0),
+        nd
+    );
 };
 
 BattleTankGame.deps.bulletPixel.prototype.draw = function () {
@@ -64,11 +70,11 @@ BattleTankGame.deps.bulletPixel.prototype.fly = function () {
         this.y = this.y + vy;
         this.draw();
 
-        if (this.x > this.CONST.MAXX * 20 + 20 || this.x < 0) {
+        if (this.x > this.CONST.MAXX * 20 || this.x < 0) {
             this.isfire = false;
         }
 
-        if (this.y > this.CONST.MAXY * 20 + 20 || this.y < 0) {
+        if (this.y > this.CONST.MAXY * 20 || this.y < 0) {
             this.isfire = false;
         }
     }
@@ -82,7 +88,7 @@ BattleTankGame.deps.bulletPixel.prototype.init = function (
     bnum
 ) {
     // starts from a cell near tank
-    this.initCoords(nx + 8, ny + 8, nd);
+    // this.initCoords(nx + 8, ny + 8, nd);
     this.isfire = false;
     this.parentTank = parentTank;
     this.bulletNum = bnum;
