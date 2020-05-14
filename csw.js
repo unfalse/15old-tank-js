@@ -21,6 +21,7 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
     this.stopAccel = true;
     this.PLAYER_BULLETS_INTERVAL = 1500;
     this.MAXIMUM_ACCELERATION = 8;
+    this.dimensions = {};
 
     this.CONST = CONST;
     this.bullet = bullet;
@@ -60,6 +61,13 @@ BattleTankGame.deps.csw.prototype.init = function (
         newBullet.init(mx, my, 0, this, bc);
         this.bulletsArray.push(newBullet);
     }
+
+    this.dimensions = {
+        0: BTankInst.getShipDimensions(0, who),
+        1: BTankInst.getShipDimensions(1, who),
+        2: BTankInst.getShipDimensions(2, who),
+        3: BTankInst.getShipDimensions(3, who)
+    };
 };
 
 BattleTankGame.deps.csw.prototype.setCrash = function () {
@@ -257,18 +265,23 @@ BattleTankGame.deps.csw.prototype.move = function (direction) {
     let ux = nvxy.vx * acceleration;
     let uy = nvxy.vy * acceleration;
 
-    if (this.x + ux > this.CONST.MAXX * 20 || this.x + ux < 0) {
+    // get ship dimensions by current direction and 'iam' flag
+    const { width, height } = this.dimensions[direction];
+
+    if ((this.x + ux + width) > (this.CONST.MAXX * 20) || this.x + ux < 0) {
         ux = 0;
         this.inertiaDirections[direction] = 0;
     }
 
-    if (this.y + uy > this.CONST.MAXY * 20 || this.y + uy < 0) {
+    if ((this.y + uy + height) > (this.CONST.MAXY * 20) || this.y + uy < 0) {
         uy = 0;
         this.inertiaDirections[direction] = 0;
     }
 
     if (ux != 0 || uy != 0) {
-        if (this.BTankInst.getCSW(this.x + ux, this.y + uy)) {
+        // TO FIX!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // TODO: this not works good :( !!!!!!!!!!!!!!!!!!!!!!!
+        if (this.BTankInst.getCSWWithPixelPrecision(this.x + (ux * width), this.y + (uy * height))) {
             ux = 0;
             uy = 0;
         }

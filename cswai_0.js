@@ -120,6 +120,8 @@ BattleTankGame.deps.cswAI_1 = function (CONST, bullet) {
     this.path = null; // { d: 0, accel: 0, ms: 0 };
     this.pathStartTime = -1;
     this.fireStartTime = -1;
+    this.fireLastTime = -1;
+    this.newFireTime = -1;
     // d: 0...3, a: 0...1, ms: (0...1) *1000
 };
 
@@ -133,13 +135,17 @@ BattleTankGame.deps.cswAI_1.prototype.AI_generateNewPath = function () {
     return {
         d: this.Utils.getRandomInt(0, 3),
         accel: this.Utils.getRandomInt(0, 1),
-        ms: this.Utils.getRandomInt(0, 1) * 1000,
+        ms: this.Utils.getRandomInt(0, 6) * 1000,
     };
 };
 
+BattleTankGame.deps.cswAI_1.prototype.AI_generateNewFireTime = function () {
+    return this.Utils.getRandomInt(1, 3) * 1000;
+}
+
 BattleTankGame.deps.cswAI_1.prototype.AI_update = function (timestamp) {
     if (this.life > 0) {
-        if (this.path && timestamp - this.pathStartTime <= this.path.ms) {
+        if (this.path && ((timestamp - this.pathStartTime) <= this.path.ms)) {
             this.setDirectionAndAccel(
                 this.path.d,
                 this.path.accel,
@@ -163,6 +169,15 @@ BattleTankGame.deps.cswAI_1.prototype.AI_update = function (timestamp) {
     this.update();
 
     if (this.life > 0) {
-        this.fire(timestamp);
+        if (this.newFireTime < 0) {
+            this.newFireTime = this.AI_generateNewFireTime();
+            this.fireLastTime = timestamp;
+        }
+        if ((this.newFireTime>0) && (timestamp - this.fireLastTime >= this.newFireTime)) {
+            this.fire(timestamp);
+            this.newFireTime = this.AI_generateNewFireTime();
+            this.fireLastTime = timestamp;
+        }
+        // this.fire(timestamp);
     }
 };

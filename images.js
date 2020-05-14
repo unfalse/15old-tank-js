@@ -1,18 +1,20 @@
 console.log("images!");
 
-BattleTankGame.deps.images = function (BTankInst, src) {
+BattleTankGame.deps.images = function (BTankInst, src, onLoadHandler) {
     this.image = new Image();
     this.loaded = false;
     this.BTankInst = BTankInst;
 
-    this.init(src);
+    this.init(src, onLoadHandler);
 };
 
-BattleTankGame.deps.images.prototype.init = function (src) {
+BattleTankGame.deps.images.prototype.init = function (src, onLoadHandler) {
     this.image.addEventListener(
         "load",
         function () {
             this.loaded = true;
+            console.log(src + ' has loaded!');
+            onLoadHandler();
         }.bind(this),
         false
     );

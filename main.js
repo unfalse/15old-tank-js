@@ -21,43 +21,44 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     //let cpus = [];
 
     this.start = function () {
-        BTank.init();
-        BTank.showLogo();
-        BTank.showNames()        
-
-        player1 = BTank.createCSW(1, 1, CONST.USER, 1);
-
-        setTimeout(() => BTank.createCSW(960, 340, CONST.COMPUTER, 1), 1000);
-        setTimeout(() => BTank.createCSW(980, 360, CONST.COMPUTER, 2), 2030);
-        setTimeout(() => BTank.createCSW(980, 380, CONST.COMPUTER, 3), 3300);
-        setTimeout(() => BTank.createCSW(980, 400, CONST.COMPUTER, 4), 4444);
-        setTimeout(() => BTank.createCSW(250, 420, CONST.COMPUTER, 5), 5005);
-        setTimeout(() => BTank.createCSW(250, 440, CONST.COMPUTER, 6), 6007);
-        setTimeout(() => BTank.createCSW(250, 460, CONST.COMPUTER, 7), 7008);
-        setTimeout(() => BTank.createCSW(250, 480, CONST.COMPUTER, 8), 9001);
-        setTimeout(() => BTank.createCSW(250, 500, CONST.COMPUTER, 9), 11003);
-        setTimeout(() => BTank.createCSW(250, 520, CONST.COMPUTER, 10), 17009);
-        setTimeout(() => BTank.createCSW(250, 540, CONST.COMPUTER, 11), 23005);
-        setTimeout(() => BTank.createCSW(250, 560, CONST.COMPUTER, 12), 41009);
-
-
-        // BTank.createCSW(250, 460, CONST.COMPUTER, 7);
-        // BTank.createCSW(250, 480, CONST.COMPUTER, 8);
-        // BTank.createCSW(250, 500, CONST.COMPUTER, 9);
-        // BTank.createCSW(250, 520, CONST.COMPUTER, 10);
-        // BTank.createCSW(250, 540, CONST.COMPUTER, 11);
-        // BTank.createCSW(250, 560, CONST.COMPUTER, 12);
-
-
-
-        stop = false;
-
-        document.addEventListener("keydown", this.keysHandler.bind(this));
-        document.addEventListener("keyup", this.keysHandler.bind(this));
-
-        mainIntervalId = window.requestAnimationFrame(
-            this.mainCycle.bind(this)
-        );
+        BTank.init().then((function() {
+            BTank.showLogo();
+            BTank.showNames()        
+    
+            player1 = BTank.createCSW(1, 1, CONST.USER, 1);
+    
+            setTimeout(() => BTank.createCSW(960, 340, CONST.COMPUTER, 1), 1000);
+            setTimeout(() => BTank.createCSW(940, 360, CONST.COMPUTER, 2), 2030);
+            setTimeout(() => BTank.createCSW(940, 380, CONST.COMPUTER, 3), 3300);
+            setTimeout(() => BTank.createCSW(940, 400, CONST.COMPUTER, 4), 4444);
+            setTimeout(() => BTank.createCSW(250, 420, CONST.COMPUTER, 5), 5005);
+            setTimeout(() => BTank.createCSW(250, 440, CONST.COMPUTER, 6), 6007);
+            setTimeout(() => BTank.createCSW(250, 460, CONST.COMPUTER, 7), 7008);
+            setTimeout(() => BTank.createCSW(250, 480, CONST.COMPUTER, 8), 9001);
+            setTimeout(() => BTank.createCSW(250, 500, CONST.COMPUTER, 9), 11003);
+            setTimeout(() => BTank.createCSW(250, 520, CONST.COMPUTER, 10), 17009);
+            setTimeout(() => BTank.createCSW(250, 540, CONST.COMPUTER, 11), 23005);
+            setTimeout(() => BTank.createCSW(250, 560, CONST.COMPUTER, 12), 41009);
+    
+    
+            // BTank.createCSW(250, 460, CONST.COMPUTER, 7);
+            // BTank.createCSW(250, 480, CONST.COMPUTER, 8);
+            // BTank.createCSW(250, 500, CONST.COMPUTER, 9);
+            // BTank.createCSW(250, 520, CONST.COMPUTER, 10);
+            // BTank.createCSW(250, 540, CONST.COMPUTER, 11);
+            // BTank.createCSW(250, 560, CONST.COMPUTER, 12);
+    
+    
+    
+            stop = false;
+    
+            document.addEventListener("keydown", this.keysHandler.bind(this));
+            document.addEventListener("keyup", this.keysHandler.bind(this));
+    
+            mainIntervalId = window.requestAnimationFrame(
+                this.mainCycle.bind(this)
+            );
+        }).bind(this));
     };
 
     this.mainCycle = function (timestamp) {
