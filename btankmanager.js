@@ -67,29 +67,66 @@ BattleTankGame.deps.BTankManager.prototype.init = function () {
     this.againBtn = document.querySelector("#playAgainBtn");
 
     const loadImage = function (imagePath, onLoad) {
-        return new Promise((function(resolve) {
-            onLoad.call(this, new this.images(this, imagePath, function() { resolve(); }));
-        }).bind(this));
-    }
+        return new Promise(
+            function (resolve) {
+                onLoad.call(
+                    this,
+                    new this.images(this, imagePath, function () {
+                        resolve();
+                    })
+                );
+            }.bind(this)
+        );
+    };
     this.playerImages = {};
     this.cpuImages = {};
     this.crashImage = null;
     this.backgroundImage = null;
 
     const promises = [
-        loadImage.call(this, "images/csw-mt9bigger2x_0.png", function (image) { this.playerImages[3] = image; }),
-        loadImage.call(this, "images/csw-mt9bigger2x_90.png", function (image) {  this.playerImages[0] = image; }),
-        loadImage.call(this, "images/csw-mt9bigger2x_180.png", function (image) {  this.playerImages[1] = image; }),
-        loadImage.call(this, "images/csw-mt9bigger2x_270.png", function (image) {  this.playerImages[2] = image; }),
+        loadImage.call(this, "images/csw-mt9bigger2x_0.png", function (image) {
+            this.playerImages[3] = image;
+        }),
+        loadImage.call(this, "images/csw-mt9bigger2x_90.png", function (image) {
+            this.playerImages[0] = image;
+        }),
+        loadImage.call(this, "images/csw-mt9bigger2x_180.png", function (
+            image
+        ) {
+            this.playerImages[1] = image;
+        }),
+        loadImage.call(this, "images/csw-mt9bigger2x_270.png", function (
+            image
+        ) {
+            this.playerImages[2] = image;
+        }),
 
-        loadImage.call(this, "images/csw-mt5bigger2x_0.png", function (image) {  this.cpuImages[3] = image; }),
-        loadImage.call(this, "images/csw-mt5bigger2x_90.png", function (image) {  this.cpuImages[0] = image; }),
-        loadImage.call(this, "images/csw-mt5bigger2x_180.png", function (image) { this.cpuImages[1] = image; }),
-        loadImage.call(this, "images/csw-mt5bigger2x_270.png", function (image) { this.cpuImages[2] = image; }),
+        loadImage.call(this, "images/csw-mt5bigger2x_0.png", function (image) {
+            this.cpuImages[3] = image;
+        }),
+        loadImage.call(this, "images/csw-mt5bigger2x_90.png", function (image) {
+            this.cpuImages[0] = image;
+        }),
+        loadImage.call(this, "images/csw-mt5bigger2x_180.png", function (
+            image
+        ) {
+            this.cpuImages[1] = image;
+        }),
+        loadImage.call(this, "images/csw-mt5bigger2x_270.png", function (
+            image
+        ) {
+            this.cpuImages[2] = image;
+        }),
 
-        loadImage.call(this, "images/crash.png", function (image) {this.crashImage = image; }),
+        loadImage.call(this, "images/crash.png", function (image) {
+            this.crashImage = image;
+        }),
 
-        loadImage.call(this, "images/1920x1080-nebula2_02.gif", function (image) { this.backgroundImage = image; })
+        loadImage.call(this, "images/1920x1080-nebula2_02.gif", function (
+            image
+        ) {
+            this.backgroundImage = image;
+        }),
     ];
     return Promise.all(promises);
 };
@@ -97,15 +134,22 @@ BattleTankGame.deps.BTankManager.prototype.init = function () {
 // x, y - coordinates of pixels, not cells
 BattleTankGame.deps.BTankManager.prototype.checkCSWWithPixelPrecision = function (
     x,
-    y
+    y,
+    whoAsks
 ) {
-    const result =
-        this.cswArr.filter(function (csw) {
-            const {width, height} = csw.dimensions[csw.d];
-            return (
-                x >= csw.x && x <= csw.x + width && y >= csw.y && y <= csw.y + height
-            );
-        }).length > 0;
+    const result = this.cswArr.filter(function (csw) {
+        // console.log(whoAsks === csw);
+        if (whoAsks === csw) {
+            return false;
+        }
+        const { width, height } = csw.dimensions[csw.d];
+        return (
+            x >= csw.x &&
+            x <= csw.x + width &&
+            y >= csw.y &&
+            y <= csw.y + height
+        );
+    });
     return result.length > 0;
 };
 
@@ -131,12 +175,74 @@ BattleTankGame.deps.BTankManager.prototype.checkCSW = function (x, y) {
     return result.length > 0;
 };
 
+BattleTankGame.deps.BTankManager.prototype.checkIfTwoShipsCross = function (
+    nx,
+    ny,
+    whoAsks
+) {
+    const debugDraw = (function(x,y,w,h) {
+        this.drawContext.strokeStyle = "#0f0";
+        this.drawContext.strokeRect(x, y, w, h);
+    }).bind(this);
+
+    const checkSquare = function (csw, x, y) {
+        const { width, height } = csw.dimensions[csw.d];
+        // debugDraw(csw.x, csw.y, width, height);
+        
+        return (
+            x >= csw.x &&
+            x <= csw.x + width &&
+            y >= csw.y &&
+            y <= csw.y + height
+        );
+    };
+
+    const { width, height } = whoAsks.dimensions[whoAsks.d];
+
+    // setInterval((function() {
+
+    // }
+
+    const tArr = this.cswArr.filter(function (csw) {
+        if (whoAsks === csw) {
+            return false;
+        }
+
+        const checkResult =
+            checkSquare(csw, nx, ny) ||
+            checkSquare(csw, nx + width, ny) ||
+            checkSquare(csw, nx, ny + height) ||
+            checkSquare(csw, nx + width, ny + height) ||
+
+            checkSquare(csw, nx + width/2, ny) ||
+            checkSquare(csw, nx, ny + height/2) ||
+            checkSquare(csw, nx + width, ny + height/2) ||
+            checkSquare(csw, nx + width/2, ny + height);
+        return checkResult;
+    });
+
+    // if (tArr.length > 0) {
+    //     console.log('collide!');
+    //     this.drawContext.strokeStyle = "#f00";
+    // } else {
+    //     this.drawContext.strokeStyle = "#fff";
+    // }
+
+    // this.drawContext.strokeRect(nx, ny, width, height);
+
+    return tArr.length > 0 ? tArr[0] : null;
+};
+
 // Returns CSW on coords in params (by pixel)
 BattleTankGame.deps.BTankManager.prototype.getCSWWithPixelPrecision = function (
     x,
-    y
+    y,
+    whoAsks
 ) {
     const tArr = this.cswArr.filter(function (csw) {
+        if (whoAsks === csw) {
+            return false;
+        }
         const { width, height } = csw.dimensions[csw.d];
         return (
             x >= csw.x &&

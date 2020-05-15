@@ -122,6 +122,7 @@ BattleTankGame.deps.cswAI_1 = function (CONST, bullet) {
     this.fireStartTime = -1;
     this.fireLastTime = -1;
     this.newFireTime = -1;
+    this.disableAI = false;
     // d: 0...3, a: 0...1, ms: (0...1) *1000
 };
 
@@ -144,7 +145,7 @@ BattleTankGame.deps.cswAI_1.prototype.AI_generateNewFireTime = function () {
 }
 
 BattleTankGame.deps.cswAI_1.prototype.AI_update = function (timestamp) {
-    if (this.life > 0) {
+    if (this.life > 0 && !this.disableAI) {
         if (this.path && ((timestamp - this.pathStartTime) <= this.path.ms)) {
             this.setDirectionAndAccel(
                 this.path.d,
@@ -168,7 +169,7 @@ BattleTankGame.deps.cswAI_1.prototype.AI_update = function (timestamp) {
     }
     this.update();
 
-    if (this.life > 0) {
+    if (this.life > 0 && !this.disableAI) {
         if (this.newFireTime < 0) {
             this.newFireTime = this.AI_generateNewFireTime();
             this.fireLastTime = timestamp;

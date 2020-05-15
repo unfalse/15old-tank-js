@@ -17,8 +17,8 @@ BattleTankGame.deps.bulletPixel.prototype.setCoords = function (nx, ny, nd) {
     const vxy = this.getVXY(nd);
     const { width, height } = this.parentTank.dimensions[nd];
     this.initCoords(
-        nx + (vxy.vx * width) + (vxy.vx === 0 ? width/2 : 0),
-        ny + (vxy.vy * height)  + (vxy.vy === 0 ? height/2 : 0),
+        nx + (vxy.vx ) + (vxy.vx === 0 ? width/2 : 0),
+        ny + (vxy.vy )  + (vxy.vy === 0 ? height/2 : 0),
         nd
     );
 };

@@ -281,9 +281,15 @@ BattleTankGame.deps.csw.prototype.move = function (direction) {
     if (ux != 0 || uy != 0) {
         // TO FIX!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // TODO: this not works good :( !!!!!!!!!!!!!!!!!!!!!!!
-        if (this.BTankInst.getCSWWithPixelPrecision(this.x + (ux * width), this.y + (uy * height))) {
+        //const found = this.BTankInst.getCSWWithPixelPrecision(this.x + (ux), this.y + (uy), this);
+        const found = this.BTankInst.checkIfTwoShipsCross(this.x + (ux), this.y + (uy), this);
+        if (found) {
+        // if (this.BTankInst.checkCSWWithPixelPrecision(this.x + (ux * width), this.y + (uy * height), this)) {
+            // debugger;
+            //console.log(`collide! ${this.x + (ux + width)} ${this.x} ${ux}`);
             ux = 0;
             uy = 0;
+            this.inertiaDirections[direction] = 0;
         }
     }
 
