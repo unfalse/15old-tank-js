@@ -27,18 +27,18 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     
             player1 = BTank.createCSW(1, 1, CONST.USER, 1);
     
-            setTimeout(() => BTank.createCSW(960, 340, CONST.COMPUTER, 1), 1000);
+            setTimeout(() => BTank.createCSW(500, 300, CONST.COMPUTER, 1), 1000);
             setTimeout(() => BTank.createCSW(940, 360, CONST.COMPUTER, 2), 2030);
-            setTimeout(() => BTank.createCSW(940, 380, CONST.COMPUTER, 3), 3300);
-            setTimeout(() => BTank.createCSW(940, 400, CONST.COMPUTER, 4), 4444);
-            setTimeout(() => BTank.createCSW(250, 420, CONST.COMPUTER, 5), 5005);
-            setTimeout(() => BTank.createCSW(250, 440, CONST.COMPUTER, 6), 6007);
+            setTimeout(() => BTank.createCSW(940, 420, CONST.COMPUTER, 3), 3300);
+            setTimeout(() => BTank.createCSW(940, 480, CONST.COMPUTER, 4), 4444);
+            setTimeout(() => BTank.createCSW(250, 540, CONST.COMPUTER, 5), 5005);
+            setTimeout(() => BTank.createCSW(250, 600, CONST.COMPUTER, 6), 6007);
             setTimeout(() => BTank.createCSW(250, 460, CONST.COMPUTER, 7), 7008);
-            setTimeout(() => BTank.createCSW(250, 480, CONST.COMPUTER, 8), 9001);
-            setTimeout(() => BTank.createCSW(250, 500, CONST.COMPUTER, 9), 11003);
-            setTimeout(() => BTank.createCSW(250, 520, CONST.COMPUTER, 10), 17009);
-            setTimeout(() => BTank.createCSW(250, 540, CONST.COMPUTER, 11), 23005);
-            setTimeout(() => BTank.createCSW(250, 560, CONST.COMPUTER, 12), 41009);
+            setTimeout(() => BTank.createCSW(250, 660, CONST.COMPUTER, 8), 9001);
+            setTimeout(() => BTank.createCSW(250, 100, CONST.COMPUTER, 9), 11003);
+            setTimeout(() => BTank.createCSW(250, 220, CONST.COMPUTER, 10), 17009);
+            setTimeout(() => BTank.createCSW(250, 340, CONST.COMPUTER, 11), 23005);
+            setTimeout(() => BTank.createCSW(250, 400, CONST.COMPUTER, 12), 41009);
     
     
             // BTank.createCSW(250, 460, CONST.COMPUTER, 7);
@@ -63,8 +63,8 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
 
     this.mainCycle = function (timestamp) {
         // console.log(timestamp);
-        BTank.drawContext.fillStyle = "black";
-        BTank.drawContext.fillRect(0, 0, 420, 420);
+        // BTank.drawContext.fillStyle = "black";
+        // BTank.drawContext.fillRect(0, 0, 420, 420);
         BTank.drawBackground();
         
         this.detectMovement(timestamp);
