@@ -10,21 +10,46 @@ BattleTankGame.deps.bulletPixel = function (CONST, BTankInst) {
     this.BTankInst = BTankInst;
 };
 
-BattleTankGame.deps.bulletPixel.prototype = Object.create(BattleTankGame.deps.baseCoordinates.prototype);
-BattleTankGame.deps.bulletPixel.prototype.constructor = BattleTankGame.deps.bulletPixel;
+BattleTankGame.deps.bulletPixel.prototype = Object.create(
+    BattleTankGame.deps.baseCoordinates.prototype
+);
+BattleTankGame.deps.bulletPixel.prototype.constructor =
+    BattleTankGame.deps.bulletPixel;
 
 BattleTankGame.deps.bulletPixel.prototype.setCoords = function (nx, ny, nd) {
-    const vxy = this.getVXY(nd);
     const { width, height } = this.parentTank.dimensions[nd];
-    this.initCoords(
-        nx + (vxy.vx ) + (vxy.vx === 0 ? width/2 : 0),
-        ny + (vxy.vy )  + (vxy.vy === 0 ? height/2 : 0),
-        nd
-    );
+    let x = 0,
+        y = 0;
+    switch (nd) {
+        case 0: {
+            x = nx + width;
+            y = ny + height / 2;
+            break;
+        }
+        case 1: {
+            x = nx + width / 2;
+            y = ny + height + 1;
+            break;
+        }
+        case 2: {
+            x = nx - 1;
+            y = ny + height / 2;
+            break;
+        }
+        case 3: {
+            x = nx + width / 2;
+            y = ny - 1;
+            break;
+        }
+        default:
+            break;
+    }
+    this.initCoords(x, y, nd);
 };
 
 BattleTankGame.deps.bulletPixel.prototype.draw = function () {
-    this.BTankInst.drawContext.fillStyle = this.parentTank.iam === this.CONST.USER ? "#F00" : "#FF0";
+    this.BTankInst.drawContext.fillStyle =
+        this.parentTank.iam === this.CONST.USER ? "#F00" : "#FF0";
     this.BTankInst.drawContext.fillRect(this.x, this.y, 4, 4);
 };
 
