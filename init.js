@@ -1,5 +1,5 @@
 const BattleTankGame = {
-    deps: {}
+    deps: {},
 };
 BattleTankGame.deps.baseCoordinates = function () {
     this.x = 0;
@@ -15,12 +15,16 @@ BattleTankGame.deps.baseCoordinates.prototype.getVXY = function (d) {
     };
 };
 
+//   >  0 - right
+//   v  1 - down
+//   <  2 - left
+//   ^  3 - up
 BattleTankGame.deps.baseCoordinates.prototype.getVXYAndAngle = function (d) {
     const mapDirections = {
-        0: { vx: 1,  vy: 0,  angle: 90   },
-        1: { vx: 0,  vy: 1,  angle: 180  },
-        2: { vx: -1, vy: 0,  angle: 270 },
-        3: { vx: 0,  vy: -1, angle: 0 },
+        0: { vx: 1, vy: 0, angle: 90 },
+        1: { vx: 0, vy: 1, angle: 180 },
+        2: { vx: -1, vy: 0, angle: 270 },
+        3: { vx: 0, vy: -1, angle: 0 },
     };
     return mapDirections[d];
 };

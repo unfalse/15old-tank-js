@@ -46,7 +46,7 @@ BattleTankGame.deps.csw.prototype.init = function (
     this.iam = who;
     this.maxlife =
         this.iam === this.CONST.USER
-            ? this.CONST.MAXLIFES * 10
+            ? 3
             : 5;
     this.life = this.maxlife;
     this.speed = 0; // make speed more precise
@@ -278,18 +278,18 @@ BattleTankGame.deps.csw.prototype.move = function (direction) {
         this.inertiaDirections[direction] = 0;
     }
 
-    if (ux != 0 || uy != 0) {
-        // TO FIX!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // TODO: this not works good :( !!!!!!!!!!!!!!!!!!!!!!!
-        //const found = this.BTankInst.getCSWWithPixelPrecision(this.x + (ux), this.y + (uy), this);
-        const found = this.BTankInst.checkIfTwoShipsCross(this.x + (ux), this.y + (uy), this);
-        if (found) {
-        // if (this.BTankInst.checkCSWWithPixelPrecision(this.x + (ux * width), this.y + (uy * height), this)) {
-            // debugger;
-            //console.log(`collide! ${this.x + (ux + width)} ${this.x} ${ux}`);
-            ux = 0;
-            uy = 0;
-            this.inertiaDirections[direction] = 0;
+    // checking if the ship is on the other ship already
+    const isOnTheOtherShip = this.BTankInst.checkIfTwoShipsCross(this.x, this.y, this);
+
+    if (!isOnTheOtherShip) {
+        if (ux != 0 || uy != 0) {
+            const found = this.BTankInst.checkIfTwoShipsCross(this.x + (ux), this.y + (uy), this);
+            if (found) {
+                //console.log(`collide! ${this.x + (ux + width)} ${this.x} ${ux}`);
+                ux = 0;
+                uy = 0;
+                this.inertiaDirections[direction] = 0;
+            }
         }
     }
 
