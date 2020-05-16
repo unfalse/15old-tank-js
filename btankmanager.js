@@ -180,10 +180,10 @@ BattleTankGame.deps.BTankManager.prototype.checkIfTwoShipsCross = function (
     ny,
     whoAsks
 ) {
-    const debugDraw = (function(x,y,w,h) {
-        this.drawContext.strokeStyle = "#0f0";
-        this.drawContext.strokeRect(x, y, w, h);
-    }).bind(this);
+    // const debugDraw = (function(x,y,w,h) {
+    //     this.drawContext.strokeStyle = "#0f0";
+    //     this.drawContext.strokeRect(x, y, w, h);
+    // }).bind(this);
 
     const checkSquare = function (csw, x, y) {
         const { width, height } = csw.dimensions[csw.d];
@@ -198,10 +198,6 @@ BattleTankGame.deps.BTankManager.prototype.checkIfTwoShipsCross = function (
     };
 
     const { width, height } = whoAsks.dimensions[whoAsks.d];
-
-    // setInterval((function() {
-
-    // }
 
     const tArr = this.cswArr.filter(function (csw) {
         if (whoAsks === csw) {
@@ -220,15 +216,6 @@ BattleTankGame.deps.BTankManager.prototype.checkIfTwoShipsCross = function (
             checkSquare(csw, nx + width/2, ny + height);
         return checkResult;
     });
-
-    // if (tArr.length > 0) {
-    //     console.log('collide!');
-    //     this.drawContext.strokeStyle = "#f00";
-    // } else {
-    //     this.drawContext.strokeStyle = "#fff";
-    // }
-
-    // this.drawContext.strokeRect(nx, ny, width, height);
 
     return tArr.length > 0 ? tArr[0] : null;
 };
@@ -255,31 +242,7 @@ BattleTankGame.deps.BTankManager.prototype.getCSWWithPixelPrecision = function (
     return tArr.length ? tArr[0] : null;
 };
 
-BattleTankGame.deps.BTankManager.prototype.getVXVYBeforeCollision = function (
-    newx,
-    newy,
-    vx,
-    vy
-) {
-    /*
-        should return new vx and vy
-        if there is a CSW on newx, newy then check if (abs(CSW.x) - abs(newx)) === vx
-        (same for y) and return the (abs(CSW.x) - abs(newx)) as vx
-        if (abs(CSW.x) - abs(newx)) === 0
-        then return vx = 0
-    */
-};
-
-// Returns CSW on coords in params (by cell)
-// TODO: is it good that BTankManager knows what fields CSW class contains ?
-BattleTankGame.deps.BTankManager.prototype.getCSW = function (x1, y1) {
-    const tArr = this.cswArr.filter(function (c) {
-        return c.x == x1 && c.y == y1;
-    });
-
-    return tArr.length ? tArr[0] : null;
-};
-
+// TODO: is it good that BTankManager knows which fields CSW class contains ?
 BattleTankGame.deps.BTankManager.prototype.createCSW = function (
     x,
     y,
@@ -301,10 +264,10 @@ BattleTankGame.deps.BTankManager.prototype.getCPUs = function () {
     });
 };
 
-BattleTankGame.deps.BTankManager.prototype.deleteCSW = function (x, y) {
+BattleTankGame.deps.BTankManager.prototype.removeShip = function (ship) {
     let ca = 0;
     while (1) {
-        if (this.cswArr[ca].x == x && this.cswArr[ca].y == y) {
+        if (this.cswArr[ca] === ship) {
             this.cswArr.splice(ca, 1);
             break;
         }
