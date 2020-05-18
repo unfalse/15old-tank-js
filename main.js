@@ -5,7 +5,7 @@ console.log("main!");
 // -----------------------------
 BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     let mainIntervalId = null;
-    let stop = false;
+    let gameOver = false;
     let keys = {};
     let timeCount = 0;
 
@@ -21,54 +21,92 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     //let cpus = [];
 
     this.start = function () {
-        BTank.init().then((function() {
-            BTank.showLogo();
-            BTank.showNames()        
-    
-            player1 = BTank.createCSW(1, 1, CONST.USER, 1);
-    
-            setTimeout(() => BTank.createCSW(500, 300, CONST.COMPUTER, 1), 1000);
-            setTimeout(() => BTank.createCSW(940, 360, CONST.COMPUTER, 2), 2030);
-            setTimeout(() => BTank.createCSW(940, 420, CONST.COMPUTER, 3), 3300);
-            setTimeout(() => BTank.createCSW(940, 480, CONST.COMPUTER, 4), 4444);
-            setTimeout(() => BTank.createCSW(250, 540, CONST.COMPUTER, 5), 5005);
-            setTimeout(() => BTank.createCSW(250, 600, CONST.COMPUTER, 6), 6007);
-            setTimeout(() => BTank.createCSW(250, 460, CONST.COMPUTER, 7), 7008);
-            setTimeout(() => BTank.createCSW(250, 660, CONST.COMPUTER, 8), 9001);
-            setTimeout(() => BTank.createCSW(250, 100, CONST.COMPUTER, 9), 11003);
-            setTimeout(() => BTank.createCSW(250, 220, CONST.COMPUTER, 10), 17009);
-            setTimeout(() => BTank.createCSW(250, 340, CONST.COMPUTER, 11), 23005);
-            setTimeout(() => BTank.createCSW(250, 400, CONST.COMPUTER, 12), 41009);
-    
-    
-            // BTank.createCSW(250, 460, CONST.COMPUTER, 7);
-            // BTank.createCSW(250, 480, CONST.COMPUTER, 8);
-            // BTank.createCSW(250, 500, CONST.COMPUTER, 9);
-            // BTank.createCSW(250, 520, CONST.COMPUTER, 10);
-            // BTank.createCSW(250, 540, CONST.COMPUTER, 11);
-            // BTank.createCSW(250, 560, CONST.COMPUTER, 12);
-    
-    
-    
-            stop = false;
-    
-            document.addEventListener("keydown", this.keysHandler.bind(this));
-            document.addEventListener("keyup", this.keysHandler.bind(this));
-    
-            mainIntervalId = window.requestAnimationFrame(
-                this.mainCycle.bind(this)
-            );
-        }).bind(this));
+        BTank.init().then(
+            function () {
+                BTank.showLogo();
+                BTank.showNames();
+
+                player1 = BTank.createCSW(1, 1, CONST.USER, 1);
+
+                setTimeout(
+                    () => BTank.createCSW(500, 300, CONST.COMPUTER, 1),
+                    1000
+                );
+                setTimeout(
+                    () => BTank.createCSW(940, 360, CONST.COMPUTER, 2),
+                    2030
+                );
+                setTimeout(
+                    () => BTank.createCSW(940, 420, CONST.COMPUTER, 3),
+                    3300
+                );
+                setTimeout(
+                    () => BTank.createCSW(940, 480, CONST.COMPUTER, 4),
+                    4444
+                );
+                setTimeout(
+                    () => BTank.createCSW(250, 540, CONST.COMPUTER, 5),
+                    5005
+                );
+                setTimeout(
+                    () => BTank.createCSW(250, 600, CONST.COMPUTER, 6),
+                    6007
+                );
+                setTimeout(
+                    () => BTank.createCSW(250, 460, CONST.COMPUTER, 7),
+                    7008
+                );
+                setTimeout(
+                    () => BTank.createCSW(250, 660, CONST.COMPUTER, 8),
+                    9001
+                );
+                setTimeout(
+                    () => BTank.createCSW(250, 100, CONST.COMPUTER, 9),
+                    11003
+                );
+                setTimeout(
+                    () => BTank.createCSW(250, 220, CONST.COMPUTER, 10),
+                    17009
+                );
+                setTimeout(
+                    () => BTank.createCSW(250, 340, CONST.COMPUTER, 11),
+                    23005
+                );
+                setTimeout(
+                    () => BTank.createCSW(250, 400, CONST.COMPUTER, 12),
+                    41009
+                );
+
+                // BTank.createCSW(250, 460, CONST.COMPUTER, 7);
+                // BTank.createCSW(250, 480, CONST.COMPUTER, 8);
+                // BTank.createCSW(250, 500, CONST.COMPUTER, 9);
+                // BTank.createCSW(250, 520, CONST.COMPUTER, 10);
+                // BTank.createCSW(250, 540, CONST.COMPUTER, 11);
+                // BTank.createCSW(250, 560, CONST.COMPUTER, 12);
+
+                gameOver = false;
+
+                document.addEventListener(
+                    "keydown",
+                    this.keysHandler.bind(this)
+                );
+                document.addEventListener("keyup", this.keysHandler.bind(this));
+
+                mainIntervalId = window.requestAnimationFrame(
+                    this.mainCycle.bind(this)
+                );
+            }.bind(this)
+        );
     };
 
     this.mainCycle = function (timestamp) {
         // console.log(timestamp);
-        // BTank.drawContext.fillStyle = "black";
-        // BTank.drawContext.fillRect(0, 0, 420, 420);
         BTank.drawBackground();
-        
-        this.detectMovement(timestamp);
-        player1.update();
+
+        if (player1.life > 0) {
+            this.detectMovement(timestamp);
+            player1.update();
+        }
 
         // random AI
         BTank.getCPUs().filter(function (cpu) {
@@ -80,7 +118,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
 
         if (player1.life === 0) {
             Utils.text("GAME OVER");
-            stop = true;
+            gameOver = true;
         }
 
         // if (cpus[0].life <= 0) {
@@ -88,40 +126,21 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         //     stop = true;
         // }
 
-        if (stop) {
+        if (gameOver) {
             BTank.showGameOver(player1.life);
+            gameOver = false;
         }
 
-        if (!stop) {
-            mainIntervalId = window.requestAnimationFrame(
-                this.mainCycle.bind(this)
-            );
-        }
+        mainIntervalId = window.requestAnimationFrame(
+            this.mainCycle.bind(this)
+        );
     };
-
-    // ----------- ACCELERATION -----------
-
-    this.accelerateWhileDownAndStopOnceUp = function () {
-        player1.addAccel(0.1);
-        timeCount++;
-        if (!player1.stopAccel) {
-            setTimeout(this.accelerateWhileDownAndStopOnceUp.bind(this), 10);
-        }
-    }
-
-    this.handler_accelerateWhileDownAndStopOnceUp = function () {
-        player1.stopAccel = false;
-        setTimeout(this.accelerateWhileDownAndStopOnceUp.bind(this), 10);
-    }
 
     this.keyUpHandler = function () {
         // TODO: keysUp array for keys that are up to know which direction isn't getting acceleration
         player1.stopAccel = true;
-        if (player1.getAccel() < 0) {
-            player1.setAccel(0);
-        }
         timeCount = 0;
-    }
+    };
 
     // ----------- END -----------
 
@@ -142,21 +161,41 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         // code here must change ONLY DIRECTION
         const ACCEL = 0.1;
         if (keys[Utils.KEY_CODE.UP]) {
-            player1.setDirectionAndAddAccel(controlsMap[Utils.KEY_CODE.UP], ACCEL);
+            player1.setDirectionAndAddAccel(
+                controlsMap[Utils.KEY_CODE.UP],
+                ACCEL
+            );
         }
         if (keys[Utils.KEY_CODE.LEFT]) {
-            player1.setDirectionAndAddAccel(controlsMap[Utils.KEY_CODE.LEFT], ACCEL);
+            player1.setDirectionAndAddAccel(
+                controlsMap[Utils.KEY_CODE.LEFT],
+                ACCEL
+            );
         }
         if (keys[Utils.KEY_CODE.RIGHT]) {
-            player1.setDirectionAndAddAccel(controlsMap[Utils.KEY_CODE.RIGHT], ACCEL);
+            player1.setDirectionAndAddAccel(
+                controlsMap[Utils.KEY_CODE.RIGHT],
+                ACCEL
+            );
         }
         if (keys[Utils.KEY_CODE.DOWN]) {
-            player1.setDirectionAndAddAccel(controlsMap[Utils.KEY_CODE.DOWN], ACCEL);
+            player1.setDirectionAndAddAccel(
+                controlsMap[Utils.KEY_CODE.DOWN],
+                ACCEL
+            );
         }
         if (keys[Utils.KEY_CODE.a_KEY]) {
             player1.fire(timestamp);
         }
-        if (keys[Utils.KEY_CODE.UP] || keys[Utils.KEY_CODE.DOWN] || keys[Utils.KEY_CODE.LEFT] || keys[Utils.KEY_CODE.RIGHT]) {
+        if (keys[Utils.KEY_CODE.s_KEY]) {
+            player1.stop();
+        }
+        if (
+            keys[Utils.KEY_CODE.UP] ||
+            keys[Utils.KEY_CODE.DOWN] ||
+            keys[Utils.KEY_CODE.LEFT] ||
+            keys[Utils.KEY_CODE.RIGHT]
+        ) {
             // this.handler_accelerateWhileDownAndStopOnceUp();
         }
     };

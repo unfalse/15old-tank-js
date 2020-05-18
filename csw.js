@@ -167,7 +167,6 @@ BattleTankGame.deps.csw.prototype.setDirectionAndAddAccel = function (d, accel) 
         }
         this.inertiaDirections[d] += accel;
     }
-
     // this.inertiaDirections[d] += accel;
 };
 
@@ -199,7 +198,7 @@ BattleTankGame.deps.csw.prototype.getDirSum = function () {
 };
 
 BattleTankGame.deps.csw.prototype.inertia = function () {
-    if (this.getDirSum() > 0 && this.stopAccel) {
+    if (this.getDirSum() > 0 && this.stopAccel && this.inertiaTimerIsRunning) {
         // TODO: WHERE TO PUT DECREASING AND INCREASING OF ACCELERATION ?
         // maybe use stopAccel from the main.js !!!
         // this way the momentum will be the same every time till zero acceleration
@@ -247,6 +246,14 @@ BattleTankGame.deps.csw.prototype.inertiaStartAttempt = function () {
         this.waitAndCall(this.inertia.bind(this), 10, this.waitInertiaStartAttempt);
     }
 };
+
+BattleTankGame.deps.csw.prototype.stop = function () {
+    this.stopAccel = false;
+    this.inertiaTimerIsRunning = false;
+    for (let d = 0; d < 4; d++) {
+        this.inertiaDirections[d] = 0;
+    }
+}
 
 /*
 
