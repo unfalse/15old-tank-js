@@ -23,7 +23,6 @@ BattleTankGame.deps.csw = function (CONST, bullet) {
     this.MAXIMUM_ACCELERATION = 8;
     this.dimensions = {};
 
-
     this.CONST = CONST;
     this.bullet = bullet;
     this.BTankInst = null;
@@ -40,7 +39,6 @@ BattleTankGame.deps.csw.prototype.init = function (
     mx,
     my,
     who,
-    num,
     BTankInst
 ) {
     this.initCoords(mx, my, 0);
@@ -51,10 +49,10 @@ BattleTankGame.deps.csw.prototype.init = function (
             : 5;
     this.life = this.maxlife;
     this.speed = 0; // make speed more precise
-    this.n = num;
     this.crashed = false;
     this.bulletsCount = 0;
     this.bulletsAmountOnFire = this.CONST.MAXBULLETS;
+    this.type = this.CONST.TYPES.SHIP;
 
     this.BTankInst = BTankInst;
 
@@ -307,11 +305,16 @@ BattleTankGame.deps.csw.prototype.move = function (direction) {
     // this.draw();
 };
 
-BattleTankGame.deps.csw.prototype.update = function () {
+BattleTankGame.deps.csw.prototype.update = function (timestamp) {
 
     if (this.life <= 0) {
         this.BTankInst.removeShip(this);
     }
+
+    if (this.iam === this.CONST.COMPUTER) {
+        this.AI_update(timestamp);
+    }
+
     this.updateBullets();
     this.inertiaStartAttempt();
 

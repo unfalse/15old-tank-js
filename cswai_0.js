@@ -123,6 +123,9 @@ BattleTankGame.deps.cswAI_1 = function (CONST, bullet) {
     this.fireLastTime = -1;
     this.newFireTime = -1;
     this.disableAI = false;
+    this.baseUpdate = this.update;
+    // this.update = function (timestamp) { console.log('function was overrided!'); };
+    // debugger;
     // d: 0...3, a: 0...1, ms: (0...1) *1000
 };
 
@@ -167,7 +170,7 @@ BattleTankGame.deps.cswAI_1.prototype.AI_update = function (timestamp) {
         }
 
     }
-    this.update();
+    // this.update();
 
     if (this.life > 0 && !this.disableAI) {
         if (this.newFireTime < 0) {
@@ -181,4 +184,9 @@ BattleTankGame.deps.cswAI_1.prototype.AI_update = function (timestamp) {
         }
         // this.fire(timestamp);
     }
+
+    // TODO: try to call the update of the parent prototype (CSW !)
+    // this way i don't need to check if this.iam equals CONST.COMPUTER in csw.update anymore!!
+    // this.__proto__.update.call(this, timestamp);
+    // this.baseUpdate(timestamp);
 };
