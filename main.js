@@ -26,56 +26,20 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
                 BTank.showLogo();
                 BTank.showNames();
 
-                player1 = BTank.createCSW(1, 1, CONST.USER, 1);
+                player1 = BTank.createCSW(1, 1, CONST.USER);
 
-                setTimeout(
-                    () => BTank.createCSW(500, 300, CONST.COMPUTER, 1),
-                    1000
-                );
-                setTimeout(
-                    () => BTank.createCSW(940, 360, CONST.COMPUTER, 2),
-                    2030
-                );
-                setTimeout(
-                    () => BTank.createCSW(940, 420, CONST.COMPUTER, 3),
-                    3300
-                );
-                setTimeout(
-                    () => BTank.createCSW(940, 480, CONST.COMPUTER, 4),
-                    4444
-                );
-                setTimeout(
-                    () => BTank.createCSW(250, 540, CONST.COMPUTER, 5),
-                    5005
-                );
-                setTimeout(
-                    () => BTank.createCSW(250, 600, CONST.COMPUTER, 6),
-                    6007
-                );
-                setTimeout(
-                    () => BTank.createCSW(250, 460, CONST.COMPUTER, 7),
-                    7008
-                );
-                setTimeout(
-                    () => BTank.createCSW(250, 660, CONST.COMPUTER, 8),
-                    9001
-                );
-                setTimeout(
-                    () => BTank.createCSW(250, 100, CONST.COMPUTER, 9),
-                    11003
-                );
-                setTimeout(
-                    () => BTank.createCSW(250, 220, CONST.COMPUTER, 10),
-                    17009
-                );
-                setTimeout(
-                    () => BTank.createCSW(250, 340, CONST.COMPUTER, 11),
-                    23005
-                );
-                setTimeout(
-                    () => BTank.createCSW(250, 400, CONST.COMPUTER, 12),
-                    41009
-                );
+                BTank.createCSW(500, 300, CONST.COMPUTER, 1000);
+                BTank.createCSW(940, 360, CONST.COMPUTER, 2030);
+                BTank.createCSW(940, 420, CONST.COMPUTER, 3300);
+                BTank.createCSW(940, 480, CONST.COMPUTER, 4444);
+                BTank.createCSW(250, 540, CONST.COMPUTER, 5005);
+                BTank.createCSW(250, 600, CONST.COMPUTER, 6007);
+                BTank.createCSW(250, 460, CONST.COMPUTER, 7008);
+                BTank.createCSW(250, 660, CONST.COMPUTER, 9001);
+                BTank.createCSW(250, 100, CONST.COMPUTER, 11003);
+                BTank.createCSW(250, 220, CONST.COMPUTER, 17009);
+                BTank.createCSW(250, 340, CONST.COMPUTER, 23005);
+                BTank.createCSW(250, 400, CONST.COMPUTER, 41009);
 
                 // BTank.createCSW(250, 460, CONST.COMPUTER, 7);
                 // BTank.createCSW(250, 480, CONST.COMPUTER, 8);
@@ -108,16 +72,18 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
             player1.update();
         }
 
-        // random AI
-        BTank.getCPUs().filter(function (cpu) {
-            cpu.AI_update(timestamp);
+        BTank.getAllShips().forEach(function (ship) {
+            ship.update(timestamp);
         });
+
+        // BTank.getCPUs().filter(function (cpu) {
+        //     cpu.AI_update(timestamp);
+        // });
 
         BTank.displayLifeBar(player1);
         // BTank.displayLifeBar(cpus[0]);
 
         if (player1.life === 0) {
-            Utils.text("GAME OVER");
             gameOver = true;
         }
 
@@ -127,6 +93,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         // }
 
         if (gameOver) {
+            Utils.text("GAME OVER");
             BTank.showGameOver(player1.life);
             gameOver = false;
         }

@@ -7,6 +7,10 @@ BattleTankGame.deps.const = {
 
     COMPUTER: 0,
     USER: 1,
+    TYPES: {
+        SHIP: 0,
+        OBSTACLE: 1,
+    },
 
     MAXX: 50,
     MAXY: 36,
@@ -66,6 +70,12 @@ BattleTankGame.deps.BTankManager.prototype.init = function () {
     this.infoContext = gameInfo.getContext("2d");
     this.againBtn = document.querySelector("#playAgainBtn");
 
+    this.playerImages = {};
+    this.cpuImages = {};
+    this.crashImage = null;
+    this.backgroundImage = null;
+    this.obstacleImage = null;
+
     const loadImage = function (imagePath, onLoad) {
         return new Promise(
             function (resolve) {
@@ -78,10 +88,6 @@ BattleTankGame.deps.BTankManager.prototype.init = function () {
             }.bind(this)
         );
     };
-    this.playerImages = {};
-    this.cpuImages = {};
-    this.crashImage = null;
-    this.backgroundImage = null;
 
     const promises = [
         loadImage.call(this, "images/csw-mt9bigger2x_0.png", function (image) {
@@ -127,8 +133,48 @@ BattleTankGame.deps.BTankManager.prototype.init = function () {
         ) {
             this.backgroundImage = image;
         }),
+
+        loadImage.call(this, "images/obstacle1bigger.png", function (image) {
+            this.obstacleImage = image;
+        }),
     ];
     return Promise.all(promises);
+};
+
+// TODO: is it good that BTankManager knows which fields CSW class contains ?
+BattleTankGame.deps.BTankManager.prototype.createCSW = function (
+    x,
+    y,
+    who,
+    delay,
+    typeParam
+) {
+    let c1 = null;
+    const type = typeParam || this.CONST.TYPES.SHIP;
+    if (who === this.CONST.USER) {
+        c1 = new this.csw(this.CONST, this.bullet);
+        c1.init(x, y, who, this);
+        this.cswArr.push(c1);
+        return c1;
+    } else if (who === this.CONST.COMPUTER) {
+        setTimeout((function () {
+
+            // this code should be extendable
+            // TODO: implement some pattern to not write thousands if-s
+            if (type === this.CONST.TYPES.SHIP) {
+                c1 = new this.cswAI(this.CONST, this.bullet);
+            } else if (type === this.CONST.TYPES.OBSTACLE) {
+                throw new Error("No class for obstacles implemented yet!");
+            }
+
+            c1.init(x, y, who, this);
+            this.cswArr.push(c1);        
+        }).bind(this), delay);
+    }
+    // const c1 =
+    //     who === this.CONST.USER
+    //         ? new this.csw(this.CONST, this.bullet)
+    //         : new this.cswAI(this.CONST, this.bullet);
 };
 
 // x, y - coordinates of pixels, not cells
@@ -188,7 +234,7 @@ BattleTankGame.deps.BTankManager.prototype.checkIfTwoShipsCross = function (
     const checkSquare = function (csw, x, y) {
         const { width, height } = csw.dimensions[csw.d];
         // debugDraw(csw.x, csw.y, width, height);
-        
+
         return (
             x >= csw.x &&
             x <= csw.x + width &&
@@ -209,11 +255,10 @@ BattleTankGame.deps.BTankManager.prototype.checkIfTwoShipsCross = function (
             checkSquare(csw, nx + width, ny) ||
             checkSquare(csw, nx, ny + height) ||
             checkSquare(csw, nx + width, ny + height) ||
-
-            checkSquare(csw, nx + width/2, ny) ||
-            checkSquare(csw, nx, ny + height/2) ||
-            checkSquare(csw, nx + width, ny + height/2) ||
-            checkSquare(csw, nx + width/2, ny + height);
+            checkSquare(csw, nx + width / 2, ny) ||
+            checkSquare(csw, nx, ny + height / 2) ||
+            checkSquare(csw, nx + width, ny + height / 2) ||
+            checkSquare(csw, nx + width / 2, ny + height);
         return checkResult;
     });
 
@@ -242,20 +287,8 @@ BattleTankGame.deps.BTankManager.prototype.getCSWWithPixelPrecision = function (
     return tArr.length ? tArr[0] : null;
 };
 
-// TODO: is it good that BTankManager knows which fields CSW class contains ?
-BattleTankGame.deps.BTankManager.prototype.createCSW = function (
-    x,
-    y,
-    who,
-    num
-) {
-    const c1 =
-        who === this.CONST.USER
-            ? new this.csw(this.CONST, this.bullet)
-            : new this.cswAI(this.CONST, this.bullet);
-    c1.init(x, y, who, num, this);
-    this.cswArr.push(c1);
-    return c1;
+BattleTankGame.deps.BTankManager.prototype.getAllShips = function () {
+    return this.cswArr;
 };
 
 BattleTankGame.deps.BTankManager.prototype.getCPUs = function () {
