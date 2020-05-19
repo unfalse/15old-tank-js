@@ -107,7 +107,7 @@ BattleTankGame.deps.cswAI_0.prototype.AI_update = function (timestamp) {
         } while (this.path.ms === 0);
         this.pathStartTime = timestamp;
     }
-    this.update();
+    // this.update();
     this.fire(timestamp);
 };
 
