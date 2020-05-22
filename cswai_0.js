@@ -117,13 +117,14 @@ console.log("csw AI_1!");
 
 BattleTankGame.deps.cswAI_1 = function (CONST, bullet) {
     BattleTankGame.deps.csw.call(this, CONST, bullet);
+    this.baseUpdate = BattleTankGame.deps.csw.prototype.update;
     this.path = null; // { d: 0, accel: 0, ms: 0 };
     this.pathStartTime = -1;
     this.fireStartTime = -1;
     this.fireLastTime = -1;
     this.newFireTime = -1;
     this.disableAI = false;
-    this.baseUpdate = this.update;
+
     // this.update = function (timestamp) { console.log('function was overrided!'); };
     // debugger;
     // d: 0...3, a: 0...1, ms: (0...1) *1000
@@ -145,11 +146,11 @@ BattleTankGame.deps.cswAI_1.prototype.AI_generateNewPath = function () {
 
 BattleTankGame.deps.cswAI_1.prototype.AI_generateNewFireTime = function () {
     return this.Utils.getRandomInt(1, 3) * 1000;
-}
+};
 
-BattleTankGame.deps.cswAI_1.prototype.AI_update = function (timestamp) {
+BattleTankGame.deps.cswAI_1.prototype.update = function (timestamp) {
     if (this.life > 0 && !this.disableAI) {
-        if (this.path && ((timestamp - this.pathStartTime) <= this.path.ms)) {
+        if (this.path && timestamp - this.pathStartTime <= this.path.ms) {
             this.setDirectionAndAccel(
                 this.path.d,
                 this.path.accel,
@@ -168,7 +169,6 @@ BattleTankGame.deps.cswAI_1.prototype.AI_update = function (timestamp) {
             } while (this.path.ms === 0);
             this.pathStartTime = timestamp;
         }
-
     }
     // this.update();
 
@@ -177,7 +177,10 @@ BattleTankGame.deps.cswAI_1.prototype.AI_update = function (timestamp) {
             this.newFireTime = this.AI_generateNewFireTime();
             this.fireLastTime = timestamp;
         }
-        if ((this.newFireTime>0) && (timestamp - this.fireLastTime >= this.newFireTime)) {
+        if (
+            this.newFireTime > 0 &&
+            timestamp - this.fireLastTime >= this.newFireTime
+        ) {
             this.fire(timestamp);
             this.newFireTime = this.AI_generateNewFireTime();
             this.fireLastTime = timestamp;
@@ -185,8 +188,30 @@ BattleTankGame.deps.cswAI_1.prototype.AI_update = function (timestamp) {
         // this.fire(timestamp);
     }
 
+    this.baseUpdate(timestamp);
+
     // TODO: try to call the update of the parent prototype (CSW !)
     // this way i don't need to check if this.iam equals CONST.COMPUTER in csw.update anymore!!
     // this.__proto__.update.call(this, timestamp);
     // this.baseUpdate(timestamp);
 };
+
+////////////////////////////////////////////////////////// obstacle
+
+console.log("obstacle!");
+
+BattleTankGame.deps.obstacle = function (CONST, bullet) {
+    BattleTankGame.deps.csw.call(this, CONST, bullet);
+    this.baseUpdate = BattleTankGame.deps.csw.prototype.update;
+};
+
+BattleTankGame.deps.obstacle.prototype = Object.create(
+    BattleTankGame.deps.csw.prototype
+);
+
+BattleTankGame.deps.obstacle.prototype.constructor =
+    BattleTankGame.deps.obstacle;
+
+BattleTankGame.deps.obstacle.prototype.draw = function(){
+    this.BTankInst.drawObstacle(this.x, this.y);
+}

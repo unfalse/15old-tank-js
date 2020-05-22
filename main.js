@@ -26,7 +26,11 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
                 BTank.showLogo();
                 BTank.showNames();
 
-                player1 = BTank.createCSW(1, 1, CONST.USER);
+                player1 = BTank.createCSW(0, 0, CONST.USER);
+
+                BTank.createCSW(41, 41, CONST.COMPUTER, 0, CONST.TYPES.OBSTACLE);
+                BTank.createCSW(41, 81, CONST.COMPUTER, 0, CONST.TYPES.OBSTACLE);
+                BTank.createCSW(41, 162, CONST.COMPUTER, 0, CONST.TYPES.OBSTACLE);
 
                 BTank.createCSW(500, 300, CONST.COMPUTER, 1000);
                 BTank.createCSW(940, 360, CONST.COMPUTER, 2030);
@@ -175,6 +179,7 @@ BattleTankGame.gameInstance = new BattleTankGame.deps.game(
         BattleTankGame.deps.csw,
         // BattleTankGame.deps.cswAI_0,
         BattleTankGame.deps.cswAI_1,
+        BattleTankGame.deps.obstacle,
         BattleTankGame.deps.bulletPixel,
         BattleTankGame.deps.images
     ),
