@@ -86,6 +86,10 @@ BattleTankGame.deps.csw.prototype.getAccel = function () {
     return this.accel;
 };
 
+BattleTankGame.deps.csw.prototype.collide = function() {
+    return { ux: 0, uy: 0 };
+}
+
 BattleTankGame.deps.csw.prototype.draw = function () {
     if (this.crashed) {
         this.BTankInst.DrawCrash(
@@ -309,10 +313,6 @@ BattleTankGame.deps.csw.prototype.update = function (timestamp) {
 
     if (this.life <= 0) {
         this.BTankInst.removeShip(this);
-    }
-
-    if (this.iam === this.CONST.COMPUTER) {
-        this.AI_update(timestamp);
     }
 
     this.updateBullets();

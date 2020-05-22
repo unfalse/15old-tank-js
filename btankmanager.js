@@ -38,6 +38,7 @@ BattleTankGame.deps.BTankManager = function (
     CONST,
     csw,
     cswAI,
+    obstacle,
     bullet,
     images
 ) {
@@ -54,6 +55,7 @@ BattleTankGame.deps.BTankManager = function (
     this.CONST = CONST;
     this.csw = csw;
     this.cswAI = cswAI;
+    this.obstacle = obstacle;
     this.bullet = bullet;
     this.images = images;
     this.baseCoords = new BattleTankGame.deps.baseCoordinates();
@@ -89,6 +91,10 @@ BattleTankGame.deps.BTankManager.prototype.init = function () {
         );
     };
 
+    // TODO: it should be a function which will preload images.
+    // First it should collect paths to images from classes (csw, cswai, obstacle, etc.)
+    // Every class will have a variable with image. Now it can only call the "draw" function.
+    // Image field should be in csw class. This way player should have a separate class.
     const promises = [
         loadImage.call(this, "images/csw-mt9bigger2x_0.png", function (image) {
             this.playerImages[3] = image;
@@ -128,7 +134,7 @@ BattleTankGame.deps.BTankManager.prototype.init = function () {
             this.crashImage = image;
         }),
 
-        loadImage.call(this, "images/1920x1080-nebula2_02.gif", function (
+        loadImage.call(this, "images/background.png", function (
             image
         ) {
             this.backgroundImage = image;
@@ -145,7 +151,7 @@ BattleTankGame.deps.BTankManager.prototype.init = function () {
 BattleTankGame.deps.BTankManager.prototype.createCSW = function (
     x,
     y,
-    who,
+    who, // TODO: this field should be in ship class (csw or cswai or obstacle)
     delay,
     typeParam
 ) {
@@ -157,19 +163,29 @@ BattleTankGame.deps.BTankManager.prototype.createCSW = function (
         this.cswArr.push(c1);
         return c1;
     } else if (who === this.CONST.COMPUTER) {
-        setTimeout((function () {
+        // TODO: make delayed parameter as a field in class so BTankManager should decide from this field how to create new instance
+        setTimeout(
+            function () {
+                // this code should be extendable
+                // TODO: implement some pattern to not write thousands if-s
+                if (type === this.CONST.TYPES.SHIP) {
+                    c1 = new this.cswAI(this.CONST, this.bullet);
+                } else if (type === this.CONST.TYPES.OBSTACLE) {
+                    c1 = new this.obstacle(this.CONST, this.bullet);
+                }
 
-            // this code should be extendable
-            // TODO: implement some pattern to not write thousands if-s
-            if (type === this.CONST.TYPES.SHIP) {
-                c1 = new this.cswAI(this.CONST, this.bullet);
-            } else if (type === this.CONST.TYPES.OBSTACLE) {
-                throw new Error("No class for obstacles implemented yet!");
-            }
+                c1.init(x, y, who, this);
+                this.cswArr.push(c1);
+            }.bind(this),
+            delay
+        );
 
+        if (type === this.CONST.TYPES.OBSTACLE) {
+            c1 = new this.obstacle(this.CONST, this.bullet);
             c1.init(x, y, who, this);
-            this.cswArr.push(c1);        
-        }).bind(this), delay);
+            this.cswArr.push(c1);
+        }
+
     }
     // const c1 =
     //     who === this.CONST.USER
@@ -326,6 +342,10 @@ BattleTankGame.deps.BTankManager.prototype.drawcswmt5 = function (x, y, d) {
     this.cpuImages[d].draw(x, y);
 };
 
+BattleTankGame.deps.BTankManager.prototype.drawObstacle = function (x, y) {
+    this.obstacleImage.draw(x, y);
+};
+
 BattleTankGame.deps.BTankManager.prototype.DrawBlack = function (x, y) {
     this.drawContext.clearRect(x, y, 20, 20);
 };
@@ -339,7 +359,7 @@ BattleTankGame.deps.BTankManager.prototype.DrawCrash = function (
     // this.crashImage.draw(x, y, 0, onDelayEnd);
 };
 
-BattleTankGame.deps.BTankManager.prototype.DrawGameField = function () {
+BattleTankGame.deps.BTankManager.prototype.drawGameField = function () {
     this.drawContext.strokeStyle = "#000";
     this.drawContext.strokeRect(
         0,
@@ -357,7 +377,7 @@ BattleTankGame.deps.BTankManager.prototype.showLogo = function () {
     this.infoContext.fillStyle = "lightgreen";
     this.infoContext.strokeStyle = "#F00";
     this.infoContext.font = "30pt Arial";
-    this.infoContext.fillText("Battle Tank!", 0, 30);
+    this.infoContext.fillText("Space Town!", 0, 30);
 };
 
 BattleTankGame.deps.BTankManager.prototype.showNames = function () {
