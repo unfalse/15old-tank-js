@@ -52,7 +52,7 @@ BattleTankGame.deps.csw.prototype.init = function (
     this.crashed = false;
     this.bulletsCount = 0;
     this.bulletsAmountOnFire = this.CONST.MAXBULLETS;
-    this.type = this.CONST.TYPES.SHIP;
+    this.type = this.iam === this.CONST.USER ? this.CONST.TYPES.SHIP : this.type;
 
     this.BTankInst = BTankInst;
 

@@ -124,6 +124,7 @@ BattleTankGame.deps.cswAI_1 = function (CONST, bullet) {
     this.fireLastTime = -1;
     this.newFireTime = -1;
     this.disableAI = false;
+    this.type = CONST.TYPES.SHIP;
 
     // this.update = function (timestamp) { console.log('function was overrided!'); };
     // debugger;
@@ -202,6 +203,7 @@ console.log("obstacle!");
 
 BattleTankGame.deps.obstacle = function (CONST, bullet) {
     BattleTankGame.deps.csw.call(this, CONST, bullet);
+    this.type = CONST.TYPES.OBSTACLE;
     this.baseUpdate = BattleTankGame.deps.csw.prototype.update;
 };
 

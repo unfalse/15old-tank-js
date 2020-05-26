@@ -6,6 +6,7 @@ console.log("main!");
 BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     let mainIntervalId = null;
     let gameOver = false;
+    let win = false;
     let keys = {};
     let timeCount = 0;
 
@@ -33,17 +34,17 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
                 BTank.createCSW(41, 162, CONST.COMPUTER, 0, CONST.TYPES.OBSTACLE);
 
                 BTank.createCSW(500, 300, CONST.COMPUTER, 1000);
-                BTank.createCSW(940, 360, CONST.COMPUTER, 2030);
-                BTank.createCSW(940, 420, CONST.COMPUTER, 3300);
-                BTank.createCSW(940, 480, CONST.COMPUTER, 4444);
-                BTank.createCSW(250, 540, CONST.COMPUTER, 5005);
-                BTank.createCSW(250, 600, CONST.COMPUTER, 6007);
-                BTank.createCSW(250, 460, CONST.COMPUTER, 7008);
-                BTank.createCSW(250, 660, CONST.COMPUTER, 9001);
-                BTank.createCSW(250, 100, CONST.COMPUTER, 11003);
-                BTank.createCSW(250, 220, CONST.COMPUTER, 17009);
-                BTank.createCSW(250, 340, CONST.COMPUTER, 23005);
-                BTank.createCSW(250, 400, CONST.COMPUTER, 41009);
+                // BTank.createCSW(940, 360, CONST.COMPUTER, 2030);
+                // BTank.createCSW(940, 420, CONST.COMPUTER, 3300);
+                // BTank.createCSW(940, 480, CONST.COMPUTER, 4444);
+                // BTank.createCSW(250, 540, CONST.COMPUTER, 5005);
+                // BTank.createCSW(250, 600, CONST.COMPUTER, 6007);
+                // BTank.createCSW(250, 460, CONST.COMPUTER, 7008);
+                // BTank.createCSW(250, 660, CONST.COMPUTER, 9001);
+                // BTank.createCSW(250, 100, CONST.COMPUTER, 11003);
+                // BTank.createCSW(250, 220, CONST.COMPUTER, 17009);
+                // BTank.createCSW(250, 340, CONST.COMPUTER, 23005);
+                // BTank.createCSW(250, 400, CONST.COMPUTER, 41009);
 
                 // BTank.createCSW(250, 460, CONST.COMPUTER, 7);
                 // BTank.createCSW(250, 480, CONST.COMPUTER, 8);
@@ -53,6 +54,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
                 // BTank.createCSW(250, 560, CONST.COMPUTER, 12);
 
                 gameOver = false;
+                win = false;
 
                 document.addEventListener(
                     "keydown",
@@ -87,19 +89,24 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         BTank.displayLifeBar(player1);
         // BTank.displayLifeBar(cpus[0]);
 
-        if (player1.life === 0) {
+        if (player1.life === 0 && !gameOver) {
             gameOver = true;
         }
 
-        // if (cpus[0].life <= 0) {
-        //     Utils.text("YOU WIN");
-        //     stop = true;
+        // if (BTank.cswArr.filter(c => (c.iam === CONST.COMPUTER && c.type === CONST.TYPES.SHIP)).length === 0) {
+        //     win = true;
         // }
 
-        if (gameOver) {
-            Utils.text("GAME OVER");
-            BTank.showGameOver(player1.life);
-            gameOver = false;
+        if (gameOver || win) {
+            if (win) {
+                Utils.text("YOU WIN");
+                BTank.showWin();
+            } else {
+                Utils.text("GAME OVER");
+                BTank.showGameOver();
+            }
+
+            // gameOver = false;
         }
 
         mainIntervalId = window.requestAnimationFrame(

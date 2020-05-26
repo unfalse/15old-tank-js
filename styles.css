@@ -2,11 +2,21 @@ body {
     background-color: black;
 }
 
+#gameOverBlock {
+    position: absolute;
+    display: none;
+    text-transform: uppercase;
+    color: #fff;
+    font-weight: bold;
+    font-family: Comic;
+    font-size: 25pt;
+}
+
 #playAgainBtn {
     width: 100px;
     height: 20px;
     position: absolute;
-    top: 320px;
+    top: 520px;
     display: none;
     background-color: black;
     color: white;
