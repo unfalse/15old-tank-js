@@ -7,7 +7,8 @@ BattleTankGame.deps.utils = new (function () {
         RIGHT: 39,
         DOWN: 40,
         a_KEY: 65,
-        s_KEY: 83
+        s_KEY: 83,
+        F1_KEY: 112
     };
 
     // event.type должен быть keypress
