@@ -12,6 +12,11 @@ BattleTankGame.deps.const = {
         OBSTACLE: 1,
     },
 
+    CELLSIZES: {
+        MAXX: 40,
+        MAXY: 40
+    },
+
     MAXX: 50,
     MAXY: 36,
     BEGX: 20,
@@ -73,6 +78,8 @@ BattleTankGame.deps.BTankManager.prototype.init = function () {
     this.infoContext = gameInfo.getContext("2d");
     this.againBtn = document.querySelector("#playAgainBtn");
     this.gameOverBlock = document.querySelector("#gameOverBlock");
+    this.gameFieldBlock = gameField;
+    this.editorUnits = [];
 
     this.playerImages = {};
     this.cpuImages = {};
@@ -188,6 +195,20 @@ BattleTankGame.deps.BTankManager.prototype.createCSW = function (
     //         ? new this.csw(this.CONST, this.bullet)
     //         : new this.cswAI(this.CONST, this.bullet);
 };
+
+BattleTankGame.deps.BTankManager.prototype.createEditorUnit = function(
+    x,
+    y,
+    type
+) {
+    let newUnit = null;
+    const who = this.CONST.COMPUTER;
+    if (type === this.CONST.TYPES.OBSTACLE) {
+        newUnit = new this.obstacle(this.CONST, this.bullet);
+        newUnit.init(x, y, who, this);
+        this.editorUnits.push(newUnit);
+    }
+}
 
 // x, y - coordinates of pixels, not cells
 BattleTankGame.deps.BTankManager.prototype.checkCSWWithPixelPrecision = function (
@@ -360,7 +381,7 @@ BattleTankGame.deps.BTankManager.prototype.drawGameField = function () {
     this.drawContext.strokeRect(
         0,
         0,
-        this.CONST.MAXX * 20,
+        this.CONST.MAXX * 20, // TODO: use CONST.CELLSIZES.MAXX instead of magic number!
         this.CONST.MAXY * 20
     );
 };
@@ -382,10 +403,10 @@ BattleTankGame.deps.BTankManager.prototype.showNames = function () {
     this.infoContext.font = "20pt Arial";
     this.infoContext.fillText("p1 life:", 0, 60);
 
-    this.infoContext.fillStyle = "gray";
-    this.infoContext.strokeStyle = "#F00";
-    this.infoContext.font = "20pt Arial";
-    this.infoContext.fillText("cpu life:", 0, 90);
+    // this.infoContext.fillStyle = "gray";
+    // this.infoContext.strokeStyle = "#F00";
+    // this.infoContext.font = "20pt Arial";
+    // this.infoContext.fillText("cpu life:", 0, 90);
 };
 
 BattleTankGame.deps.BTankManager.prototype.showGameOver = function () {
