@@ -140,7 +140,8 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
             const x = event.offsetX, y = event.offsetY;
             const cellx = Math.floor(x/40);
             const celly = Math.floor(y/40);
-            BTank.createEditorUnit(cellx*40, celly*40, CONST.TYPES.OBSTACLE);
+            // BTank.createEditorUnit(cellx*40, celly*40, CONST.TYPES.OBSTACLE);
+            BTank.createEditorUnit(cellx*40, celly*40, CONST.TYPES.SHIP);
         }
     }
 
@@ -151,8 +152,13 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
 
         if (kc === Utils.KEY_CODE.F1_KEY) {
             console.log('f1 !');
-            editor = !editor;
+            this.toggleEditor();
         }
+    };
+
+    this.toggleEditor = function () {
+        editor = !editor;
+        BTank.toggleEditorControls(editor);
     };
 
     // ----------- END -----------

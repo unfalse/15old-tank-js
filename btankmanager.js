@@ -14,7 +14,7 @@ BattleTankGame.deps.const = {
 
     CELLSIZES: {
         MAXX: 40,
-        MAXY: 40
+        MAXY: 40,
     },
 
     MAXX: 50,
@@ -72,15 +72,22 @@ BattleTankGame.deps.BTankManager.prototype.init = function () {
     gameField.height = this.CONST.MAXY * 20;
     gameField.width = this.CONST.MAXX * 20;
 
-    const gameInfo = document.getElementById("gameInfo");
-
-    this.drawContext = gameField.getContext("2d");
-    this.infoContext = gameInfo.getContext("2d");
+    // TODO: create new ui class and move these things to it
+    this.gameInfo = document.getElementById("gameInfo");
     this.againBtn = document.querySelector("#playAgainBtn");
     this.gameOverBlock = document.querySelector("#gameOverBlock");
+    this.titleBlock = document.querySelector("#titleBlock");
+    this.editorBlock = document.querySelector('#editorBlock');
+    this.editorCurrentObject = document.querySelector('#editorCurrentObject');
     this.gameFieldBlock = gameField;
-    this.editorUnits = [];
 
+    this.drawContext = gameField.getContext("2d");
+    this.infoContext = this.gameInfo.getContext("2d");
+
+    // TODO: make separate editor class?
+    // current object chosen to place on the map
+    this.editorCurrentObjectBrush = this.CONST.TYPES.OBSTACLE;
+    this.editorUnits = [];
     this.playerImages = {};
     this.cpuImages = {};
     this.crashImage = null;
@@ -178,7 +185,7 @@ BattleTankGame.deps.BTankManager.prototype.createCSW = function (
                 if (type === this.CONST.TYPES.SHIP) {
                     c1 = new this.cswAI(this.CONST, this.bullet);
                     c1.init(x, y, who, this);
-                    this.cswArr.push(c1);    
+                    this.cswArr.push(c1);
                 }
             }.bind(this),
             delay
@@ -196,7 +203,7 @@ BattleTankGame.deps.BTankManager.prototype.createCSW = function (
     //         : new this.cswAI(this.CONST, this.bullet);
 };
 
-BattleTankGame.deps.BTankManager.prototype.createEditorUnit = function(
+BattleTankGame.deps.BTankManager.prototype.createEditorUnit = function (
     x,
     y,
     type
@@ -208,7 +215,12 @@ BattleTankGame.deps.BTankManager.prototype.createEditorUnit = function(
         newUnit.init(x, y, who, this);
         this.editorUnits.push(newUnit);
     }
-}
+    if (type === this.CONST.TYPES.SHIP) {
+        newUnit = new this.cswAI(this.CONST, this.bullet);
+        newUnit.init(x, y, who, this);
+        this.editorUnits.push(newUnit);
+    }
+};
 
 // x, y - coordinates of pixels, not cells
 BattleTankGame.deps.BTankManager.prototype.checkCSWWithPixelPrecision = function (
@@ -389,6 +401,23 @@ BattleTankGame.deps.BTankManager.prototype.drawGameField = function () {
 BattleTankGame.deps.BTankManager.prototype.drawBackground = function () {
     this.backgroundImage.draw(0, 0);
 };
+
+BattleTankGame.deps.BTankManager.prototype.toggleEditorControls = function (editorEnabled) {
+    if (editorEnabled) {
+        this.gameInfo.style.display = 'none';
+
+        this.editorBlock.style.display = 'flex';
+        this.editorBlock.style.justifyContent = 'center';
+
+        this.editorCurrentObject.style.backgroundImage= "url('images/obstacle1bigger.png')";
+        this.editorCurrentObject.style.width = '40px';
+        this.editorCurrentObject.style.height= '40px';
+    } else {
+        this.gameInfo.style.display = '';
+        this.gameInfo.style.textAlign = 'center';
+        this.editorBlock.style.display = 'none';
+    }
+}
 
 BattleTankGame.deps.BTankManager.prototype.showLogo = function () {
     this.infoContext.fillStyle = "lightgreen";
