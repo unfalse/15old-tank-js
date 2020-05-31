@@ -2,6 +2,10 @@ body {
     background-color: black;
 }
 
+#titleBlock {
+    text-align: center;
+}
+
 #gameOverBlock {
     position: absolute;
     display: none;
@@ -21,4 +25,14 @@ body {
     background-color: black;
     color: white;
     border: 1px solid green;
+}
+
+#editorBlock {
+    display: none;
+    text-align: center;
+}
+
+#editorCurrentBlock {
+    width: 40px;
+    height: 40px;
 }
