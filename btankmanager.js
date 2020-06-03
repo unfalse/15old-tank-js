@@ -8,6 +8,7 @@ BattleTankGame.deps.const = {
     COMPUTER: 0,
     USER: 1,
     TYPES: {
+        ERASER: -1,
         SHIP: 0,
         OBSTACLE: 1,
     },
@@ -44,6 +45,7 @@ BattleTankGame.deps.BTankManager = function (
     csw,
     cswAI,
     obstacle,
+    staticShip,
     bullet,
     images
 ) {
@@ -62,6 +64,7 @@ BattleTankGame.deps.BTankManager = function (
     this.csw = csw;
     this.cswAI = cswAI;
     this.obstacle = obstacle;
+    this.staticShip = staticShip;
     this.bullet = bullet;
     this.images = images;
     this.baseCoords = new BattleTankGame.deps.baseCoordinates();
@@ -77,8 +80,9 @@ BattleTankGame.deps.BTankManager.prototype.init = function () {
     this.againBtn = document.querySelector("#playAgainBtn");
     this.gameOverBlock = document.querySelector("#gameOverBlock");
     this.titleBlock = document.querySelector("#titleBlock");
-    this.editorBlock = document.querySelector('#editorBlock');
-    this.editorCurrentObject = document.querySelector('#editorCurrentObject');
+    this.editorBlock = document.querySelector("#editorBlock");
+    this.editorCurrentObject = document.querySelector("#editorCurrentObject");
+    this.editorPlayBtn = document.querySelector("#editorPlayBtn");
     this.gameFieldBlock = gameField;
 
     this.drawContext = gameField.getContext("2d");
@@ -86,7 +90,11 @@ BattleTankGame.deps.BTankManager.prototype.init = function () {
 
     // TODO: make separate editor class?
     // current object chosen to place on the map
-    this.editorCurrentObjectBrush = this.CONST.TYPES.OBSTACLE;
+    this.editorCurrentObjectBrush = {
+        type: this.CONST.TYPES.OBSTACLE,
+        imageUrl: "url('images/obstacle1bigger.png')",
+    };
+    this.editorMode = false;
     this.editorUnits = [];
     this.playerImages = {};
     this.cpuImages = {};
@@ -106,6 +114,8 @@ BattleTankGame.deps.BTankManager.prototype.init = function () {
             }.bind(this)
         );
     };
+
+    this.editorPlayBtn.addEventListener("click", this.playTheEditorLevel.bind(this));
 
     // TODO: it should be a function which will preload images.
     // First it should collect paths to images from classes (csw, cswai, obstacle, etc.)
@@ -160,6 +170,21 @@ BattleTankGame.deps.BTankManager.prototype.init = function () {
     ];
     return Promise.all(promises);
 };
+
+BattleTankGame.deps.BTankManager.prototype.playTheEditorLevel = function() {
+    this.destroyAll();
+
+    this.editorUnits.forEach(function(unit) {
+        if (unit.type === this.CONST.TYPES.SHIP) {
+            this.createCSW(unit.x, unit.y, this.CONST.COMPUTER, 0);
+        }
+        if (unit.type === this.CONST.TYPES.OBSTACLE) {
+            this.createCSW(unit.x, unit.y, this.CONST.COMPUTER, 0, this.CONST.TYPES.OBSTACLE);
+        }
+    }, this);
+
+    this.toggleEditorControls();
+}
 
 // TODO: is it good that BTankManager knows which fields CSW class contains ?
 BattleTankGame.deps.BTankManager.prototype.createCSW = function (
@@ -216,10 +241,19 @@ BattleTankGame.deps.BTankManager.prototype.createEditorUnit = function (
         this.editorUnits.push(newUnit);
     }
     if (type === this.CONST.TYPES.SHIP) {
-        newUnit = new this.cswAI(this.CONST, this.bullet);
+        newUnit = new this.staticShip(this.CONST, this.bullet);
         newUnit.init(x, y, who, this);
         this.editorUnits.push(newUnit);
     }
+};
+
+BattleTankGame.deps.BTankManager.prototype.removeEditorObjectAt = function (
+    x,
+    y
+) {
+    this.editorUnits = this.editorUnits.filter(function (unit) {
+        return !((unit.x === x) && (unit.y === y));
+    });
 };
 
 // x, y - coordinates of pixels, not cells
@@ -246,12 +280,18 @@ BattleTankGame.deps.BTankManager.prototype.checkCSWWithPixelPrecision = function
 
 BattleTankGame.deps.BTankManager.prototype.getShipDimensions = function (
     direction,
-    iam
+    iam,
+    type
 ) {
     const image =
         iam === this.CONST.COMPUTER
             ? this.cpuImages[direction].image
             : this.playerImages[direction].image;
+    // TODO: remove this little hack
+    if (type === this.CONST.TYPES.OBSTACLE) {
+        image.width = 30;
+        image.height = 30;
+    }
     return {
         width: image.width,
         height: image.height,
@@ -375,6 +415,10 @@ BattleTankGame.deps.BTankManager.prototype.drawObstacle = function (x, y) {
     this.obstacleImage.draw(x, y);
 };
 
+BattleTankGame.deps.BTankManager.prototype.drawStaticShip = function (x, y) {
+    this.cpuImages[0].draw(x, y);
+};
+
 BattleTankGame.deps.BTankManager.prototype.DrawBlack = function (x, y) {
     this.drawContext.clearRect(x, y, 20, 20);
 };
@@ -402,22 +446,54 @@ BattleTankGame.deps.BTankManager.prototype.drawBackground = function () {
     this.backgroundImage.draw(0, 0);
 };
 
-BattleTankGame.deps.BTankManager.prototype.toggleEditorControls = function (editorEnabled) {
-    if (editorEnabled) {
-        this.gameInfo.style.display = 'none';
-
-        this.editorBlock.style.display = 'flex';
-        this.editorBlock.style.justifyContent = 'center';
-
-        this.editorCurrentObject.style.backgroundImage= "url('images/obstacle1bigger.png')";
-        this.editorCurrentObject.style.width = '40px';
-        this.editorCurrentObject.style.height= '40px';
-    } else {
-        this.gameInfo.style.display = '';
-        this.gameInfo.style.textAlign = 'center';
-        this.editorBlock.style.display = 'none';
+BattleTankGame.deps.BTankManager.prototype.setCurrentEditorBrushObject = function (
+    brushObjectType
+) {
+    switch (brushObjectType) {
+        case this.CONST.TYPES.SHIP: {
+            this.editorCurrentObjectBrush = {
+                type: brushObjectType,
+                imageUrl: "url('images/csw-mt5bigger2x_0.png')",
+            };
+            break;
+        }
+        case this.CONST.TYPES.OBSTACLE: {
+            this.editorCurrentObjectBrush = {
+                type: brushObjectType,
+                imageUrl: "url('images/obstacle1bigger.png')",
+            };
+            break;
+        }
+        case this.CONST.TYPES.ERASER: {
+            this.editorCurrentObjectBrush = {
+                type: brushObjectType,
+                imageUrl: "",
+            };
+            break;
+        }
+        default:
+            break;
     }
-}
+    this.editorCurrentObject.style.backgroundImage = this.editorCurrentObjectBrush.imageUrl;
+};
+
+BattleTankGame.deps.BTankManager.prototype.toggleEditorControls = function () {
+    this.editorMode = !this.editorMode;
+    if (this.editorMode) {
+        this.gameInfo.style.display = "none";
+
+        this.editorBlock.style.display = "flex";
+        this.editorBlock.style.justifyContent = "center";
+
+        this.editorCurrentObject.style.backgroundImage = this.editorCurrentObjectBrush.imageUrl;
+        this.editorCurrentObject.style.width = "40px";
+        this.editorCurrentObject.style.height = "40px";
+    } else {
+        this.gameInfo.style.display = "";
+        this.gameInfo.style.textAlign = "center";
+        this.editorBlock.style.display = "none";
+    }
+};
 
 BattleTankGame.deps.BTankManager.prototype.showLogo = function () {
     this.infoContext.fillStyle = "lightgreen";

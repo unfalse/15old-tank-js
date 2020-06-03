@@ -217,3 +217,24 @@ BattleTankGame.deps.obstacle.prototype.constructor =
 BattleTankGame.deps.obstacle.prototype.draw = function(){
     this.BTankInst.drawObstacle(this.x, this.y);
 }
+
+////////////////////////////////////////////////////////// static ship
+
+console.log("static ship!");
+
+BattleTankGame.deps.staticShip = function (CONST, bullet) {
+    BattleTankGame.deps.csw.call(this, CONST, bullet);
+    this.type = CONST.TYPES.SHIP;
+    this.baseUpdate = BattleTankGame.deps.csw.prototype.update;
+};
+
+BattleTankGame.deps.staticShip.prototype = Object.create(
+    BattleTankGame.deps.csw.prototype
+);
+
+BattleTankGame.deps.staticShip.prototype.constructor =
+    BattleTankGame.deps.staticShip;
+
+BattleTankGame.deps.staticShip.prototype.draw = function(){
+    this.BTankInst.drawStaticShip(this.x, this.y);
+}

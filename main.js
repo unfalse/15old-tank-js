@@ -9,7 +9,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     let win = false;
     let keys = {};
     let timeCount = 0;
-    let editor = false;
+    // let editor = false;
 
     const controlsMap = {
         [Utils.KEY_CODE.UP]: 3,
@@ -30,29 +30,47 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
 
                 player1 = BTank.createCSW(0, 0, CONST.USER);
 
-                BTank.createCSW(41, 41, CONST.COMPUTER, 0, CONST.TYPES.OBSTACLE);
-                BTank.createCSW(41, 81, CONST.COMPUTER, 0, CONST.TYPES.OBSTACLE);
-                BTank.createCSW(41, 162, CONST.COMPUTER, 0, CONST.TYPES.OBSTACLE);
+                // BTank.createCSW(
+                //     41,
+                //     41,
+                //     CONST.COMPUTER,
+                //     0,
+                //     CONST.TYPES.OBSTACLE
+                // );
+                // BTank.createCSW(
+                //     41,
+                //     81,
+                //     CONST.COMPUTER,
+                //     0,
+                //     CONST.TYPES.OBSTACLE
+                // );
+                // BTank.createCSW(
+                //     41,
+                //     162,
+                //     CONST.COMPUTER,
+                //     0,
+                //     CONST.TYPES.OBSTACLE
+                // );
 
-                BTank.createCSW(500, 300, CONST.COMPUTER, 1000);
-                BTank.createCSW(940, 360, CONST.COMPUTER, 2030);
-                BTank.createCSW(940, 420, CONST.COMPUTER, 3300);
-                BTank.createCSW(940, 480, CONST.COMPUTER, 4444);
-                BTank.createCSW(250, 540, CONST.COMPUTER, 5005);
-                BTank.createCSW(250, 600, CONST.COMPUTER, 6007);
-                BTank.createCSW(250, 460, CONST.COMPUTER, 7008);
-                BTank.createCSW(250, 660, CONST.COMPUTER, 9001);
-                BTank.createCSW(250, 100, CONST.COMPUTER, 11003);
-                BTank.createCSW(250, 220, CONST.COMPUTER, 17009);
-                BTank.createCSW(250, 340, CONST.COMPUTER, 23005);
-                BTank.createCSW(250, 400, CONST.COMPUTER, 41009);
+                // BTank.createCSW(500, 300, CONST.COMPUTER, 1000);
+                // BTank.createCSW(940, 360, CONST.COMPUTER, 2030);
+                // BTank.createCSW(940, 420, CONST.COMPUTER, 3300);
+                // BTank.createCSW(940, 480, CONST.COMPUTER, 4444);
+                // BTank.createCSW(250, 540, CONST.COMPUTER, 5005);
+                // BTank.createCSW(250, 600, CONST.COMPUTER, 6007);
+                // BTank.createCSW(250, 460, CONST.COMPUTER, 7008);
+                // BTank.createCSW(250, 660, CONST.COMPUTER, 9001);
+                // BTank.createCSW(250, 100, CONST.COMPUTER, 11003);
+                // BTank.createCSW(250, 220, CONST.COMPUTER, 17009);
+                // BTank.createCSW(250, 340, CONST.COMPUTER, 23005);
+                // BTank.createCSW(250, 400, CONST.COMPUTER, 41009);
 
-                BTank.createCSW(250, 460, CONST.COMPUTER, 7);
-                BTank.createCSW(250, 480, CONST.COMPUTER, 8);
-                BTank.createCSW(250, 500, CONST.COMPUTER, 9);
-                BTank.createCSW(250, 520, CONST.COMPUTER, 10);
-                BTank.createCSW(250, 540, CONST.COMPUTER, 11);
-                BTank.createCSW(250, 560, CONST.COMPUTER, 12);
+                // BTank.createCSW(250, 460, CONST.COMPUTER, 7);
+                // BTank.createCSW(250, 480, CONST.COMPUTER, 8);
+                // BTank.createCSW(250, 500, CONST.COMPUTER, 9);
+                // BTank.createCSW(250, 520, CONST.COMPUTER, 10);
+                // BTank.createCSW(250, 540, CONST.COMPUTER, 11);
+                // BTank.createCSW(250, 560, CONST.COMPUTER, 12);
 
                 // for (let i = 0; i < 100; i++) {
                 //     BTank.createCSW(940, 480, CONST.COMPUTER, 0);
@@ -67,8 +85,14 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
                 );
                 document.addEventListener("keyup", this.keysHandler.bind(this));
                 // BTank.gameFieldBlock.addEventListener("click", this.editorOnClickHandler.bind(this));
-                BTank.gameFieldBlock.addEventListener("mousedown", this.editorMouseDownHandler.bind(this));
-                BTank.gameFieldBlock.addEventListener("mousemove", this.editorMouseDownHandler.bind(this));
+                BTank.gameFieldBlock.addEventListener(
+                    "mousedown",
+                    this.editorMouseDownHandler.bind(this)
+                );
+                BTank.gameFieldBlock.addEventListener(
+                    "mousemove",
+                    this.editorMouseDownHandler.bind(this)
+                );
 
                 mainIntervalId = window.requestAnimationFrame(
                     this.mainCycle.bind(this)
@@ -81,7 +105,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         // console.log(timestamp);
         BTank.drawBackground();
 
-        if (editor) {
+        if (BTank.editorMode) {
             this.editorCycle(timestamp);
         } else {
             this.gameCycle(timestamp);
@@ -92,13 +116,13 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         );
     };
 
-    this.editorCycle = function(timestamp) {
+    this.editorCycle = function (timestamp) {
         BTank.editorUnits.forEach(function (unit) {
             unit.update(timestamp);
         });
-    }
+    };
 
-    this.gameCycle = function(timestamp) {
+    this.gameCycle = function (timestamp) {
         if (player1.life > 0) {
             this.detectMovement(timestamp);
             player1.update();
@@ -125,25 +149,23 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
 
             gameOver = true;
         }
-    }
+    };
 
-    this.editorOnClickHandler = function(event) {
-        const x = event.offsetX, y = event.offsetY;
-        const cellx = Math.floor(x/40);
-        const celly = Math.floor(y/40);
-        BTank.createEditorUnit(cellx*40, celly*40, CONST.TYPES.OBSTACLE);
-    }
-
-    this.editorMouseDownHandler = function(event) {
+    this.editorMouseDownHandler = function (event) {
         // console.log(event);
         if (event.buttons === 1) {
-            const x = event.offsetX, y = event.offsetY;
-            const cellx = Math.floor(x/40);
-            const celly = Math.floor(y/40);
-            // BTank.createEditorUnit(cellx*40, celly*40, CONST.TYPES.OBSTACLE);
-            BTank.createEditorUnit(cellx*40, celly*40, CONST.TYPES.SHIP);
+            const x = event.offsetX,
+                y = event.offsetY;
+            const cellx = Math.floor(x / 40)*40;
+            const celly = Math.floor(y / 40)*40;
+            if (BTank.editorCurrentObjectBrush.type !== CONST.TYPES.ERASER) {
+                BTank.createEditorUnit(cellx, celly, BTank.editorCurrentObjectBrush.type);
+            } else {
+                console.log([cellx, celly])
+                BTank.removeEditorObjectAt(cellx, celly);
+            }
         }
-    }
+    };
 
     this.keyUpHandler = function (kc) {
         // TODO: keysUp array for keys that are up to know which direction isn't getting acceleration
@@ -151,14 +173,13 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         timeCount = 0;
 
         if (kc === Utils.KEY_CODE.F1_KEY) {
-            console.log('f1 !');
+            console.log("f1 !");
             this.toggleEditor();
         }
     };
 
     this.toggleEditor = function () {
-        editor = !editor;
-        BTank.toggleEditorControls(editor);
+        BTank.toggleEditorControls();
     };
 
     // ----------- END -----------
@@ -171,8 +192,22 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         }
         const kc = event.keyCode || event.which;
         keys[kc] = event.type == "keydown";
+        console.log(kc);
         if (event.type === "keyup") {
             this.keyUpHandler(kc);
+        }
+        this.editorKeys(kc);
+    };
+
+    this.editorKeys = function (kc) {
+        if (BTank.editorMode && kc === Utils.KEY_CODE.N1_KEY) {
+            BTank.setCurrentEditorBrushObject(CONST.TYPES.OBSTACLE);
+        }
+        if (BTank.editorMode && kc === Utils.KEY_CODE.N2_KEY) {
+            BTank.setCurrentEditorBrushObject(CONST.TYPES.SHIP);
+        }
+        if (BTank.editorMode && kc === Utils.KEY_CODE.N3_KEY) {
+            BTank.setCurrentEditorBrushObject(CONST.TYPES.ERASER);
         }
     };
 
@@ -228,6 +263,7 @@ BattleTankGame.gameInstance = new BattleTankGame.deps.game(
         // BattleTankGame.deps.cswAI_0,
         BattleTankGame.deps.cswAI_1,
         BattleTankGame.deps.obstacle,
+        BattleTankGame.deps.staticShip,
         BattleTankGame.deps.bulletPixel,
         BattleTankGame.deps.images
     ),

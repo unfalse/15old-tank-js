@@ -63,10 +63,10 @@ BattleTankGame.deps.csw.prototype.init = function (
     }
 
     this.dimensions = {
-        0: BTankInst.getShipDimensions(0, who),
-        1: BTankInst.getShipDimensions(1, who),
-        2: BTankInst.getShipDimensions(2, who),
-        3: BTankInst.getShipDimensions(3, who)
+        0: BTankInst.getShipDimensions(0, who, this.type),
+        1: BTankInst.getShipDimensions(1, who, this.type),
+        2: BTankInst.getShipDimensions(2, who, this.type),
+        3: BTankInst.getShipDimensions(3, who, this.type)
     };
 };
 
@@ -151,8 +151,6 @@ BattleTankGame.deps.csw.prototype.updateBullets = function () {
         }
     });
 };
-
-
 
 // TODO: maybe move acceleration, direction and inertia control functions into the separate class
 BattleTankGame.deps.csw.prototype.setDirectionAndAddAccel = function (d, accel) {
