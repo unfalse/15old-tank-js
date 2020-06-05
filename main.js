@@ -19,6 +19,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         [Utils.KEY_CODE.a_KEY]: 4,
     };
 
+    // TODO: move player1 into BTankManager
     let player1 = null;
     //let cpus = [];
 
@@ -153,7 +154,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
 
     this.editorMouseDownHandler = function (event) {
         // console.log(event);
-        if (event.buttons === 1) {
+        if (BTank.editorMode && event.buttons === 1) {
             const x = event.offsetX,
                 y = event.offsetY;
             const cellx = Math.floor(x / 40)*40;
@@ -161,7 +162,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
             if (BTank.editorCurrentObjectBrush.type !== CONST.TYPES.ERASER) {
                 BTank.createEditorUnit(cellx, celly, BTank.editorCurrentObjectBrush.type);
             } else {
-                console.log([cellx, celly])
+                // console.log([cellx, celly])
                 BTank.removeEditorObjectAt(cellx, celly);
             }
         }
@@ -173,7 +174,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         timeCount = 0;
 
         if (kc === Utils.KEY_CODE.F1_KEY) {
-            console.log("f1 !");
+            // console.log("f1 !");
             this.toggleEditor();
         }
     };
@@ -192,7 +193,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         }
         const kc = event.keyCode || event.which;
         keys[kc] = event.type == "keydown";
-        console.log(kc);
+        // console.log(kc);
         if (event.type === "keyup") {
             this.keyUpHandler(kc);
         }
