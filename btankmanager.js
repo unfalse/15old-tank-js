@@ -40,521 +40,518 @@ BattleTankGame.deps.const = {
 // -------------------------------------
 
 // Tanks manager and draw manager
-BattleTankGame.deps.BTankManager = function (
-    CONST,
-    csw,
-    cswAI,
-    obstacle,
-    staticShip,
-    bullet,
-    images
-) {
-    // TODO: dependencies in parameters are completely redundant! (CONST, csw, bullet, images)
-    // TODO: write the full paths to classes
-    this.cswArr = [];
-    this.drawContext = null;
-    this.infoContext = null;
-    this.againBtn = null;
-    this.gameOverBlock = null;
-    this.playerImage = null;
-    this.crashImage = null;
-    this.backgroundImage = null;
+// BattleTankGame.deps.BTankManager = function (
+BattleTankGame.deps.BTankManager = class {
+    constructor(CONST, csw, cswAI, obstacle, staticShip, bullet, images) {
+        // TODO: dependencies in parameters are completely redundant! (CONST, csw, bullet, images)
+        // TODO: write the full paths to classes
+        this.cswArr = [];
+        this.drawContext = null;
+        this.infoContext = null;
+        this.againBtn = null;
+        this.gameOverBlock = null;
+        this.playerImage = null;
+        this.crashImage = null;
+        this.backgroundImage = null;
 
-    this.CONST = CONST;
-    this.csw = csw;
-    this.cswAI = cswAI;
-    this.obstacle = obstacle;
-    this.staticShip = staticShip;
-    this.bullet = bullet;
-    this.images = images;
-    this.baseCoords = new BattleTankGame.deps.baseCoordinates();
-};
+        this.CONST = CONST;
+        this.csw = csw;
+        this.cswAI = cswAI;
+        this.obstacle = obstacle;
+        this.staticShip = staticShip;
+        this.bullet = bullet;
+        this.images = images;
+        this.baseCoords = new BattleTankGame.deps.baseCoordinates();
+    }
 
-BattleTankGame.deps.BTankManager.prototype.init = function () {
-    const gameField = document.getElementById("gameField");
-    gameField.height = this.CONST.MAXY * 20;
-    gameField.width = this.CONST.MAXX * 20;
+    init() {
+        const gameField = document.getElementById("gameField");
+        gameField.height = this.CONST.MAXY * 20;
+        gameField.width = this.CONST.MAXX * 20;
 
-    // TODO: create new ui class and move these things to it
-    this.gameInfo = document.getElementById("gameInfo");
-    this.againBtn = document.querySelector("#playAgainBtn");
-    this.gameOverBlock = document.querySelector("#gameOverBlock");
-    this.titleBlock = document.querySelector("#titleBlock");
-    this.editorBlock = document.querySelector("#editorBlock");
-    this.editorCurrentObject = document.querySelector("#editorCurrentObject");
-    this.editorPlayBtn = document.querySelector("#editorPlayBtn");
-    this.gameFieldBlock = gameField;
+        // TODO: create new ui class and move these things to it
+        this.gameInfo = document.getElementById("gameInfo");
+        this.againBtn = document.querySelector("#playAgainBtn");
+        this.gameOverBlock = document.querySelector("#gameOverBlock");
+        this.titleBlock = document.querySelector("#titleBlock");
+        this.editorBlock = document.querySelector("#editorBlock");
+        this.editorCurrentObject = document.querySelector(
+            "#editorCurrentObject"
+        );
+        this.editorPlayBtn = document.querySelector("#editorPlayBtn");
+        this.gameFieldBlock = gameField;
 
-    this.drawContext = gameField.getContext("2d");
-    this.infoContext = this.gameInfo.getContext("2d");
+        this.drawContext = gameField.getContext("2d");
+        this.infoContext = this.gameInfo.getContext("2d");
 
-    // TODO: make separate editor class?
-    // current object chosen to place on the map
-    this.editorCurrentObjectBrush = {
-        type: this.CONST.TYPES.OBSTACLE,
-        imageUrl: "url('images/obstacle1bigger.png')",
-    };
-    this.editorMode = false;
-    this.editorUnits = [];
-    this.playerImages = {};
-    this.cpuImages = {};
-    this.crashImage = null;
-    this.backgroundImage = null;
-    this.obstacleImage = null;
+        // TODO: make separate editor class?
+        // current object chosen to place on the map
+        this.editorCurrentObjectBrush = {
+            type: this.CONST.TYPES.OBSTACLE,
+            imageUrl: "url('images/obstacle1bigger.png')",
+        };
+        this.editorMode = false;
+        this.editorUnits = [];
+        this.playerImages = {};
+        this.cpuImages = {};
+        this.crashImage = null;
+        this.backgroundImage = null;
+        this.obstacleImage = null;
 
-    const loadImage = function (imagePath, onLoad) {
-        return new Promise(
-            function (resolve) {
-                onLoad.call(
-                    this,
-                    new this.images(this, imagePath, function () {
-                        resolve();
-                    })
+        const loadImage = function (imagePath, onLoad) {
+            return new Promise(
+                function (resolve) {
+                    onLoad.call(
+                        this,
+                        new this.images(this, imagePath, function () {
+                            resolve();
+                        })
+                    );
+                }.bind(this)
+            );
+        };
+
+        this.editorPlayBtn.addEventListener(
+            "click",
+            this.playTheEditorLevel.bind(this)
+        );
+
+        // TODO: it should be a function which will preload images.
+        // First it should collect paths to images from classes (csw, cswai, obstacle, etc.)
+        // Every class will have a variable with image. Now it can only call the "draw" function.
+        // Image field should be in csw class. This way player should have a separate class.
+        const promises = [
+            loadImage.call(this, "images/csw-mt9bigger2x_0.png", function (
+                image
+            ) {
+                this.playerImages[3] = image;
+            }),
+            loadImage.call(this, "images/csw-mt9bigger2x_90.png", function (
+                image
+            ) {
+                this.playerImages[0] = image;
+            }),
+            loadImage.call(this, "images/csw-mt9bigger2x_180.png", function (
+                image
+            ) {
+                this.playerImages[1] = image;
+            }),
+            loadImage.call(this, "images/csw-mt9bigger2x_270.png", function (
+                image
+            ) {
+                this.playerImages[2] = image;
+            }),
+
+            loadImage.call(this, "images/csw-mt5bigger2x_0.png", function (
+                image
+            ) {
+                this.cpuImages[3] = image;
+            }),
+            loadImage.call(this, "images/csw-mt5bigger2x_90.png", function (
+                image
+            ) {
+                this.cpuImages[0] = image;
+            }),
+            loadImage.call(this, "images/csw-mt5bigger2x_180.png", function (
+                image
+            ) {
+                this.cpuImages[1] = image;
+            }),
+            loadImage.call(this, "images/csw-mt5bigger2x_270.png", function (
+                image
+            ) {
+                this.cpuImages[2] = image;
+            }),
+
+            loadImage.call(this, "images/crash.png", function (image) {
+                this.crashImage = image;
+            }),
+
+            loadImage.call(this, "images/background.png", function (image) {
+                this.backgroundImage = image;
+            }),
+
+            loadImage.call(this, "images/obstacle1bigger.png", function (
+                image
+            ) {
+                this.obstacleImage = image;
+            }),
+        ];
+        return Promise.all(promises);
+    }
+
+    playTheEditorLevel() {
+        const player = this.cswArr[0];
+        this.destroyAll();
+
+        // TODO: add player1 to the empty array
+        this.cswArr.push(player);
+        this.editorUnits.forEach(function (unit) {
+            if (unit.type === this.CONST.TYPES.SHIP) {
+                this.createCSW(unit.x, unit.y, this.CONST.COMPUTER, 0);
+            }
+            if (unit.type === this.CONST.TYPES.OBSTACLE) {
+                this.createCSW(
+                    unit.x,
+                    unit.y,
+                    this.CONST.COMPUTER,
+                    0,
+                    this.CONST.TYPES.OBSTACLE
                 );
-            }.bind(this)
-        );
-    };
+            }
+        }, this);
 
-    this.editorPlayBtn.addEventListener("click", this.playTheEditorLevel.bind(this));
+        this.toggleEditorControls();
+    }
 
-    // TODO: it should be a function which will preload images.
-    // First it should collect paths to images from classes (csw, cswai, obstacle, etc.)
-    // Every class will have a variable with image. Now it can only call the "draw" function.
-    // Image field should be in csw class. This way player should have a separate class.
-    const promises = [
-        loadImage.call(this, "images/csw-mt9bigger2x_0.png", function (image) {
-            this.playerImages[3] = image;
-        }),
-        loadImage.call(this, "images/csw-mt9bigger2x_90.png", function (image) {
-            this.playerImages[0] = image;
-        }),
-        loadImage.call(this, "images/csw-mt9bigger2x_180.png", function (
-            image
-        ) {
-            this.playerImages[1] = image;
-        }),
-        loadImage.call(this, "images/csw-mt9bigger2x_270.png", function (
-            image
-        ) {
-            this.playerImages[2] = image;
-        }),
-
-        loadImage.call(this, "images/csw-mt5bigger2x_0.png", function (image) {
-            this.cpuImages[3] = image;
-        }),
-        loadImage.call(this, "images/csw-mt5bigger2x_90.png", function (image) {
-            this.cpuImages[0] = image;
-        }),
-        loadImage.call(this, "images/csw-mt5bigger2x_180.png", function (
-            image
-        ) {
-            this.cpuImages[1] = image;
-        }),
-        loadImage.call(this, "images/csw-mt5bigger2x_270.png", function (
-            image
-        ) {
-            this.cpuImages[2] = image;
-        }),
-
-        loadImage.call(this, "images/crash.png", function (image) {
-            this.crashImage = image;
-        }),
-
-        loadImage.call(this, "images/background.png", function (image) {
-            this.backgroundImage = image;
-        }),
-
-        loadImage.call(this, "images/obstacle1bigger.png", function (image) {
-            this.obstacleImage = image;
-        }),
-    ];
-    return Promise.all(promises);
-};
-
-BattleTankGame.deps.BTankManager.prototype.playTheEditorLevel = function() {
-    this.destroyAll();
-
-    this.editorUnits.forEach(function(unit) {
-        if (unit.type === this.CONST.TYPES.SHIP) {
-            this.createCSW(unit.x, unit.y, this.CONST.COMPUTER, 0);
-        }
-        if (unit.type === this.CONST.TYPES.OBSTACLE) {
-            this.createCSW(unit.x, unit.y, this.CONST.COMPUTER, 0, this.CONST.TYPES.OBSTACLE);
-        }
-    }, this);
-
-    this.toggleEditorControls();
-}
-
-// TODO: is it good that BTankManager knows which fields CSW class contains ?
-BattleTankGame.deps.BTankManager.prototype.createCSW = function (
-    x,
-    y,
-    who, // TODO: this field should be in ship class (csw or cswai or obstacle)
-    delay,
-    typeParam
-) {
-    let c1 = null;
-    const type = typeParam || this.CONST.TYPES.SHIP;
-    if (who === this.CONST.USER) {
-        c1 = new this.csw(this.CONST, this.bullet);
-        c1.init(x, y, who, this);
-        this.cswArr.push(c1);
-        return c1;
-    } else if (who === this.CONST.COMPUTER) {
-        // TODO: make delayed parameter as a field in class so BTankManager should decide from this field how to create new instance
-        setTimeout(
-            function () {
-                // this code should be extendable
-                // TODO: implement some pattern to not write thousands if-s
-                if (type === this.CONST.TYPES.SHIP) {
-                    c1 = new this.cswAI(this.CONST, this.bullet);
-                    c1.init(x, y, who, this);
-                    this.cswArr.push(c1);
-                }
-            }.bind(this),
-            delay
-        );
-
-        if (type === this.CONST.TYPES.OBSTACLE) {
-            c1 = new this.obstacle(this.CONST, this.bullet);
+    // TODO: is it good that BTankManager knows which fields CSW class contains ?
+    createCSW(
+        x,
+        y,
+        who, // TODO: this field should be in ship class (csw or cswai or obstacle)
+        delay,
+        typeParam
+    ) {
+        let c1 = null;
+        const type = typeParam || this.CONST.TYPES.SHIP;
+        if (who === this.CONST.USER) {
+            c1 = new this.csw(this.CONST, this.bullet);
             c1.init(x, y, who, this);
             this.cswArr.push(c1);
+            return c1;
+        } else if (who === this.CONST.COMPUTER) {
+            // TODO: make delayed parameter as a field in class so BTankManager should decide from this field how to create new instance
+            setTimeout(
+                function () {
+                    // this code should be extendable
+                    // TODO: implement some pattern to not write thousands if-s
+                    if (type === this.CONST.TYPES.SHIP) {
+                        c1 = new this.cswAI(this.CONST, this.bullet);
+                        c1.init(x, y, who, this);
+                        this.cswArr.push(c1);
+                    }
+                }.bind(this),
+                delay
+            );
+
+            if (type === this.CONST.TYPES.OBSTACLE) {
+                c1 = new this.obstacle(this.CONST, this.bullet);
+                c1.init(x, y, who, this);
+                this.cswArr.push(c1);
+            }
+        }
+        // const c1 =
+        //     who === this.CONST.USER
+        //         ? new this.csw(this.CONST, this.bullet)
+        //         : new this.cswAI(this.CONST, this.bullet);
+    }
+
+    createEditorUnit(x, y, type) {
+        let newUnit = null;
+        const who = this.CONST.COMPUTER;
+        if (this.editorUnits.some(function (unit) { return unit.x === x && unit.y === y; })) {
+            return;
+        }
+        if (type === this.CONST.TYPES.OBSTACLE) {
+            newUnit = new this.obstacle(this.CONST, this.bullet);
+            newUnit.init(x, y, who, this);
+            this.editorUnits.push(newUnit);
+        }
+        if (type === this.CONST.TYPES.SHIP) {
+            newUnit = new this.staticShip(this.CONST, this.bullet);
+            newUnit.init(x, y, who, this);
+            this.editorUnits.push(newUnit);
         }
     }
-    // const c1 =
-    //     who === this.CONST.USER
-    //         ? new this.csw(this.CONST, this.bullet)
-    //         : new this.cswAI(this.CONST, this.bullet);
-};
 
-BattleTankGame.deps.BTankManager.prototype.createEditorUnit = function (
-    x,
-    y,
-    type
-) {
-    let newUnit = null;
-    const who = this.CONST.COMPUTER;
-    if (type === this.CONST.TYPES.OBSTACLE) {
-        newUnit = new this.obstacle(this.CONST, this.bullet);
-        newUnit.init(x, y, who, this);
-        this.editorUnits.push(newUnit);
+    removeEditorObjectAt(x, y) {
+        this.editorUnits = this.editorUnits.filter(function (unit) {
+            return !(unit.x === x && unit.y === y);
+        });
     }
-    if (type === this.CONST.TYPES.SHIP) {
-        newUnit = new this.staticShip(this.CONST, this.bullet);
-        newUnit.init(x, y, who, this);
-        this.editorUnits.push(newUnit);
+
+    // x, y - coordinates of pixels, not cells
+    checkCSWWithPixelPrecision(x, y, whoAsks) {
+        const result = this.cswArr.filter(function (csw) {
+            // console.log(whoAsks === csw);
+            if (whoAsks === csw) {
+                return false;
+            }
+            const { width, height } = csw.dimensions[csw.d];
+            return (
+                x >= csw.x &&
+                x <= csw.x + width &&
+                y >= csw.y &&
+                y <= csw.y + height
+            );
+        });
+        return result.length > 0;
     }
-};
 
-BattleTankGame.deps.BTankManager.prototype.removeEditorObjectAt = function (
-    x,
-    y
-) {
-    this.editorUnits = this.editorUnits.filter(function (unit) {
-        return !((unit.x === x) && (unit.y === y));
-    });
-};
+    getShipDimensions(direction, iam, type) {
+        const image =
+            iam === this.CONST.COMPUTER
+                ? this.cpuImages[direction].image
+                : this.playerImages[direction].image;
+        // TODO: remove this little hack
+        // if (type === this.CONST.TYPES.OBSTACLE) {
+        //     image.width = 30;
+        //     image.height = 30;
+        // }
+        return {
+            width: image.width,
+            height: image.height,
+        };
+    }
 
-// x, y - coordinates of pixels, not cells
-BattleTankGame.deps.BTankManager.prototype.checkCSWWithPixelPrecision = function (
-    x,
-    y,
-    whoAsks
-) {
-    const result = this.cswArr.filter(function (csw) {
-        // console.log(whoAsks === csw);
-        if (whoAsks === csw) {
-            return false;
+    checkCSW(x, y) {
+        const result =
+            this.cswArr.filter(function (csw) {
+                return csw.x == x && csw.y == y;
+            }).length > 0;
+        return result.length > 0;
+    }
+
+    checkIfTwoShipsCross(nx, ny, whoAsks) {
+        // const debugDraw = (function(x,y,w,h) {
+        //     this.drawContext.strokeStyle = "#0f0";
+        //     this.drawContext.strokeRect(x, y, w, h);
+        // }).bind(this);
+
+        const checkSquare = function (csw, x, y) {
+            let { width, height } = csw.dimensions[csw.d];
+            width--;
+            height--;
+            // debugDraw(csw.x, csw.y, width, height);
+
+            return (
+                x >= csw.x &&
+                x <= csw.x + width &&
+                y >= csw.y &&
+                y <= csw.y + height
+            );
+        };
+
+        let { width, height } = whoAsks.dimensions[whoAsks.d];
+        width--;
+        height--;
+
+        const tArr = this.cswArr.filter(function (csw) {
+            if (whoAsks === csw) {
+                return false;
+            }
+
+            const checkResult =
+                checkSquare(csw, nx, ny) ||
+                checkSquare(csw, nx + width, ny) ||
+                checkSquare(csw, nx, ny + height) ||
+                checkSquare(csw, nx + width, ny + height) ||
+                checkSquare(csw, nx + width / 2, ny) ||
+                checkSquare(csw, nx, ny + height / 2) ||
+                checkSquare(csw, nx + width, ny + height / 2) ||
+                checkSquare(csw, nx + width / 2, ny + height);
+            return checkResult;
+        });
+
+        return tArr.length > 0 ? tArr[0] : null;
+    }
+
+    // Returns CSW on coords in params (by pixel)
+    getCSWWithPixelPrecision(x, y, whoAsks) {
+        const tArr = this.cswArr.filter(function (csw) {
+            if (whoAsks === csw) {
+                return false;
+            }
+            const { width, height } = csw.dimensions[csw.d];
+            return (
+                x >= csw.x &&
+                x <= csw.x + width &&
+                y >= csw.y &&
+                y <= csw.y + height
+            );
+        });
+
+        return tArr.length ? tArr[0] : null;
+    }
+
+    getAllShips() {
+        return this.cswArr;
+    }
+
+    getCPUs() {
+        return this.cswArr.filter(function (c) {
+            return c.iam === c.CONST.COMPUTER;
+        });
+    }
+
+    removeShip(ship) {
+        let ca = 0;
+        while (1) {
+            if (this.cswArr[ca] === ship) {
+                this.cswArr.splice(ca, 1);
+                break;
+            }
+            ca++;
+            if (ca == this.cswArr.length) {
+                break;
+            }
         }
-        const { width, height } = csw.dimensions[csw.d];
-        return (
-            x >= csw.x &&
-            x <= csw.x + width &&
-            y >= csw.y &&
-            y <= csw.y + height
+    }
+
+    destroyAll() {
+        this.cswArr = [];
+    }
+
+    // user
+    drawcswmt9(x, y, d) {
+        this.playerImages[d].draw(x, y);
+        //this.playerImage.draw(x, y);
+    }
+
+    // cpu
+    drawcswmt5(x, y, d) {
+        this.cpuImages[d].draw(x, y);
+    }
+
+    drawObstacle(x, y) {
+        this.obstacleImage.draw(x, y);
+    }
+
+    drawStaticShip(x, y) {
+        this.cpuImages[0].draw(x, y);
+    }
+
+    DrawBlack(x, y) {
+        this.drawContext.clearRect(x, y, 20, 20);
+    }
+
+    DrawCrash(x, y, onDelayEnd) {
+        this.crashImage.draw(x, y, 100, onDelayEnd);
+        // this.crashImage.draw(x, y, 0, onDelayEnd);
+    }
+
+    drawGameField() {
+        this.drawContext.strokeStyle = "#000";
+        this.drawContext.strokeRect(
+            0,
+            0,
+            this.CONST.MAXX * 20, // TODO: use CONST.CELLSIZES.MAXX instead of magic number!
+            this.CONST.MAXY * 20
         );
-    });
-    return result.length > 0;
-};
-
-BattleTankGame.deps.BTankManager.prototype.getShipDimensions = function (
-    direction,
-    iam,
-    type
-) {
-    const image =
-        iam === this.CONST.COMPUTER
-            ? this.cpuImages[direction].image
-            : this.playerImages[direction].image;
-    // TODO: remove this little hack
-    if (type === this.CONST.TYPES.OBSTACLE) {
-        image.width = 30;
-        image.height = 30;
     }
-    return {
-        width: image.width,
-        height: image.height,
-    };
-};
 
-BattleTankGame.deps.BTankManager.prototype.checkCSW = function (x, y) {
-    const result =
-        this.cswArr.filter(function (csw) {
-            return csw.x == x && csw.y == y;
-        }).length > 0;
-    return result.length > 0;
-};
-
-BattleTankGame.deps.BTankManager.prototype.checkIfTwoShipsCross = function (
-    nx,
-    ny,
-    whoAsks
-) {
-    // const debugDraw = (function(x,y,w,h) {
-    //     this.drawContext.strokeStyle = "#0f0";
-    //     this.drawContext.strokeRect(x, y, w, h);
-    // }).bind(this);
-
-    const checkSquare = function (csw, x, y) {
-        const { width, height } = csw.dimensions[csw.d];
-        // debugDraw(csw.x, csw.y, width, height);
-
-        return (
-            x >= csw.x &&
-            x <= csw.x + width &&
-            y >= csw.y &&
-            y <= csw.y + height
-        );
-    };
-
-    const { width, height } = whoAsks.dimensions[whoAsks.d];
-
-    const tArr = this.cswArr.filter(function (csw) {
-        if (whoAsks === csw) {
-            return false;
-        }
-
-        const checkResult =
-            checkSquare(csw, nx, ny) ||
-            checkSquare(csw, nx + width, ny) ||
-            checkSquare(csw, nx, ny + height) ||
-            checkSquare(csw, nx + width, ny + height) ||
-            checkSquare(csw, nx + width / 2, ny) ||
-            checkSquare(csw, nx, ny + height / 2) ||
-            checkSquare(csw, nx + width, ny + height / 2) ||
-            checkSquare(csw, nx + width / 2, ny + height);
-        return checkResult;
-    });
-
-    return tArr.length > 0 ? tArr[0] : null;
-};
-
-// Returns CSW on coords in params (by pixel)
-BattleTankGame.deps.BTankManager.prototype.getCSWWithPixelPrecision = function (
-    x,
-    y,
-    whoAsks
-) {
-    const tArr = this.cswArr.filter(function (csw) {
-        if (whoAsks === csw) {
-            return false;
-        }
-        const { width, height } = csw.dimensions[csw.d];
-        return (
-            x >= csw.x &&
-            x <= csw.x + width &&
-            y >= csw.y &&
-            y <= csw.y + height
-        );
-    });
-
-    return tArr.length ? tArr[0] : null;
-};
-
-BattleTankGame.deps.BTankManager.prototype.getAllShips = function () {
-    return this.cswArr;
-};
-
-BattleTankGame.deps.BTankManager.prototype.getCPUs = function () {
-    return this.cswArr.filter(function (c) {
-        return c.iam === c.CONST.COMPUTER;
-    });
-};
-
-BattleTankGame.deps.BTankManager.prototype.removeShip = function (ship) {
-    let ca = 0;
-    while (1) {
-        if (this.cswArr[ca] === ship) {
-            this.cswArr.splice(ca, 1);
-            break;
-        }
-        ca++;
-        if (ca == this.cswArr.length) {
-            break;
-        }
+    drawBackground() {
+        this.backgroundImage.draw(0, 0);
     }
-};
 
-BattleTankGame.deps.BTankManager.prototype.destroyAll = function () {
-    this.cswArr = [];
-};
-
-// user
-BattleTankGame.deps.BTankManager.prototype.drawcswmt9 = function (x, y, d) {
-    this.playerImages[d].draw(x, y);
-    //this.playerImage.draw(x, y);
-};
-
-// cpu
-BattleTankGame.deps.BTankManager.prototype.drawcswmt5 = function (x, y, d) {
-    this.cpuImages[d].draw(x, y);
-};
-
-BattleTankGame.deps.BTankManager.prototype.drawObstacle = function (x, y) {
-    this.obstacleImage.draw(x, y);
-};
-
-BattleTankGame.deps.BTankManager.prototype.drawStaticShip = function (x, y) {
-    this.cpuImages[0].draw(x, y);
-};
-
-BattleTankGame.deps.BTankManager.prototype.DrawBlack = function (x, y) {
-    this.drawContext.clearRect(x, y, 20, 20);
-};
-
-BattleTankGame.deps.BTankManager.prototype.DrawCrash = function (
-    x,
-    y,
-    onDelayEnd
-) {
-    this.crashImage.draw(x, y, 100, onDelayEnd);
-    // this.crashImage.draw(x, y, 0, onDelayEnd);
-};
-
-BattleTankGame.deps.BTankManager.prototype.drawGameField = function () {
-    this.drawContext.strokeStyle = "#000";
-    this.drawContext.strokeRect(
-        0,
-        0,
-        this.CONST.MAXX * 20, // TODO: use CONST.CELLSIZES.MAXX instead of magic number!
-        this.CONST.MAXY * 20
-    );
-};
-
-BattleTankGame.deps.BTankManager.prototype.drawBackground = function () {
-    this.backgroundImage.draw(0, 0);
-};
-
-BattleTankGame.deps.BTankManager.prototype.setCurrentEditorBrushObject = function (
-    brushObjectType
-) {
-    switch (brushObjectType) {
-        case this.CONST.TYPES.SHIP: {
-            this.editorCurrentObjectBrush = {
-                type: brushObjectType,
-                imageUrl: "url('images/csw-mt5bigger2x_0.png')",
-            };
-            break;
+    setCurrentEditorBrushObject(brushObjectType) {
+        switch (brushObjectType) {
+            case this.CONST.TYPES.SHIP: {
+                this.editorCurrentObjectBrush = {
+                    type: brushObjectType,
+                    imageUrl: "url('images/csw-mt5bigger2x_0.png')",
+                };
+                break;
+            }
+            case this.CONST.TYPES.OBSTACLE: {
+                this.editorCurrentObjectBrush = {
+                    type: brushObjectType,
+                    imageUrl: "url('images/obstacle1bigger.png')",
+                };
+                break;
+            }
+            case this.CONST.TYPES.ERASER: {
+                this.editorCurrentObjectBrush = {
+                    type: brushObjectType,
+                    imageUrl: "",
+                };
+                break;
+            }
+            default:
+                break;
         }
-        case this.CONST.TYPES.OBSTACLE: {
-            this.editorCurrentObjectBrush = {
-                type: brushObjectType,
-                imageUrl: "url('images/obstacle1bigger.png')",
-            };
-            break;
-        }
-        case this.CONST.TYPES.ERASER: {
-            this.editorCurrentObjectBrush = {
-                type: brushObjectType,
-                imageUrl: "",
-            };
-            break;
-        }
-        default:
-            break;
-    }
-    this.editorCurrentObject.style.backgroundImage = this.editorCurrentObjectBrush.imageUrl;
-};
-
-BattleTankGame.deps.BTankManager.prototype.toggleEditorControls = function () {
-    this.editorMode = !this.editorMode;
-    if (this.editorMode) {
-        this.gameInfo.style.display = "none";
-
-        this.editorBlock.style.display = "flex";
-        this.editorBlock.style.justifyContent = "center";
-
         this.editorCurrentObject.style.backgroundImage = this.editorCurrentObjectBrush.imageUrl;
-        this.editorCurrentObject.style.width = "40px";
-        this.editorCurrentObject.style.height = "40px";
-    } else {
-        this.gameInfo.style.display = "";
-        this.gameInfo.style.textAlign = "center";
-        this.editorBlock.style.display = "none";
     }
-};
 
-BattleTankGame.deps.BTankManager.prototype.showLogo = function () {
-    this.infoContext.fillStyle = "lightgreen";
-    this.infoContext.strokeStyle = "#F00";
-    this.infoContext.font = "30pt Arial";
-    this.infoContext.fillText("Space Town!", 0, 30);
-};
+    toggleEditorControls() {
+        this.editorMode = !this.editorMode;
+        if (this.editorMode) {
+            this.gameInfo.style.display = "none";
 
-BattleTankGame.deps.BTankManager.prototype.showNames = function () {
-    this.infoContext.fillStyle = "gray";
-    this.infoContext.strokeStyle = "#F00";
-    this.infoContext.font = "20pt Arial";
-    this.infoContext.fillText("p1 life:", 0, 60);
+            this.editorBlock.style.display = "flex";
+            this.editorBlock.style.justifyContent = "center";
 
-    // this.infoContext.fillStyle = "gray";
-    // this.infoContext.strokeStyle = "#F00";
-    // this.infoContext.font = "20pt Arial";
-    // this.infoContext.fillText("cpu life:", 0, 90);
-};
+            this.editorCurrentObject.style.backgroundImage = this.editorCurrentObjectBrush.imageUrl;
+            this.editorCurrentObject.style.width = "40px";
+            this.editorCurrentObject.style.height = "40px";
+        } else {
+            this.gameInfo.style.display = "";
+            this.gameInfo.style.textAlign = "center";
+            this.editorBlock.style.display = "none";
+        }
+    }
 
-BattleTankGame.deps.BTankManager.prototype.showGameOver = function () {
-    this.gameOverBlock.innerText = "GAME OVER";
-    this.againBtn.style.display = "block";
-    this.gameOverBlock.style.display = "block";
-};
-
-BattleTankGame.deps.BTankManager.prototype.showWin = function () {
-    this.againBtn.style.display = "block";
-    this.gameOverBlock.innerText = "YOU WIN";
-    this.gameOverBlock.style.display = "block";
-};
-
-BattleTankGame.deps.BTankManager.prototype.displayLifeBar = function (player) {
-    const LIFEBARMAXWIDTH = 200;
-    const onePercent = player.maxlife / LIFEBARMAXWIDTH;
-    if (player.iam) {
-        // player
-        this.infoContext.fillStyle = "#000";
-        this.infoContext.fillRect(100, 40, 200, 20);
-
-        this.infoContext.fillStyle = "#0F0";
-        this.infoContext.strokeStyle = "#0F0";
-        this.infoContext.strokeRect(100, 40, 200, 20);
-        this.infoContext.fillRect(
-            100,
-            40,
-            Math.ceil(player.life / onePercent),
-            20
-        );
-    } else {
-        this.infoContext.fillStyle = "#000";
-        this.infoContext.fillRect(100, 70, 200, 20);
-
-        this.infoContext.fillStyle = "#F00";
+    showLogo() {
+        this.infoContext.fillStyle = "lightgreen";
         this.infoContext.strokeStyle = "#F00";
-        this.infoContext.strokeRect(100, 70, 200, 20);
-        this.infoContext.fillRect(
-            100,
-            70,
-            Math.ceil(player.life / onePercent),
-            20
-        );
+        this.infoContext.font = "30pt Arial";
+        this.infoContext.fillText("Space Town!", 0, 30);
+    }
+
+    showNames() {
+        this.infoContext.fillStyle = "gray";
+        this.infoContext.strokeStyle = "#F00";
+        this.infoContext.font = "20pt Arial";
+        this.infoContext.fillText("p1 life:", 0, 60);
+
+        // this.infoContext.fillStyle = "gray";
+        // this.infoContext.strokeStyle = "#F00";
+        // this.infoContext.font = "20pt Arial";
+        // this.infoContext.fillText("cpu life:", 0, 90);
+    }
+
+    showGameOver() {
+        this.gameOverBlock.innerText = "GAME OVER";
+        this.againBtn.style.display = "block";
+        this.gameOverBlock.style.display = "block";
+    }
+
+    showWin() {
+        this.againBtn.style.display = "block";
+        this.gameOverBlock.innerText = "YOU WIN";
+        this.gameOverBlock.style.display = "block";
+    }
+
+    displayLifeBar(player) {
+        const LIFEBARMAXWIDTH = 200;
+        const onePercent = player.maxlife / LIFEBARMAXWIDTH;
+        if (player.iam) {
+            // player
+            this.infoContext.fillStyle = "#000";
+            this.infoContext.fillRect(100, 40, 200, 20);
+
+            this.infoContext.fillStyle = "#0F0";
+            this.infoContext.strokeStyle = "#0F0";
+            this.infoContext.strokeRect(100, 40, 200, 20);
+            this.infoContext.fillRect(
+                100,
+                40,
+                Math.ceil(player.life / onePercent),
+                20
+            );
+        } else {
+            this.infoContext.fillStyle = "#000";
+            this.infoContext.fillRect(100, 70, 200, 20);
+
+            this.infoContext.fillStyle = "#F00";
+            this.infoContext.strokeStyle = "#F00";
+            this.infoContext.strokeRect(100, 70, 200, 20);
+            this.infoContext.fillRect(
+                100,
+                70,
+                Math.ceil(player.life / onePercent),
+                20
+            );
+        }
     }
 };
