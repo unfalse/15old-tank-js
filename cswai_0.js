@@ -213,10 +213,15 @@ BattleTankGame.deps.obstacle = class extends BattleTankGame.deps.csw {
     constructor(CONST, bullet) {
         super(CONST, bullet);
         this.type = CONST.TYPES.OBSTACLE;
+        this.baseHitByBullet = BattleTankGame.deps.csw.prototype.hitByBullet;
     }
 
     draw() {
         this.BTankInst.drawObstacle(this.x, this.y);
+    }
+
+    hitByBullet() {
+        
     }
 };
 
