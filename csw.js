@@ -22,7 +22,7 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         this.inertiaTimerIsRunning = false;
         this.d = 0; // direction
         this.stopAccel = true;
-        this.PLAYER_BULLETS_INTERVAL = 1500;
+        this.PLAYER_BULLETS_INTERVAL = 600;
         this.MAXIMUM_ACCELERATION = 8;
         this.dimensions = {};
 
@@ -308,13 +308,14 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         }
 
         // checking if the ship is on the other ship already
-        const isOnTheOtherShip = this.BTankInst.checkIfTwoShipsCross(
-            this.x,
-            this.y,
-            this
-        );
+        // const isOnTheOtherShip = this.BTankInst.checkIfTwoShipsCross(
+        //     this.x,
+        //     this.y,
+        //     this
+        // );
 
-        if (!isOnTheOtherShip) {
+        // if (!isOnTheOtherShip) {
+        if (true) {
             if (ux != 0 || uy != 0) {
                 const found = this.BTankInst.checkIfTwoShipsCross(
                     this.x + ux, //Math.floor(ux), //Math.ceil(ux),
@@ -367,7 +368,7 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
     }
 
     hitByBullet(bulletInstance) {
-        // if (this != bulletInstance.parentShip) {
+        // if (this === bulletInstance.parentShip) {
         if (bulletInstance.parentShip.iam === this.CONST.USER) {
             if (this.iam === this.CONST.COMPUTER) {
                 this.life--;

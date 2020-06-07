@@ -8,7 +8,7 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
     constructor(CONST, BTankInst) {
         super();
         this.bulletNum = -1;
-        this.BULLETSPEED = 5;
+        this.BULLETSPEED = 2;
 
         this.CONST = CONST;
         this.BTankInst = BTankInst;
@@ -70,14 +70,25 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
         // Проверка попадания в танк
         if (this.isfire) {
             // TODO: убрать сильную связанность с BTank
-            const curCSW = this.BTankInst.getCSWWithPixelPrecision(
+            const collidedShips = this.BTankInst.getCSWWithPixelPrecision(
                 this.x,
-                this.y
+                this.y,
+                this.parentShip
             );
+            const collidedBullets = this.BTankInst.getBulletWithPixelPrecision(
+                this.x,
+                this.y,
+                this.parentShip
+            );
+            if (collidedBullets) {
+                console.log('bullets collided!');
+                this.isfire = false;
+                collidedBullets.isfire = false;
+            }
             // a bullet can't hurt it's master! :)
-            if (curCSW && curCSW != this.parentShip) {
-                if (curCSW.hitByBullet) {
-                    curCSW.hitByBullet(this);
+            if (collidedShips) {
+                if (collidedShips.hitByBullet) {
+                    collidedShips.hitByBullet(this);
                 }
                 // if (curCSW.iam !== this.parentTank.iam) {
                 //     curCSW.life--;
