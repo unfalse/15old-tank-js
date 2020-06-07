@@ -137,8 +137,16 @@ BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.csw {
         // this.update = function (timestamp) { console.log('function was overrided!'); };
         // debugger;
         // d: 0...3, a: 0...1, ms: (0...1) *1000
+        this.baseInit = BattleTankGame.deps.csw.prototype.init;
     }
 
+    init(mx, my, who, BTankInst) {
+        this.baseInit(mx, my, who, BTankInst);
+        this.msCount = 0;
+        this.msArray = [1000, 2500, 1200, 1900, 2300, 5450, 3567, 4444, 6000, 3000, 2000, 5000, 4500];
+        this.accels = [0, 3, 2, 0, 1, 1, 2, 3, 0, 1, 2, 2, 3];
+        this.dirs = [3,3,3,3,3,0, 3, 2, 0,0,0,0,0,0, 1, 1, 2, 3, 0,1,1,1,1, 1, 2, 2, 3];
+    }
     // BattleTankGame.deps.cswAI_1.prototype = Object.create(
     //     BattleTankGame.deps.csw.prototype
     // );
@@ -146,15 +154,20 @@ BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.csw {
     // BattleTankGame.deps.cswAI_1.prototype.constructor = BattleTankGame.deps.cswAI_1;
 
     AI_generateNewPath() {
+        // TODO: get numbers for ms from array [1000, 2500, 1200, 900, 2300, 5450, 3567, 4444]
+        // this.msCount = this.msCount === this.msArray.length-1 ? 0 : (this.msCount + 1);
         return {
-            d: this.Utils.getRandomInt(0, 3),
-            accel: this.Utils.getRandomInt(0, 1),
-            ms: this.Utils.getRandomInt(0, 6) * 1000,
+            // d: this.Utils.getRandomInt(0, 3),
+            // accel: this.Utils.getRandomInt(0, 3),
+            d: this.dirs[this.Utils.getRandomInt(0, this.dirs.length-1)],
+            accel: this.accels[this.Utils.getRandomInt(0, this.accels.length-1)],
+            ms: this.msArray[this.Utils.getRandomInt(0, this.msArray.length-1)]
+            // ms: this.Utils.getRandomInt(0, 6) * 1000
         };
     }
 
     AI_generateNewFireTime() {
-        return this.Utils.getRandomInt(1, 3) * 1000;
+        return this.Utils.getRandomInt(1, 3) * 500;
     }
 
     update(timestamp) {
@@ -220,9 +233,7 @@ BattleTankGame.deps.obstacle = class extends BattleTankGame.deps.csw {
         this.BTankInst.drawObstacle(this.x, this.y);
     }
 
-    hitByBullet() {
-        
-    }
+    hitByBullet() {}
 };
 
 ////////////////////////////////////////////////////////// static ship
@@ -247,14 +258,29 @@ console.log("space brick!");
 BattleTankGame.deps.spaceBrick = class extends BattleTankGame.deps.csw {
     constructor(CONST, bullet) {
         super(CONST, bullet);
-        this.type = CONST.TYPES.SPACEBRICK;
+
+        this.baseHitByBullet = BattleTankGame.deps.csw.prototype.hitByBullet;
+        this.baseInit = BattleTankGame.deps.csw.prototype.init;
     }
 
+    init(mx, my, who, BTankInst) {
+        this.baseInit(mx, my, who, BTankInst);
+        this.type = this.CONST.TYPES.SPACEBRICK;
+        this.life = 10;
+    }
     // TODO: add logic to display 5 or 6 states based on value of life
     // draw states based on life
     // add logic to change image
 
     draw() {
-        this.BTankInst.drawSpaceBrick(this.x, this.y);
+        this.BTankInst.drawSpaceBrick(
+            this.x,
+            this.y,
+            Math.floor((this.life - 1) / 2)
+        );
+    }
+
+    hitByBullet(bulletInstance) {
+        this.life--;
     }
 };
