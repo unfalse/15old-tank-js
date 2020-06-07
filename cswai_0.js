@@ -234,3 +234,22 @@ BattleTankGame.deps.staticShip = class extends BattleTankGame.deps.csw {
         this.BTankInst.drawStaticShip(this.x, this.y);
     }
 };
+
+////////////////////////////////////////////////////////// space brick
+
+console.log("space brick!");
+
+BattleTankGame.deps.spaceBrick = class extends BattleTankGame.deps.csw {
+    constructor(CONST, bullet) {
+        super(CONST, bullet);
+        this.type = CONST.TYPES.SPACEBRICK;
+    }
+
+    // TODO: add logic to display 5 or 6 states based on value of life
+    // draw states based on life
+    // add logic to change image
+
+    draw() {
+        this.BTankInst.drawSpaceBrick(this.x, this.y);
+    }
+};

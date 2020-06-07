@@ -11,6 +11,7 @@ BattleTankGame.deps.const = {
         ERASER: -1,
         SHIP: 0,
         OBSTACLE: 1,
+        SPACEBRICK: 2
     },
 
     CELLSIZES: {
@@ -79,7 +80,10 @@ BattleTankGame.deps.BTankManager = class {
             "#editorCurrentObject"
         );
         this.editorPlayBtn = document.querySelector("#editorPlayBtn");
+        this.editorSaveBtn = document.querySelector("#editorSaveBtn");
+        this.editorLoadBtn = document.querySelector("#editorLoadBtn");
         this.gameFieldBlock = gameField;
+        window.__editor_load_str = '';
 
         this.drawContext = gameField.getContext("2d");
         this.infoContext = this.gameInfo.getContext("2d");
@@ -97,6 +101,7 @@ BattleTankGame.deps.BTankManager = class {
         this.crashImage = null;
         this.backgroundImage = null;
         this.obstacleImage = null;
+        this.spaceBrickImage = null;
 
         const loadImage = function (imagePath, onLoad) {
             return new Promise(
@@ -114,6 +119,16 @@ BattleTankGame.deps.BTankManager = class {
         this.editorPlayBtn.addEventListener(
             "click",
             this.playTheEditorLevel.bind(this)
+        );
+
+        this.editorSaveBtn.addEventListener(
+            "click",
+            this.saveTheEditorLevel.bind(this)
+        );
+
+        this.editorLoadBtn.addEventListener(
+            "click",
+            this.loadTheEditorLevel.bind(this)
         );
 
         // TODO: it should be a function which will preload images.
@@ -176,6 +191,12 @@ BattleTankGame.deps.BTankManager = class {
             ) {
                 this.obstacleImage = image;
             }),
+
+            loadImage.call(this, "images/space_brick2x.png", function (
+                image
+            ) {
+                this.spaceBrickImage = image;
+            }),
         ];
         return Promise.all(promises);
     }
@@ -202,6 +223,20 @@ BattleTankGame.deps.BTankManager = class {
         }, this);
 
         this.toggleEditorControls();
+    }
+
+    saveTheEditorLevel() {
+        window.__editor_save_str = this.editorUnits.reduce(function(prev, curr) {
+            return prev + curr.type+','+curr.x+','+curr.y+'|'
+        }, "");
+    }
+
+    loadTheEditorLevel() {
+        window.__editor_load_str = "1,320,200|1,320,160|1,320,120|1,360,120|1,360,80|1,400,80|1,440,80|1,480,80|1,480,120|1,520,120|1,520,160|1,520,200|1,520,240|1,480,240|1,480,280|1,440,280|1,400,280|1,360,280|1,360,240|1,320,240|0,400,120|0,400,160|0,440,160|0,440,120|0,480,160|0,480,200|0,440,200|0,400,200|0,360,200|0,360,160|0,400,240|0,440,240|";
+        window.__editor_load_str.split('|').forEach(function(objStr) {
+            var fields = objStr.split(',');
+            this.createEditorUnit(+fields[1], +fields[2], +fields[0]);
+        }, this);
     }
 
     // TODO: is it good that BTankManager knows which fields CSW class contains ?
@@ -312,11 +347,12 @@ BattleTankGame.deps.BTankManager = class {
         return result.length > 0;
     }
 
-    checkIfTwoShipsCross(nx, ny, whoAsks) {
+    checkIfTwoShipsCross(nx, ny, whoAsks, typeToCheckParam) {
         // const debugDraw = (function(x,y,w,h) {
         //     this.drawContext.strokeStyle = "#0f0";
         //     this.drawContext.strokeRect(x, y, w, h);
         // }).bind(this);
+        // const typeToCheck = typeToCheckParam || this.CONST.TYPES.SHIP;
 
         const checkSquare = function (csw, x, y) {
             let { width, height } = csw.dimensions[csw.d];
@@ -336,6 +372,8 @@ BattleTankGame.deps.BTankManager = class {
         width--;
         height--;
 
+// || (typeToCheckParam === undefined && csw.type !== typeToCheckParam)
+
         const tArr = this.cswArr.filter(function (csw) {
             if (whoAsks === csw) {
                 return false;
@@ -351,7 +389,7 @@ BattleTankGame.deps.BTankManager = class {
                 checkSquare(csw, nx + width, ny + height / 2) ||
                 checkSquare(csw, nx + width / 2, ny + height);
             return checkResult;
-        });
+        }, this);
 
         return tArr.length > 0 ? tArr[0] : null;
     }
@@ -405,20 +443,32 @@ BattleTankGame.deps.BTankManager = class {
     // user
     drawcswmt9(x, y, d) {
         this.playerImages[d].draw(x, y);
-        //this.playerImage.draw(x, y);
+        // this.drawContext.strokeStyle="#f00";
+        // this.drawContext.strokeRect(Math.floor(x), Math.floor(y), 39,39);
+        // this.drawContext.lineWidth=0.1;
     }
 
     // cpu
     drawcswmt5(x, y, d) {
         this.cpuImages[d].draw(x, y);
+        // this.drawContext.strokeStyle="#f00";
+        // this.drawContext.strokeRect(x, y, 39,39);
     }
 
     drawObstacle(x, y) {
         this.obstacleImage.draw(x, y);
+        // this.drawContext.strokeStyle="#f00";
+        // this.drawContext.strokeRect(x, y, 39,39);
     }
 
     drawStaticShip(x, y) {
         this.cpuImages[0].draw(x, y);
+        // this.drawContext.strokeStyle="#f00";
+        // this.drawContext.strokeRect(x, y, 39,39);
+    }
+
+    drawSpaceBrick(x, y) {
+        this.spaceBrickImage.draw(x, y);
     }
 
     DrawBlack(x, y) {
