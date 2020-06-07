@@ -21,7 +21,7 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
     //     BattleTankGame.deps.bulletPixel;
 
     setCoords(nx, ny, nd) {
-        const { width, height } = this.parentTank.dimensions[nd];
+        const { width, height } = this.parentShip.dimensions[nd];
         let x = 0,
             y = 0;
         switch (nd) {
@@ -53,7 +53,7 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
 
     draw() {
         this.BTankInst.drawContext.fillStyle =
-            this.parentTank.iam === this.CONST.USER ? "#F00" : "#FF0";
+            this.parentShip.iam === this.CONST.USER ? "#F00" : "#FF0";
         this.BTankInst.drawContext.fillRect(this.x, this.y, 4, 4);
     }
 
@@ -75,22 +75,15 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
                 this.y
             );
             // a bullet can't hurt it's master! :)
-            if (curCSW && curCSW != this.parentTank) {
-                const vx1 = vx;
-                const vy1 = vy;
-                vx = 0;
-                vy = 0;
-
-                if (curCSW.life == 0) {
-                    vx = vx1;
-                    vy = vy1;
-                } else {
-                    if (curCSW.iam !== this.parentTank.iam) {
-                        curCSW.life--;
-                    }
-                    // curCSW.setCrash();
-                    this.isfire = false;
+            if (curCSW && curCSW != this.parentShip) {
+                if (curCSW.hitByBullet) {
+                    curCSW.hitByBullet(this);
                 }
+                // if (curCSW.iam !== this.parentTank.iam) {
+                //     curCSW.life--;
+                // }
+                // curCSW.setCrash();
+                this.isfire = false;
             }
         }
 
@@ -112,11 +105,11 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
         }
     }
 
-    init(nx, ny, nd, parentTank, bnum) {
+    init(nx, ny, nd, parentShip, bnum) {
         // starts from a cell near tank
         // this.initCoords(nx + 8, ny + 8, nd);
         this.isfire = false;
-        this.parentTank = parentTank;
+        this.parentShip = parentShip;
         this.bulletNum = bnum;
     }
 };

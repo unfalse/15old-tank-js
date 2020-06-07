@@ -1,7 +1,7 @@
 console.log("csw!");
 
 // TODO: csw: cosmo ship war, the old title
-// TODO: rename csw to something more understandable - tank?
+// TODO: rename csw to something more understandable - tank? SpaceShip ?
 // TODO: maybe the CPU and player should have separate classes? And several base classes.
 // BattleTankGame.deps.csw = function (CONST, bullet) {
 //     BattleTankGame.deps.baseCoordinates.call(this);
@@ -213,7 +213,6 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
                 } else {
                     this.inertiaDirections[d] = 0;
                 }
-
                 this.move(d);
             }
             this.draw();
@@ -318,20 +317,19 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         if (!isOnTheOtherShip) {
             if (ux != 0 || uy != 0) {
                 const found = this.BTankInst.checkIfTwoShipsCross(
-                    this.x + ux,//Math.floor(ux), //Math.ceil(ux),
-                    this.y + uy,//Math.floor(uy),//Math.ceil(uy),
+                    this.x + ux, //Math.floor(ux), //Math.ceil(ux),
+                    this.y + uy, //Math.floor(uy),//Math.ceil(uy),
                     this
                 );
                 if (found) {
                     if (direction === this.CONST.RIGHT)
-                        this.x = found.x - width -1;
+                        this.x = found.x - width - 1;
                     if (direction === this.CONST.UP)
                         this.y = found.y + found.dimensions[found.d].height;
                     if (direction === this.CONST.LEFT)
                         this.x = found.x + found.dimensions[found.d].width;
                     if (direction === this.CONST.DOWN)
                         this.y = found.y - height - 1;
-                    //console.log(`collide! ${this.x + (ux + width)} ${this.x} ${ux}`);
                     ux = 0;
                     uy = 0;
                     this.inertiaDirections[direction] = 0;
@@ -366,5 +364,20 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
             this.draw();
             // console.log([this.x, this.y]);
         }
+    }
+
+    hitByBullet(bulletInstance) {
+        // if (this != bulletInstance.parentShip) {
+        if (bulletInstance.parentShip.iam === this.CONST.USER) {
+            if (this.iam === this.CONST.COMPUTER) {
+                this.life--;
+            }
+        }
+        if (bulletInstance.parentShip.iam === this.CONST.COMPUTER) {
+            if (this.iam === this.CONST.USER) {
+                this.life--;
+            }
+        }
+        // }
     }
 };
