@@ -246,37 +246,36 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         }
 
         // checking if the ship is on the other ship already
-        // const isOnTheOtherShip = this.BTankInst.checkIfTwoShipsCross(
-        //     this.x,
-        //     this.y,
-        //     this
-        // );
+        const isOnTheOtherShip = this.BTankInst.checkIfTwoShipsCross(
+            this.x,
+            this.y,
+            this
+        );
 
-        // if (!isOnTheOtherShip) {
-        if (ux != 0 || uy != 0) {
-            const found = this.BTankInst.checkIfTwoShipsCross(
-                this.x + ux, //Math.floor(ux), //Math.ceil(ux),
-                this.y + uy, //Math.floor(uy),//Math.ceil(uy),
-                this
-            );
-            if (found) {
-                if (direction === this.CONST.RIGHT)
-                    this.x = found.x - width - 1;
-                if (direction === this.CONST.UP)
-                    this.y = found.y + found.dimensions[found.d].height;
-                if (direction === this.CONST.LEFT)
-                    this.x = found.x + found.dimensions[found.d].width;
-                if (direction === this.CONST.DOWN)
-                    this.y = found.y - height - 1;
-                ux = 0;
-                uy = 0;
-                this.inertiaDirections[direction] = 0;
+        if (!isOnTheOtherShip) {
+            if (ux != 0 || uy != 0) {
+                const found = this.BTankInst.checkIfTwoShipsCross(
+                    this.x + ux, //Math.floor(ux), //Math.ceil(ux),
+                    this.y + uy, //Math.floor(uy),//Math.ceil(uy),
+                    this
+                );
+                if (found) {
+                    if (direction === this.CONST.RIGHT)
+                        this.x = found.x - width - 1;
+                    if (direction === this.CONST.UP)
+                        this.y = found.y + found.dimensions[found.d].height;
+                    if (direction === this.CONST.LEFT)
+                        this.x = found.x + found.dimensions[found.d].width;
+                    if (direction === this.CONST.DOWN)
+                        this.y = found.y - height - 1;
+                    ux = 0;
+                    uy = 0;
+                    this.inertiaDirections[direction] = 0;
+                }
             }
+            this.x = this.x + ux;
+            this.y = this.y + uy;
         }
-        // console.log([this.x, this.y]);
-        this.x = this.x + ux;
-        this.y = this.y + uy;
-        // this.draw();
     }
 
     update(timestamp) {
@@ -294,28 +293,8 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         }
 
         this.draw();
-
-        // if (this.iam === this.CONST.COMPUTER && this.life > 0) {
-        //     this.draw();
-        // }
-
-        // if (this.iam === this.CONST.USER) {
-        //     this.draw();
-        // }
     }
 
     hitByBullet(bulletInstance) {
-        // if (this === bulletInstance.parentShip) {
-        // if (bulletInstance.parentShip.iam === this.CONST.USER) {
-        //     if (this.iam === this.CONST.COMPUTER) {
-        //         this.life--;
-        //     }
-        // }
-        // if (bulletInstance.parentShip.iam === this.CONST.COMPUTER) {
-        //     if (this.iam === this.CONST.USER) {
-        //         this.life--;
-        //     }
-        // }
-        // }
     }
 };

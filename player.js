@@ -12,8 +12,6 @@ BattleTankGame.deps.player = class extends BattleTankGame.deps.csw {
         super.init(mx, my, who, BTankInst);
         this.maxlife = 3;
         this.life = this.maxlife;
-        this._dp = new BattleTankGame.deps.delayedPic(this.CONST);
-        this._dp.init(0, 0, 0, this.BTankInst);
     }
 
     addAccel(value) {
@@ -30,8 +28,7 @@ BattleTankGame.deps.player = class extends BattleTankGame.deps.csw {
             this.PLAYER_BULLETS_INTERVAL
         ) {
             this.lastBulletTimeStamp = timestamp;
-            const bullet = this.createNewBullet(this.x, this.y, this.d);
-            if (bullet) this._dp.setCoords(bullet.x-10, bullet.y-10);
+            this.createNewBullet(this.x, this.y, this.d);
         }
     }
 
@@ -51,11 +48,6 @@ BattleTankGame.deps.player = class extends BattleTankGame.deps.csw {
             this.inertiaDirections[d] += accel;
         }
     }
-
-    // update(timestamp) {
-    //     super.update(timestamp);
-    //     this.draw();
-    // }
 
     hitByBullet(bulletInstance) {
         if (bulletInstance.parentShip.iam === this.CONST.COMPUTER) {

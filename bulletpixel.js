@@ -82,7 +82,7 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
                 this.parentShip
             );
             if (collidedBullets) {
-                console.log('bullets collided!');
+                // console.log('bullets collided!');
                 this.isfire = false;
                 collidedBullets.isfire = false;
             }
@@ -90,12 +90,8 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
             if (collidedShips) {
                 if (collidedShips.hitByBullet) {
                     collidedShips.hitByBullet(this);
-                    this.BTankInst.DrawCrash(this.x, this.y);
+                    this.BTankInst.createDelayedPic(this.x - 10, this.y - 10);
                 }
-                // if (curCSW.iam !== this.parentTank.iam) {
-                //     curCSW.life--;
-                // }
-                // curCSW.setCrash();
                 this.isfire = false;
             }
         }

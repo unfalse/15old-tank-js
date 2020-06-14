@@ -52,7 +52,8 @@ BattleTankGame.deps.BTankManager = class {
         staticShip,
         spaceBrick,
         bullet,
-        images
+        images,
+        delayedPic
     ) {
         // TODO: dependencies in parameters are completely redundant! (CONST, csw, bullet, images)
         // TODO: write the full paths to classes
@@ -75,6 +76,7 @@ BattleTankGame.deps.BTankManager = class {
         this.spaceBrick = spaceBrick;
         this.bullet = bullet;
         this.images = images;
+        this.delayedPic = delayedPic;
         this.baseCoords = new BattleTankGame.deps.baseCoordinates();
     }
 
@@ -199,9 +201,7 @@ BattleTankGame.deps.BTankManager = class {
                 this.backgroundImage = image;
             }),
 
-            loadImage.call(this, "images/obstacle2.png", function (
-                image
-            ) {
+            loadImage.call(this, "images/obstacle2.png", function (image) {
                 this.obstacleImage = image;
             }),
 
@@ -452,21 +452,20 @@ BattleTankGame.deps.BTankManager = class {
     }
 
     getBulletWithPixelPrecision(x, y, whoAsks) {
-        const tArr = this.cswArr.filter(function (csw) {
-            return !(csw.type !== this.CONST.TYPES.SHIP || whoAsks === csw);
-        }, this).reduce(function (csw1, csw2) {
-            // const { width, height } = csw.dimensions[csw.d];
-            const bullets = csw2.bulletsArray.filter(function (b) { return b.isfire; });
-            const collidedBullets = bullets.filter(function (b) {
-                return (
-                    x >= b.x &&
-                    x <= b.x + 4 &&
-                    y >= b.y &&
-                    y <= b.y + 4
-                );
-            });
-            return csw1.concat(collidedBullets);
-        }, []);
+        const tArr = this.cswArr
+            .filter(function (csw) {
+                return !(csw.type !== this.CONST.TYPES.SHIP || whoAsks === csw);
+            }, this)
+            .reduce(function (csw1, csw2) {
+                // const { width, height } = csw.dimensions[csw.d];
+                const bullets = csw2.bulletsArray.filter(function (b) {
+                    return b.isfire;
+                });
+                const collidedBullets = bullets.filter(function (b) {
+                    return x >= b.x && x <= b.x + 4 && y >= b.y && y <= b.y + 4;
+                });
+                return csw1.concat(collidedBullets);
+            }, []);
 
         return tArr.length ? tArr[0] : null;
     }
@@ -495,12 +494,14 @@ BattleTankGame.deps.BTankManager = class {
 
     createDelayedPic(x, y) {
         const dp = new this.delayedPic(this.CONST);
-        dp.init(x, y, this.delayedPics.length, this);
+        dp.init(x, y, this);
         this.delayedPics.push(dp);
     }
 
-    removeDelayedPic() {
-
+    removeDelayedPic(dpObj) {
+        this.delayedPics = this.delayedPics.filter(function (dp) {
+            return dp !== dpObj;
+        });
     }
 
     getAllDelayedPics() {

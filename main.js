@@ -91,17 +91,13 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
             ship.update(timestamp);
         });
 
-        if (player1._dp.show) {
-            player1._dp.draw();
-        }
+        BTank.getAllDelayedPics().forEach(function (pic) {
+            pic.draw();
+        });
 
         BTank.displayLifeBar(player1);
 
-        // if (BTank.cswArr.filter(c => (c.iam === CONST.COMPUTER && c.type === CONST.TYPES.SHIP)).length === 0) {
-        //     win = true;
-        // }
-
-        if (!gameOver && (win || player1.life === 0)) {
+        if (!gameOver && (win || player1.life <= 0)) {
             if (win) {
                 Utils.text("YOU WIN");
                 BTank.showWin();
@@ -115,7 +111,6 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     };
 
     this.editorMouseDownHandler = function (event) {
-        // console.log(event);
         if (BTank.editorMode && event.buttons === 1) {
             const x = event.offsetX,
                 y = event.offsetY;
@@ -124,7 +119,6 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
             if (BTank.editorCurrentObjectBrush.type !== CONST.TYPES.ERASER) {
                 BTank.createEditorUnit(cellx, celly, BTank.editorCurrentObjectBrush.type);
             } else {
-                // console.log([cellx, celly])
                 BTank.removeEditorObjectAt(cellx, celly);
             }
         }
@@ -136,7 +130,6 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         timeCount = 0;
 
         if (kc === Utils.KEY_CODE.F1_KEY) {
-            // console.log("f1 !");
             this.toggleEditor();
         }
     };
@@ -155,7 +148,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         }
         const kc = event.keyCode || event.which;
         keys[kc] = event.type == "keydown";
-        // console.log(kc);
+
         if (event.type === "keyup") {
             this.keyUpHandler(kc);
         }
@@ -210,14 +203,6 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         if (keys[Utils.KEY_CODE.s_KEY]) {
             player1.stop();
         }
-        if (
-            keys[Utils.KEY_CODE.UP] ||
-            keys[Utils.KEY_CODE.DOWN] ||
-            keys[Utils.KEY_CODE.LEFT] ||
-            keys[Utils.KEY_CODE.RIGHT]
-        ) {
-            // this.handler_accelerateWhileDownAndStopOnceUp();
-        }
     };
 };
 
@@ -232,7 +217,8 @@ BattleTankGame.gameInstance = new BattleTankGame.deps.game(
         BattleTankGame.deps.staticShip,
         BattleTankGame.deps.spaceBrick,
         BattleTankGame.deps.bulletPixel,
-        BattleTankGame.deps.images
+        BattleTankGame.deps.images,
+        BattleTankGame.deps.delayedPic
     ),
     BattleTankGame.deps.utils
 );

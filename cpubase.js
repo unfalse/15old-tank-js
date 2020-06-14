@@ -16,11 +16,6 @@ BattleTankGame.deps.cpuBase = class extends BattleTankGame.deps.csw {
         }
     }
 
-    // update(timestamp) {
-    //     super.update(timestamp);
-    //     this.draw();
-    // }
-
     draw() {
         this.BTankInst.drawcswmt5(this.x, this.y, this.d);
     }
