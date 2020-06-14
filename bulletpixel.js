@@ -106,10 +106,12 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
 
             if (this.x > this.CONST.MAXX * 20 || this.x < 0) {
                 this.isfire = false;
+                // this.BTankInst.createDelayedPic(this.x - 10, this.y - 10);
             }
 
             if (this.y > this.CONST.MAXY * 20 || this.y < 0) {
                 this.isfire = false;
+                // this.BTankInst.createDelayedPic(this.x - 10, this.y - 10);
             }
         }
     }

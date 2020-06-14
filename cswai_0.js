@@ -126,7 +126,7 @@ BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.cpuBase {
         this.msCount = 0;
         this.msArray = [1000, 2500, 1200, 1900, 2300, 5450, 3567, 4444, 6000, 3000, 2000, 5000, 4500];
         this.accels = [0, 3, 2, 0, 1, 1, 2, 3, 0, 1, 2, 2, 3];
-        this.dirs = [3,3,3,3,3,0, 3, 2, 0,0,0,0,0,0, 1, 1, 2, 3, 0,1,1,1,1, 1, 2, 2, 3];
+        this.dirs = [3,0,2,1];
     }
 
     AI_generateNewPath() {
