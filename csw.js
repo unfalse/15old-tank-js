@@ -22,7 +22,7 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         this.inertiaTimerIsRunning = false;
         this.d = 0; // direction
         this.stopAccel = true;
-        this.PLAYER_BULLETS_INTERVAL = 600;
+        // this.PLAYER_BULLETS_INTERVAL = 600;
         this.MAXIMUM_ACCELERATION = 8;
         this.dimensions = {};
 
@@ -41,14 +41,13 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
     init(mx, my, who, BTankInst) {
         this.initCoords(mx, my, 0);
         this.iam = who;
-        this.maxlife = this.iam === this.CONST.USER ? 3 : 5;
+        this.maxlife = 5;
         this.life = this.maxlife;
         this.speed = 0; // make speed more precise
         this.crashed = false;
         this.bulletsCount = 0;
         this.bulletsAmountOnFire = this.CONST.MAXBULLETS;
-        this.type =
-            this.iam === this.CONST.USER ? this.CONST.TYPES.SHIP : this.type;
+        // this.type = this.iam === this.CONST.USER ? this.CONST.TYPES.SHIP : this.type;
 
         this.BTankInst = BTankInst;
 
@@ -70,42 +69,22 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         this.crashed = true;
     }
 
-    setAccel(value) {
-        this.accel = value;
-    }
-
-    addAccel(value) {
-        this.accel += value;
-    }
-
-    getAccel() {
-        return this.accel;
-    }
-
-    collide() {
-        return { ux: 0, uy: 0 };
-    }
-
     draw() {
-        if (this.crashed) {
-            this.BTankInst.DrawCrash(
-                this.x,
-                this.y,
-                function () {
-                    this.crashed = false;
-                }.bind(this)
-            );
-        } else {
-            if (this.iam === this.CONST.USER) {
-                this.BTankInst.drawcswmt9(this.x, this.y, this.d);
-            } else {
-                this.BTankInst.drawcswmt5(this.x, this.y, this.d);
-            }
-        }
-    }
-
-    erase() {
-        this.BTankInst.DrawBlack(this.x, this.y);
+        // if (this.crashed) {
+        // this.BTankInst.DrawCrash(
+        //     this.x,
+        //     this.y,
+        //     function () {
+        //         this.crashed = false;
+        //     }.bind(this)
+        // );
+        // } else {
+        // if (this.iam === this.CONST.USER) {
+        // this.BTankInst.drawcswmt9(this.x, this.y, this.d);
+        // } else {
+        this.BTankInst.drawcswmt5(this.x, this.y, this.d);
+        // }
+        // }
     }
 
     createNewBullet(startX, startY, startD) {
@@ -114,6 +93,7 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         if (freeBullet) {
             freeBullet.setCoords(startX, startY, startD);
             freeBullet.isfire = true;
+            return freeBullet;
         }
     }
 
@@ -121,23 +101,6 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         // if (this.life <= 0) {
         //     return;
         // }
-        if (this.iam === this.CONST.COMPUTER) {
-            if (this.fireStartTime === -1) {
-                this.fireStartTime = timestamp;
-            }
-            if (timestamp - this.fireStartTime >= 1000) {
-                this.fireStartTime = timestamp;
-                this.createNewBullet(this.x, this.y, this.d);
-            }
-        }
-        if (
-            timestamp - this.lastBulletTimeStamp >=
-                this.PLAYER_BULLETS_INTERVAL &&
-            this.iam === this.CONST.USER
-        ) {
-            this.lastBulletTimeStamp = timestamp;
-            this.createNewBullet(this.x, this.y, this.d);
-        }
     }
 
     updateBullets() {
@@ -146,28 +109,6 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
                 b.fly();
             }
         });
-    }
-
-    // TODO: maybe move acceleration, direction and inertia control functions into the separate class
-    setDirectionAndAddAccel(d, accel) {
-        this.d = d;
-
-        if (this.inertiaDirections[this.CONST.DIR_OPPOSITES[d]] > 0) {
-            this.inertiaDirections[this.CONST.DIR_OPPOSITES[d]] -= accel;
-            if (this.inertiaDirections[this.CONST.DIR_OPPOSITES[d]] < 0) {
-                this.inertiaDirections[this.CONST.DIR_OPPOSITES[d]] = 0;
-            }
-        } else {
-            if (this.inertiaDirections[d] + accel > this.MAXIMUM_ACCELERATION) {
-                return;
-            }
-            this.inertiaDirections[d] += accel;
-        }
-        // this.inertiaDirections[d] += accel;
-    }
-
-    setInertiaValue(d, v) {
-        this.inertiaDirections[d] = v;
     }
 
     setDirectionAndAccel(d, accel, ms) {
@@ -225,7 +166,6 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
 
     waitAndCall(callback, ms, waitStart) {
         const doThings = function (timestamp) {
-            // console.log(timestamp);
             if (waitStart == null) {
                 waitStart = timestamp;
             }
@@ -238,8 +178,6 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
             }
         };
         window.requestAnimationFrame(doThings.bind(this));
-        // doThings();
-        // this.waitStart =
     }
 
     inertiaStartAttempt() {
@@ -315,26 +253,24 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         // );
 
         // if (!isOnTheOtherShip) {
-        if (true) {
-            if (ux != 0 || uy != 0) {
-                const found = this.BTankInst.checkIfTwoShipsCross(
-                    this.x + ux, //Math.floor(ux), //Math.ceil(ux),
-                    this.y + uy, //Math.floor(uy),//Math.ceil(uy),
-                    this
-                );
-                if (found) {
-                    if (direction === this.CONST.RIGHT)
-                        this.x = found.x - width - 1;
-                    if (direction === this.CONST.UP)
-                        this.y = found.y + found.dimensions[found.d].height;
-                    if (direction === this.CONST.LEFT)
-                        this.x = found.x + found.dimensions[found.d].width;
-                    if (direction === this.CONST.DOWN)
-                        this.y = found.y - height - 1;
-                    ux = 0;
-                    uy = 0;
-                    this.inertiaDirections[direction] = 0;
-                }
+        if (ux != 0 || uy != 0) {
+            const found = this.BTankInst.checkIfTwoShipsCross(
+                this.x + ux, //Math.floor(ux), //Math.ceil(ux),
+                this.y + uy, //Math.floor(uy),//Math.ceil(uy),
+                this
+            );
+            if (found) {
+                if (direction === this.CONST.RIGHT)
+                    this.x = found.x - width - 1;
+                if (direction === this.CONST.UP)
+                    this.y = found.y + found.dimensions[found.d].height;
+                if (direction === this.CONST.LEFT)
+                    this.x = found.x + found.dimensions[found.d].width;
+                if (direction === this.CONST.DOWN)
+                    this.y = found.y - height - 1;
+                ux = 0;
+                uy = 0;
+                this.inertiaDirections[direction] = 0;
             }
         }
         // console.log([this.x, this.y]);
@@ -357,28 +293,29 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
             }
         }
 
-        if (this.iam === this.CONST.COMPUTER && this.life > 0) {
-            this.draw();
-        }
+        this.draw();
 
-        if (this.iam === this.CONST.USER) {
-            this.draw();
-            // console.log([this.x, this.y]);
-        }
+        // if (this.iam === this.CONST.COMPUTER && this.life > 0) {
+        //     this.draw();
+        // }
+
+        // if (this.iam === this.CONST.USER) {
+        //     this.draw();
+        // }
     }
 
     hitByBullet(bulletInstance) {
         // if (this === bulletInstance.parentShip) {
-        if (bulletInstance.parentShip.iam === this.CONST.USER) {
-            if (this.iam === this.CONST.COMPUTER) {
-                this.life--;
-            }
-        }
-        if (bulletInstance.parentShip.iam === this.CONST.COMPUTER) {
-            if (this.iam === this.CONST.USER) {
-                this.life--;
-            }
-        }
+        // if (bulletInstance.parentShip.iam === this.CONST.USER) {
+        //     if (this.iam === this.CONST.COMPUTER) {
+        //         this.life--;
+        //     }
+        // }
+        // if (bulletInstance.parentShip.iam === this.CONST.COMPUTER) {
+        //     if (this.iam === this.CONST.USER) {
+        //         this.life--;
+        //     }
+        // }
         // }
     }
 };

@@ -8,7 +8,7 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
     constructor(CONST, BTankInst) {
         super();
         this.bulletNum = -1;
-        this.BULLETSPEED = 2;
+        this.BULLETSPEED = 2.5;
 
         this.CONST = CONST;
         this.BTankInst = BTankInst;
@@ -49,6 +49,7 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
                 break;
         }
         this.initCoords(x, y, nd);
+        return this;
     }
 
     draw() {
@@ -89,6 +90,7 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
             if (collidedShips) {
                 if (collidedShips.hitByBullet) {
                     collidedShips.hitByBullet(this);
+                    this.BTankInst.DrawCrash(this.x, this.y);
                 }
                 // if (curCSW.iam !== this.parentTank.iam) {
                 //     curCSW.life--;

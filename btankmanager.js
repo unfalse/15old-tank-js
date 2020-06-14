@@ -46,6 +46,7 @@ BattleTankGame.deps.BTankManager = class {
     constructor(
         CONST,
         csw,
+        player,
         cswAI,
         obstacle,
         staticShip,
@@ -56,6 +57,7 @@ BattleTankGame.deps.BTankManager = class {
         // TODO: dependencies in parameters are completely redundant! (CONST, csw, bullet, images)
         // TODO: write the full paths to classes
         this.cswArr = [];
+        this.delayedPics = [];
         this.drawContext = null;
         this.infoContext = null;
         this.againBtn = null;
@@ -66,6 +68,7 @@ BattleTankGame.deps.BTankManager = class {
 
         this.CONST = CONST;
         this.csw = csw;
+        this.player = player;
         this.cswAI = cswAI;
         this.obstacle = obstacle;
         this.staticShip = staticShip;
@@ -102,7 +105,7 @@ BattleTankGame.deps.BTankManager = class {
         // current object chosen to place on the map
         this.editorCurrentObjectBrush = {
             type: this.CONST.TYPES.OBSTACLE,
-            imageUrl: "url('images/obstacle1bigger.png')",
+            imageUrl: "url('images/obstacle2.png')",
         };
         this.editorMode = false;
         this.editorUnits = [];
@@ -196,7 +199,7 @@ BattleTankGame.deps.BTankManager = class {
                 this.backgroundImage = image;
             }),
 
-            loadImage.call(this, "images/obstacle1bigger.png", function (
+            loadImage.call(this, "images/obstacle2.png", function (
                 image
             ) {
                 this.obstacleImage = image;
@@ -289,7 +292,7 @@ BattleTankGame.deps.BTankManager = class {
         let c1 = null;
         const type = typeParam || this.CONST.TYPES.SHIP;
         if (who === this.CONST.USER) {
-            c1 = new this.csw(this.CONST, this.bullet);
+            c1 = new this.player(this.CONST, this.bullet);
             c1.init(x, y, who, this);
             this.cswArr.push(c1);
             return c1;
@@ -490,6 +493,20 @@ BattleTankGame.deps.BTankManager = class {
         return this.cswArr;
     }
 
+    createDelayedPic(x, y) {
+        const dp = new this.delayedPic(this.CONST);
+        dp.init(x, y, this.delayedPics.length, this);
+        this.delayedPics.push(dp);
+    }
+
+    removeDelayedPic() {
+
+    }
+
+    getAllDelayedPics() {
+        return this.delayedPics;
+    }
+
     getCPUs() {
         return this.cswArr.filter(function (c) {
             return c.iam === c.CONST.COMPUTER;
@@ -515,6 +532,7 @@ BattleTankGame.deps.BTankManager = class {
     }
 
     // user
+    // TODO: move entirely to the player class
     drawcswmt9(x, y, d) {
         this.playerImages[d].draw(x, y);
         // this.drawContext.strokeStyle="#f00";
@@ -550,7 +568,7 @@ BattleTankGame.deps.BTankManager = class {
     }
 
     DrawCrash(x, y, onDelayEnd) {
-        this.crashImage.draw(x, y, 100, onDelayEnd);
+        this.crashImage.draw(x, y, 1000, onDelayEnd);
         // this.crashImage.draw(x, y, 0, onDelayEnd);
     }
 
@@ -580,7 +598,7 @@ BattleTankGame.deps.BTankManager = class {
             case this.CONST.TYPES.OBSTACLE: {
                 this.editorCurrentObjectBrush = {
                     type: brushObjectType,
-                    imageUrl: "url('images/obstacle1bigger.png')",
+                    imageUrl: "url('images/obstacle2.png')",
                 };
                 break;
             }

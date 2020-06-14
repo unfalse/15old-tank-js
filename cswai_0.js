@@ -1,8 +1,8 @@
 console.log("csw AI_0!");
 
-BattleTankGame.deps.cswAI_0 = class extends BattleTankGame.deps.csw {
+BattleTankGame.deps.cswAI_0 = class extends BattleTankGame.deps.cpuBase {
     constructor(CONST, bullet) {
-        // BattleTankGame.deps.csw.call(this, CONST, bullet);
+        // BattleTankGame.deps.cpuBase.call(this, CONST, bullet);
         super(CONST, bullet);
         this.path = null; // { d: 0, accel: 0, ms: 0 };
         this.pathStartTime = -1;
@@ -69,7 +69,7 @@ BattleTankGame.deps.cswAI_0 = class extends BattleTankGame.deps.csw {
     }
 
     // BattleTankGame.deps.cswAI_0.prototype = Object.create(
-    //     BattleTankGame.deps.csw.prototype
+    //     BattleTankGame.deps.cpuBase.prototype
     // );
 
     // BattleTankGame.deps.cswAI_0.prototype.constructor = BattleTankGame.deps.cswAI_0;
@@ -121,11 +121,11 @@ BattleTankGame.deps.cswAI_0 = class extends BattleTankGame.deps.csw {
 
 console.log("csw AI_1!");
 
-BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.csw {
+BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.cpuBase {
     constructor(CONST, bullet) {
-        // BattleTankGame.deps.csw.call(this, CONST, bullet);
+        // BattleTankGame.deps.cpuBase.call(this, CONST, bullet);
         super(CONST, bullet);
-        this.baseUpdate = BattleTankGame.deps.csw.prototype.update;
+        // this.baseUpdate = BattleTankGame.deps.cpuBase.prototype.update;
         this.path = null; // { d: 0, accel: 0, ms: 0 };
         this.pathStartTime = -1;
         this.fireStartTime = -1;
@@ -137,18 +137,19 @@ BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.csw {
         // this.update = function (timestamp) { console.log('function was overrided!'); };
         // debugger;
         // d: 0...3, a: 0...1, ms: (0...1) *1000
-        this.baseInit = BattleTankGame.deps.csw.prototype.init;
+        // this.baseInit = BattleTankGame.deps.cpuBase.prototype.init;
     }
 
     init(mx, my, who, BTankInst) {
-        this.baseInit(mx, my, who, BTankInst);
+        //this.baseInit(mx, my, who, BTankInst);
+        super.init(mx, my, who, BTankInst);
         this.msCount = 0;
         this.msArray = [1000, 2500, 1200, 1900, 2300, 5450, 3567, 4444, 6000, 3000, 2000, 5000, 4500];
         this.accels = [0, 3, 2, 0, 1, 1, 2, 3, 0, 1, 2, 2, 3];
         this.dirs = [3,3,3,3,3,0, 3, 2, 0,0,0,0,0,0, 1, 1, 2, 3, 0,1,1,1,1, 1, 2, 2, 3];
     }
     // BattleTankGame.deps.cswAI_1.prototype = Object.create(
-    //     BattleTankGame.deps.csw.prototype
+    //     BattleTankGame.deps.cpuBase.prototype
     // );
 
     // BattleTankGame.deps.cswAI_1.prototype.constructor = BattleTankGame.deps.cswAI_1;
@@ -167,7 +168,7 @@ BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.csw {
     }
 
     AI_generateNewFireTime() {
-        return this.Utils.getRandomInt(1, 3) * 500;
+        return this.Utils.getRandomInt(1, 3) * 100;
     }
 
     update(timestamp) {
@@ -210,7 +211,8 @@ BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.csw {
             // this.fire(timestamp);
         }
 
-        this.baseUpdate(timestamp);
+        // this.baseUpdate(timestamp);
+        super.update(timestamp);
 
         // TODO: try to call the update of the parent prototype (CSW !)
         // this way i don't need to check if this.iam equals CONST.COMPUTER in csw.update anymore!!
@@ -226,7 +228,7 @@ BattleTankGame.deps.obstacle = class extends BattleTankGame.deps.csw {
     constructor(CONST, bullet) {
         super(CONST, bullet);
         this.type = CONST.TYPES.OBSTACLE;
-        this.baseHitByBullet = BattleTankGame.deps.csw.prototype.hitByBullet;
+        // this.baseHitByBullet = BattleTankGame.deps.cpuBase.prototype.hitByBullet;
     }
 
     draw() {
@@ -258,15 +260,16 @@ console.log("space brick!");
 BattleTankGame.deps.spaceBrick = class extends BattleTankGame.deps.csw {
     constructor(CONST, bullet) {
         super(CONST, bullet);
-
-        this.baseHitByBullet = BattleTankGame.deps.csw.prototype.hitByBullet;
-        this.baseInit = BattleTankGame.deps.csw.prototype.init;
+        this.type = this.CONST.TYPES.SPACEBRICK;
+        // this.baseHitByBullet = BattleTankGame.deps.cpuBase.prototype.hitByBullet;
+        // this.baseInit = BattleTankGame.deps.cpuBase.prototype.init;
     }
 
     init(mx, my, who, BTankInst) {
-        this.baseInit(mx, my, who, BTankInst);
-        this.type = this.CONST.TYPES.SPACEBRICK;
-        this.life = 10;
+        super.init(mx, my, who, BTankInst);
+        // this.baseInit(mx, my, who, BTankInst);
+        
+        this.life = 9;
     }
     // TODO: add logic to display 5 or 6 states based on value of life
     // draw states based on life
@@ -276,11 +279,12 @@ BattleTankGame.deps.spaceBrick = class extends BattleTankGame.deps.csw {
         this.BTankInst.drawSpaceBrick(
             this.x,
             this.y,
-            Math.floor((this.life - 1) / 2)
+            Math.floor((this.life) / 2)
         );
     }
 
     hitByBullet(bulletInstance) {
         this.life--;
+        console.log(this.life);
     }
 };

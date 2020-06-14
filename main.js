@@ -91,6 +91,10 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
             ship.update(timestamp);
         });
 
+        if (player1._dp.show) {
+            player1._dp.draw();
+        }
+
         BTank.displayLifeBar(player1);
 
         // if (BTank.cswArr.filter(c => (c.iam === CONST.COMPUTER && c.type === CONST.TYPES.SHIP)).length === 0) {
@@ -222,7 +226,7 @@ BattleTankGame.gameInstance = new BattleTankGame.deps.game(
     new BattleTankGame.deps.BTankManager(
         BattleTankGame.deps.const,
         BattleTankGame.deps.csw,
-        // BattleTankGame.deps.cswAI_0,
+        BattleTankGame.deps.player,
         BattleTankGame.deps.cswAI_1,
         BattleTankGame.deps.obstacle,
         BattleTankGame.deps.staticShip,
