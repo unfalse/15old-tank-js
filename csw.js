@@ -51,10 +51,13 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
 
         this.BTankInst = BTankInst;
 
-        for (let bc = 0; bc < this.bulletsAmountOnFire; bc++) {
-            const newBullet = new this.bullet(this.CONST, this.BTankInst);
-            newBullet.init(mx, my, 0, this, bc);
-            this.bulletsArray.push(newBullet);
+        // TODO: get rid of the bulletsArray and use classes (new)
+        if (this.bullet) {
+            for (let bc = 0; bc < this.bulletsAmountOnFire; bc++) {
+                const newBullet = new this.bullet(this.CONST, this.BTankInst);
+                newBullet.init(mx, my, 0, this, bc);
+                this.bulletsArray.push(newBullet);
+            }
         }
 
         this.dimensions = {
@@ -295,6 +298,5 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         this.draw();
     }
 
-    hitByBullet(bulletInstance) {
-    }
+    hitByBullet(bulletInstance) {}
 };

@@ -197,8 +197,8 @@ BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.cpuBase {
 console.log("obstacle!");
 
 BattleTankGame.deps.obstacle = class extends BattleTankGame.deps.csw {
-    constructor(CONST, bullet) {
-        super(CONST, bullet);
+    constructor(CONST) {
+        super(CONST);
         this.type = CONST.TYPES.OBSTACLE;
     }
 

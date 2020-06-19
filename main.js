@@ -3,7 +3,7 @@ console.log("main!");
 // -----------------------------
 //        Основная логика
 // -----------------------------
-BattleTankGame.deps.game = function (CONST, BTank, Utils) {
+BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
     let mainIntervalId = null;
     let gameOver = false;
     let win = false;
@@ -26,6 +26,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     this.start = function () {
         BTank.init().then(
             function () {
+                Editor.init(BTank);
                 BTank.showLogo();
                 BTank.showNames();
 
@@ -43,7 +44,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
                     this.keysHandler.bind(this)
                 );
                 document.addEventListener("keyup", this.keysHandler.bind(this));
-                // BTank.gameFieldBlock.addEventListener("click", this.editorOnClickHandler.bind(this));
+
                 BTank.gameFieldBlock.addEventListener(
                     "mousedown",
                     this.editorMouseDownHandler.bind(this)
@@ -64,7 +65,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         // console.log(timestamp);
         BTank.drawBackground();
 
-        if (BTank.editorMode) {
+        if (Editor.editorMode) {
             this.editorCycle(timestamp);
         } else {
             this.gameCycle(timestamp);
@@ -76,7 +77,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     };
 
     this.editorCycle = function (timestamp) {
-        BTank.editorUnits.forEach(function (unit) {
+        Editor.editorUnits.forEach(function (unit) {
             unit.update(timestamp);
         });
     };
@@ -111,15 +112,19 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     };
 
     this.editorMouseDownHandler = function (event) {
-        if (BTank.editorMode && event.buttons === 1) {
+        if (Editor.editorMode && event.buttons === 1) {
             const x = event.offsetX,
                 y = event.offsetY;
-            const cellx = Math.floor(x / 40)*40;
-            const celly = Math.floor(y / 40)*40;
-            if (BTank.editorCurrentObjectBrush.type !== CONST.TYPES.ERASER) {
-                BTank.createEditorUnit(cellx, celly, BTank.editorCurrentObjectBrush.type);
+            const cellx = Math.floor(x / 40) * 40;
+            const celly = Math.floor(y / 40) * 40;
+            if (Editor.editorCurrentObjectBrush.type !== CONST.TYPES.ERASER) {
+                Editor.createEditorUnit(
+                    cellx,
+                    celly,
+                    Editor.editorCurrentObjectBrush.type
+                );
             } else {
-                BTank.removeEditorObjectAt(cellx, celly);
+                Editor.removeEditorObjectAt(cellx, celly);
             }
         }
     };
@@ -130,12 +135,9 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
         timeCount = 0;
 
         if (kc === Utils.KEY_CODE.F1_KEY) {
-            this.toggleEditor();
+            //BTank.toggleEditorControls();
+            Editor.toggleEditorControls();
         }
-    };
-
-    this.toggleEditor = function () {
-        BTank.toggleEditorControls();
     };
 
     // ----------- END -----------
@@ -156,17 +158,17 @@ BattleTankGame.deps.game = function (CONST, BTank, Utils) {
     };
 
     this.editorKeys = function (kc) {
-        if (BTank.editorMode && kc === Utils.KEY_CODE.N1_KEY) {
-            BTank.setCurrentEditorBrushObject(CONST.TYPES.ERASER);
+        if (Editor.editorMode && kc === Utils.KEY_CODE.N1_KEY) {
+            Editor.setCurrentEditorBrushObject(CONST.TYPES.ERASER);
         }
-        if (BTank.editorMode && kc === Utils.KEY_CODE.N2_KEY) {
-            BTank.setCurrentEditorBrushObject(CONST.TYPES.OBSTACLE);
+        if (Editor.editorMode && kc === Utils.KEY_CODE.N2_KEY) {
+            Editor.setCurrentEditorBrushObject(CONST.TYPES.OBSTACLE);
         }
-        if (BTank.editorMode && kc === Utils.KEY_CODE.N3_KEY) {
-            BTank.setCurrentEditorBrushObject(CONST.TYPES.SHIP);
+        if (Editor.editorMode && kc === Utils.KEY_CODE.N3_KEY) {
+            Editor.setCurrentEditorBrushObject(CONST.TYPES.SHIP);
         }
-        if (BTank.editorMode && kc === Utils.KEY_CODE.N4_KEY) {
-            BTank.setCurrentEditorBrushObject(CONST.TYPES.SPACEBRICK);
+        if (Editor.editorMode && kc === Utils.KEY_CODE.N4_KEY) {
+            Editor.setCurrentEditorBrushObject(CONST.TYPES.SPACEBRICK);
         }
     };
 
@@ -219,6 +221,12 @@ BattleTankGame.gameInstance = new BattleTankGame.deps.game(
         BattleTankGame.deps.bulletPixel,
         BattleTankGame.deps.images,
         BattleTankGame.deps.delayedPic
+    ),
+    new BattleTankGame.deps.editor(
+        BattleTankGame.deps.const,
+        BattleTankGame.deps.obstacle,
+        BattleTankGame.deps.staticShip,
+        BattleTankGame.deps.spaceBrick
     ),
     BattleTankGame.deps.utils
 );
