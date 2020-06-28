@@ -3,7 +3,7 @@ console.log("BTankManager!");
 BattleTankGame.deps.const = {
     MAXLIFES: 10,
     MAXSPEED: 0,
-    MAXBULLETS: 10,
+    MAXBULLETS: 5,
 
     COMPUTER: 0,
     USER: 1,
@@ -58,26 +58,23 @@ BattleTankGame.deps.BTankManager = class {
         // TODO: dependencies in parameters are completely redundant! (CONST, csw, bullet, images)
         // TODO: write the full paths to classes
         this.cswArr = [];
+        this.bulletsArr = [];
         this.delayedPics = [];
         this.drawContext = null;
         this.infoContext = null;
         this.againBtn = null;
         this.gameOverBlock = null;
-        this.playerImage = null;
         this.crashImage = null;
         this.backgroundImage = null;
 
         this.CONST = CONST;
-        this.csw = csw;
         this.player = player;
         this.cswAI = cswAI;
         this.obstacle = obstacle;
-        // this.staticShip = staticShip;
         this.spaceBrick = spaceBrick;
         this.bullet = bullet;
         this.images = images;
         this.delayedPic = delayedPic;
-        this.baseCoords = new BattleTankGame.deps.baseCoordinates();
     }
 
     init() {
@@ -281,14 +278,6 @@ BattleTankGame.deps.BTankManager = class {
         };
     }
 
-    checkCSW(x, y) {
-        const result =
-            this.cswArr.filter(function (csw) {
-                return csw.x == x && csw.y == y;
-            }).length > 0;
-        return result.length > 0;
-    }
-
     checkIfTwoShipsCross(nx, ny, whoAsks, typeToCheckParam) {
         // const debugDraw = (function(x,y,w,h) {
         //     this.drawContext.strokeStyle = "#0f0";
@@ -336,22 +325,10 @@ BattleTankGame.deps.BTankManager = class {
         return tArr.length > 0 ? tArr[0] : null;
     }
 
-    getBulletWithPixelPrecision(x, y, whoAsks) {
-        const tArr = this.cswArr
-            .filter(function (csw) {
-                return !(csw.type !== this.CONST.TYPES.SHIP || whoAsks === csw);
-            }, this)
-            .reduce(function (csw1, csw2) {
-                // const { width, height } = csw.dimensions[csw.d];
-                const bullets = csw2.bulletsArray.filter(function (b) {
-                    return b.isfire;
-                });
-                const collidedBullets = bullets.filter(function (b) {
-                    return x >= b.x && x <= b.x + 4 && y >= b.y && y <= b.y + 4;
-                });
-                return csw1.concat(collidedBullets);
-            }, []);
-
+    getBulletWithPixelPrecision(x, y, parentShip, bulletInst) {
+        const tArr = this.bulletsArr.filter(function (b) {
+            return b.parentShip!==parentShip && b!==bulletInst && (x >= b.x && x <= b.x + 4 && y >= b.y && y <= b.y + 4);
+        });
         return tArr.length ? tArr[0] : null;
     }
 
@@ -377,6 +354,10 @@ BattleTankGame.deps.BTankManager = class {
         return this.cswArr;
     }
 
+    getAllBullets() {
+        return this.bulletsArr;
+    }
+
     addShip(ship) {
         this.cswArr.push(ship);
     }
@@ -397,24 +378,12 @@ BattleTankGame.deps.BTankManager = class {
         return this.delayedPics;
     }
 
-    getCPUs() {
-        return this.cswArr.filter(function (c) {
-            return c.iam === c.CONST.COMPUTER;
-        });
+    removeBullet(bullet) {
+        this.bulletsArr = this.bulletsArr.filter(function (b) { return b!==bullet; });
     }
 
     removeShip(ship) {
-        let ca = 0;
-        while (1) {
-            if (this.cswArr[ca] === ship) {
-                this.cswArr.splice(ca, 1);
-                break;
-            }
-            ca++;
-            if (ca == this.cswArr.length) {
-                break;
-            }
-        }
+        this.cswArr = this.cswArr.filter(function (s) { return s!==ship; });
     }
 
     destroyAll() {

@@ -88,6 +88,10 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
             player1.update();
         }
 
+        BTank.getAllBullets().forEach(function (bullet) {
+            bullet.fly(timestamp);
+        });
+
         BTank.getAllShips().forEach(function (ship) {
             ship.update(timestamp);
         });

@@ -3,13 +3,10 @@ console.log("csw!");
 // TODO: csw: cosmo ship war, the old title
 // TODO: rename csw to something more understandable - tank? SpaceShip ?
 // TODO: maybe the CPU and player should have separate classes? And several base classes.
-// BattleTankGame.deps.csw = function (CONST, bullet) {
-//     BattleTankGame.deps.baseCoordinates.call(this);
 BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
     constructor(CONST, bullet) {
         super();
         this.lastBulletTimeStamp = 0;
-        this.bulletsArray = [];
         // this.CSWSPEED = 4;
         this.CSWSPEED = 0;
         // this.accel = 0;
@@ -32,34 +29,14 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         this.Utils = BattleTankGame.deps.utils;
     }
 
-    // BattleTankGame.deps.csw.prototype = Object.create(
-    //     BattleTankGame.deps.baseCoordinates.prototype
-    // );
-    // BattleTankGame.deps.csw.prototype.constructor = BattleTankGame.deps.csw;
-
     // TODO: place code from init above!
     init(mx, my, who, BTankInst) {
         this.initCoords(mx, my, 0);
         this.iam = who;
         this.maxlife = 5;
         this.life = this.maxlife;
-        this.speed = 0; // make speed more precise
-        this.crashed = false;
-        this.bulletsCount = 0;
         this.bulletsAmountOnFire = this.CONST.MAXBULLETS;
-        // this.type = this.iam === this.CONST.USER ? this.CONST.TYPES.SHIP : this.type;
-
         this.BTankInst = BTankInst;
-
-        // TODO: get rid of the bulletsArray and use classes (new)
-        if (this.bullet) {
-            for (let bc = 0; bc < this.bulletsAmountOnFire; bc++) {
-                const newBullet = new this.bullet(this.CONST, this.BTankInst);
-                newBullet.init(mx, my, 0, this, bc);
-                this.bulletsArray.push(newBullet);
-            }
-        }
-
         this.dimensions = {
             0: BTankInst.getShipDimensions(0, who, this.type),
             1: BTankInst.getShipDimensions(1, who, this.type),
@@ -68,50 +45,16 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         };
     }
 
-    setCrash() {
-        this.crashed = true;
-    }
-
     draw() {
-        // if (this.crashed) {
-        // this.BTankInst.DrawCrash(
-        //     this.x,
-        //     this.y,
-        //     function () {
-        //         this.crashed = false;
-        //     }.bind(this)
-        // );
-        // } else {
-        // if (this.iam === this.CONST.USER) {
-        // this.BTankInst.drawcswmt9(this.x, this.y, this.d);
-        // } else {
         this.BTankInst.drawcswmt5(this.x, this.y, this.d);
-        // }
-        // }
     }
 
     createNewBullet(startX, startY, startD) {
-        const freeBullet = this.bulletsArray.find((b) => !b.isfire);
-
-        if (freeBullet) {
-            freeBullet.setCoords(startX, startY, startD);
-            freeBullet.isfire = true;
-            return freeBullet;
-        }
-    }
-
-    fire(timestamp) {
-        // if (this.life <= 0) {
-        //     return;
-        // }
-    }
-
-    updateBullets() {
-        this.bulletsArray.forEach((b) => {
-            if (b.isfire) {
-                b.fly();
-            }
-        });
+        if (this.BTankInst.bulletsArr.filter(function(b){ return b.parentShip === this }.bind(this)).length === this.bulletsAmountOnFire)
+            return;
+        const newBullet = new this.bullet(this.CONST, this.BTankInst);
+        newBullet.init(startX, startY, startD, this, 0);
+        this.BTankInst.bulletsArr.push(newBullet);
     }
 
     setDirectionAndAccel(d, accel, ms) {
@@ -286,7 +229,6 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
             this.BTankInst.removeShip(this);
         }
 
-        this.updateBullets();
         this.inertiaStartAttempt();
 
         if (!this.stopAccel) {

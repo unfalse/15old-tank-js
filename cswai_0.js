@@ -242,7 +242,7 @@ BattleTankGame.deps.spaceBrick = class extends BattleTankGame.deps.csw {
         this.BTankInst.drawSpaceBrick(
             this.x,
             this.y,
-            Math.floor((this.life) / 2)
+            Math.floor((this.life > 0 ? this.life : 0) / 2)
         );
     }
 
