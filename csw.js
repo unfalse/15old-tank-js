@@ -20,7 +20,7 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         this.d = 0; // direction
         this.stopAccel = true;
         // this.PLAYER_BULLETS_INTERVAL = 600;
-        this.MAXIMUM_ACCELERATION = 8;
+        this.MAXIMUM_ACCELERATION = 20;
         this.dimensions = {};
 
         this.CONST = CONST;
@@ -43,16 +43,17 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
             2: BTankInst.getShipDimensions(2, who, this.type),
             3: BTankInst.getShipDimensions(3, who, this.type),
         };
+        //this.ghost = !!ghost; // only display this object
     }
 
     draw() {
         this.BTankInst.drawcswmt5(this.x, this.y, this.d);
     }
 
-    createNewBullet(startX, startY, startD) {
+    createNewBullet(startX, startY, startD, whoFire) {
         if (this.BTankInst.bulletsArr.filter(function(b){ return b.parentShip === this }.bind(this)).length === this.bulletsAmountOnFire)
             return;
-        const newBullet = new this.bullet(this.CONST, this.BTankInst);
+        const newBullet = new this.bullet(this.CONST, this.BTankInst, whoFire);
         newBullet.init(startX, startY, startD, this, 0);
         this.BTankInst.bulletsArr.push(newBullet);
     }
@@ -175,18 +176,19 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         width--;
         height--;
 
-        if (this.x + ux + width > this.CONST.MAXX * 20 || this.x + ux < 0) {
+        // TODO: use this.CONST.CELLSIZES.MAXX instead of 20 !!!
+        if (this.x + ux + width > this.CONST.MAXX * this.CONST.CELLSIZES.MAXX || this.x + ux < 0) {
             if (this.x + ux < 0) this.x = 0;
-            if (this.x + ux + width > this.CONST.MAXX * 20)
-                this.x = this.CONST.MAXX * 20 - width;
+            if (this.x + ux + width > this.CONST.MAXX * this.CONST.CELLSIZES.MAXX)
+                this.x = this.CONST.MAXX * this.CONST.CELLSIZES.MAXX - width;
             ux = 0;
             this.inertiaDirections[direction] = 0;
         }
 
-        if (this.y + uy + height > this.CONST.MAXY * 20 || this.y + uy < 0) {
+        if (this.y + uy + height > this.CONST.MAXY * this.CONST.CELLSIZES.MAXY || this.y + uy < 0) {
             if (this.y + uy < 0) this.y = 0;
-            if (this.y + uy + height > this.CONST.MAXY * 20)
-                this.y = this.CONST.MAXY * 20 - height;
+            if (this.y + uy + height > this.CONST.MAXY * this.CONST.CELLSIZES.MAXY)
+                this.y = this.CONST.MAXY * this.CONST.CELLSIZES.MAXY - height;
             uy = 0;
             this.inertiaDirections[direction] = 0;
         }

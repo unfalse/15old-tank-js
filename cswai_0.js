@@ -125,7 +125,7 @@ BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.cpuBase {
         super.init(mx, my, who, BTankInst);
         this.msCount = 0;
         this.msArray = [1000, 2500, 1200, 1900, 2300, 5450, 3567, 4444, 6000, 3000, 2000, 5000, 4500];
-        this.accels = [0, 3, 2, 0, 1, 1, 2, 3, 0, 1, 2, 2, 3];
+        this.accels = [6,6,4,4,4,5,5,4,4,5,5,5,6,4,4,5,5];
         this.dirs = [3,0,2,1];
     }
 
@@ -143,7 +143,7 @@ BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.cpuBase {
     }
 
     AI_generateNewFireTime() {
-        return this.Utils.getRandomInt(1, 3) * 100;
+        return this.Utils.getRandomInt(1, 30) * 100;
     }
 
     update(timestamp) {
@@ -204,6 +204,23 @@ BattleTankGame.deps.obstacle = class extends BattleTankGame.deps.csw {
 
     draw() {
         this.BTankInst.drawObstacle(this.x, this.y);
+    }
+
+    hitByBullet() {}
+};
+
+////////////////////////////////////////////////////////// border
+
+console.log("border!");
+
+BattleTankGame.deps.border = class extends BattleTankGame.deps.csw {
+    constructor(CONST) {
+        super(CONST);
+        this.type = CONST.TYPES.BORDER;
+    }
+
+    draw() {
+        this.BTankInst.drawBorder(this.x, this.y);
     }
 
     hitByBullet() {}

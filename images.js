@@ -49,3 +49,16 @@ BattleTankGame.deps.images = class {
         }
     }
 };
+
+BattleTankGame.deps.images.loadImage = function(imagePath, onLoad) {
+    return new Promise(
+        function (resolve) {
+            onLoad.call(
+                this,
+                new this.images(this, imagePath, function () {
+                    resolve();
+                })
+            );
+        }.bind(this)
+    );
+}

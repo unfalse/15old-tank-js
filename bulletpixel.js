@@ -4,9 +4,9 @@ console.log("bulletPixel!");
 BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
     .baseCoordinates {
     // BattleTankGame.deps.baseCoordinates.call(this);
-    constructor(CONST, BTankInst) {
+    constructor(CONST, BTankInst, whoFire) {
         super();
-        this.BULLETSPEED = 2.5;
+        this.BULLETSPEED = whoFire ? (whoFire.type === CONST.USER ? 12 : 2.5) : 2.5;
 
         this.CONST = CONST;
         this.BTankInst = BTankInst;
@@ -47,7 +47,11 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
     draw() {
         this.BTankInst.drawContext.fillStyle =
             this.parentShip.iam === this.CONST.USER ? "#F00" : "#FF0";
-        this.BTankInst.drawContext.fillRect(this.x, this.y, 4, 4);
+        const relXY = this.BTankInst.gameCam.getRelCoords(this.x, this.y);
+        this.BTankInst.drawContext.fillRect(
+          relXY.x,
+          relXY.y,
+        4, 4);
     }
 
     fly() {
@@ -91,12 +95,12 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
         this.y = this.y + vy;
         this.draw();
 
-        if (this.x > this.CONST.MAXX * 20 || this.x < 0) {
+        if (this.x > this.CONST.MAXX * this.CONST.CELLSIZES.MAXX || this.x < 0) {
             this.BTankInst.removeBullet(this);
             // this.BTankInst.createDelayedPic(this.x - 10, this.y - 10);
         }
 
-        if (this.y > this.CONST.MAXY * 20 || this.y < 0) {
+        if (this.y > this.CONST.MAXY * this.CONST.CELLSIZES.MAXY || this.y < 0) {
             this.BTankInst.removeBullet(this);
             // this.BTankInst.createDelayedPic(this.x - 10, this.y - 10);
         }

@@ -19,7 +19,7 @@ BattleTankGame.deps.player = class extends BattleTankGame.deps.csw {
     }
 
     draw() {
-        this.BTankInst.drawcswmt9(this.x, this.y, this.d);
+        this.BTankInst.drawcswmt9(this.CONST.CAM.CENTERX, this.CONST.CAM.CENTERY, this.d);
     }
 
     fire(timestamp) {
@@ -28,7 +28,7 @@ BattleTankGame.deps.player = class extends BattleTankGame.deps.csw {
             this.PLAYER_BULLETS_INTERVAL
         ) {
             this.lastBulletTimeStamp = timestamp;
-            this.createNewBullet(this.x, this.y, this.d);
+            this.createNewBullet(this.x, this.y, this.d, this);
         }
     }
 
