@@ -51,8 +51,9 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
     }
 
     createNewBullet(startX, startY, startD, whoFire) {
-        if (this.BTankInst.bulletsArr.filter(function(b){ return b.parentShip === this }.bind(this)).length === this.bulletsAmountOnFire)
-            return;
+        if (this.BTankInst.bulletsArr.filter(function(b){
+            return b.parentShip === this }.bind(this)).length === this.bulletsAmountOnFire
+        ) return;
         const newBullet = new this.bullet(this.CONST, this.BTankInst, whoFire);
         newBullet.init(startX, startY, startD, this, 0);
         this.BTankInst.bulletsArr.push(newBullet);

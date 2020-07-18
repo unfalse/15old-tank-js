@@ -6,39 +6,46 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
     // BattleTankGame.deps.baseCoordinates.call(this);
     constructor(CONST, BTankInst, whoFire) {
         super();
-        this.BULLETSPEED = whoFire ? (whoFire.type === CONST.USER ? 12 : 2.5) : 2.5;
+        this.BULLETSPEED = whoFire ? (whoFire.type === CONST.USER ? 2.5 : 2.5) : 2.5;
 
         this.CONST = CONST;
         this.BTankInst = BTankInst;
     }
 
     setCoords(nx, ny, nd) {
-        const { width, height } = this.parentShip.dimensions[nd];
+        const { width, height } = this.parentShip.dimensions[typeof nd === 'number' ? nd : 0];
         let x = 0,
             y = 0;
-        switch (nd) {
-            case 0: {
-                x = nx + width;
-                y = ny + height / 2;
-                break;
+        if (typeof nd === 'number') {
+            switch (nd) {
+                case 0: {
+                    x = nx + width;
+                    y = ny + height / 2;
+                    break;
+                }
+                case 1: {
+                    x = nx + width / 2;
+                    y = ny + height + 1;
+                    break;
+                }
+                case 2: {
+                    x = nx - 1;
+                    y = ny + height / 2;
+                    break;
+                }
+                case 3: {
+                    x = nx + width / 2;
+                    y = ny - 1;
+                    break;
+                }
+                default:
+                    break;
             }
-            case 1: {
-                x = nx + width / 2;
-                y = ny + height + 1;
-                break;
-            }
-            case 2: {
-                x = nx - 1;
-                y = ny + height / 2;
-                break;
-            }
-            case 3: {
-                x = nx + width / 2;
-                y = ny - 1;
-                break;
-            }
-            default:
-                break;
+        } else if (typeof nd === 'object') {
+            const newX = { 0: width / 2, 1: width, '-1': -1 };
+            const newY = { 0: height / 2, 1: height + 1, '-1': -1 };
+            x = nx + newX[nd.vx];
+            y = ny + newY[nd.vy];
         }
         this.initCoords(x, y, nd);
         return this;
@@ -49,13 +56,13 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
             this.parentShip.iam === this.CONST.USER ? "#F00" : "#FF0";
         const relXY = this.BTankInst.gameCam.getRelCoords(this.x, this.y);
         this.BTankInst.drawContext.fillRect(
-          relXY.x,
-          relXY.y,
+            relXY.x,
+            relXY.y,
         4, 4);
     }
 
     fly() {
-        const nvxy = this.getVXY(this.d);
+        const nvxy = (typeof this.d === 'number') ? this.getVXY(this.d) : this.d;
         let vx = nvxy.vx * this.BULLETSPEED;
         let vy = nvxy.vy * this.BULLETSPEED;
 

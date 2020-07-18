@@ -124,7 +124,7 @@ BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.cpuBase {
     init(mx, my, who, BTankInst) {
         super.init(mx, my, who, BTankInst);
         this.msCount = 0;
-        this.msArray = [1000, 1200, 2000];
+        this.msArray = [1000, 1200, 2000, 5000];
         this.accels = [6,6,4,4,4,5,5,4,4,5,5,5,6,4,4,5,5];
         this.dirs = [3,0,2,1];
     }
@@ -143,7 +143,7 @@ BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.cpuBase {
     }
 
     AI_generateNewFireTime() {
-        return this.Utils.getRandomInt(1, 10) * 100;
+        return this.Utils.getRandomInt(1, 30) * 100;
     }
 
     update(timestamp) {

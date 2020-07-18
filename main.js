@@ -153,6 +153,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
 
             gameOver = true;
         }
+        console.log('cswArr = ', BTank.cswArr.length);
     };
 
     this.editorMouseDownHandler = function (event) {
@@ -243,7 +244,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
 
     this.detectMovement = function (timestamp) {
         // code here must change ONLY DIRECTION
-        const ACCEL = 0.1;
+        const ACCEL = 0.3;
 
         if (keys[Utils.KEY_CODE.UP]) {
             player1.setDirectionAndAddAccel(

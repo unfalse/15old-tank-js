@@ -4,13 +4,13 @@ BattleTankGame.deps.player = class extends BattleTankGame.deps.csw {
     constructor(CONST, bullet) {
         super(CONST, bullet);
         this.type = this.CONST.USER;
-        this.PLAYER_BULLETS_INTERVAL = 100;
+        this.PLAYER_BULLETS_INTERVAL = 700;
     }
 
     // TODO: move BTankInst to a the constructor
     init(mx, my, who, BTankInst) {
         super.init(mx, my, who, BTankInst);
-        this.maxlife = 3;
+        this.maxlife = 10;
         this.life = this.maxlife;
     }
 
@@ -29,6 +29,15 @@ BattleTankGame.deps.player = class extends BattleTankGame.deps.csw {
         ) {
             this.lastBulletTimeStamp = timestamp;
             this.createNewBullet(this.x, this.y, this.d, this);
+            // this.createNewBullet(this.x, this.y, { vx: 1, vy: 0 }, this);
+            // this.createNewBullet(this.x, this.y, { vx: 0, vy: 1 }, this);
+            // this.createNewBullet(this.x, this.y, { vx: -1, vy: 0 }, this);
+            // this.createNewBullet(this.x, this.y, { vx: 0, vy: -1 }, this);
+
+            // this.createNewBullet(this.x, this.y, { vx: 1, vy: 1 }, this);
+            // this.createNewBullet(this.x, this.y, { vx: 1, vy: -1 }, this);
+            // this.createNewBullet(this.x, this.y, { vx: -1, vy: 1 }, this);
+            // this.createNewBullet(this.x, this.y, { vx: -1, vy: -1 }, this);
         }
     }
 

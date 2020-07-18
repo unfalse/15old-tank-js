@@ -1,9 +1,11 @@
 console.log("BTankManager!");
 
+// TODO: check before actual draw if object is within the visible region
+
 BattleTankGame.deps.const = {
     MAXLIFES: 10,
     MAXSPEED: 0,
-    MAXBULLETS: 50,
+    MAXBULLETS: 10,
 
     COMPUTER: 0,
     USER: 1,
@@ -13,7 +15,7 @@ BattleTankGame.deps.const = {
         OBSTACLE: 1,
         SPACEBRICK: 2,
         COUNTER: 3,
-        BORDER: 4
+        BORDER: 4,
     },
 
     CELLSIZES: {
@@ -21,8 +23,13 @@ BattleTankGame.deps.const = {
         MAXY: 40,
     },
 
-    MAXX: 75,
-    MAXY: 75,
+    SCALE: {
+        X: 1,
+        Y: 1
+    },
+
+    MAXX: 100,
+    MAXY: 100,
     SCREENMAXX: 25,
     SCREENMAXY: 18,
 
@@ -201,7 +208,7 @@ BattleTankGame.deps.BTankManager = class {
                 this.spaceBrickImages[0] = image;
             }),
 
-            loadImage.call(this, 'images/border.png', function (image) {
+            loadImage.call(this, "images/border.png", function (image) {
                 this.borderImage = image;
             }),
 
@@ -379,8 +386,8 @@ BattleTankGame.deps.BTankManager = class {
         //     image.height = 30;
         // }
         return {
-            width: image.width,
-            height: image.height,
+            width: this.CONST.CELLSIZES.MAXX, // image.width,
+            height: this.CONST.CELLSIZES.MAXY // image.height,
         };
     }
 
@@ -409,15 +416,12 @@ BattleTankGame.deps.BTankManager = class {
         width--;
         height--;
 
-        // || (typeToCheckParam === undefined && csw.type !== typeToCheckParam)
-
         const tArr = this.cswArr.filter(function (csw) {
             if (whoAsks === csw) {
                 return false;
             }
 
-            const checkResult =
-                checkSquare(csw, nx, ny) ||
+            const checkResult = checkSquare(csw, nx, ny) ||
                 checkSquare(csw, nx + width, ny) ||
                 checkSquare(csw, nx, ny + height) ||
                 checkSquare(csw, nx + width, ny + height) ||
@@ -515,7 +519,12 @@ BattleTankGame.deps.BTankManager = class {
     // user
     // TODO: move entirely to the player class
     drawcswmt9(x, y, d) {
-        this.playerImages[d].draw(x, y);
+        this.playerImages[d].draw(
+            x,
+            y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
+        );
         // this.drawContext.strokeStyle="#f00";
         // this.drawContext.strokeRect(Math.floor(x), Math.floor(y), 39,39);
         // this.drawContext.lineWidth=0.1;
@@ -526,7 +535,9 @@ BattleTankGame.deps.BTankManager = class {
         const relXY = this.gameCam.getRelCoords(x, y);
         this.cpuImages[d].draw(
             relXY.x,
-            relXY.y
+            relXY.y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
         );
         // this.drawContext.strokeStyle="#f00";
         // this.drawContext.strokeRect(x, y, 39,39);
@@ -536,7 +547,9 @@ BattleTankGame.deps.BTankManager = class {
         const relXY = this.gameCam.getRelCoords(x, y);
         this.obstacleImage.draw(
             relXY.x,
-            relXY.y
+            relXY.y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
         );
         // this.drawContext.strokeStyle="#f00";
         // this.drawContext.strokeRect(x, y, 39,39);
@@ -546,7 +559,9 @@ BattleTankGame.deps.BTankManager = class {
         const relXY = this.gameCam.getRelCoords(x, y);
         this.borderImage.draw(
             relXY.x,
-            relXY.y
+            relXY.y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
         );
         // this.drawContext.strokeStyle="#f00";
         // this.drawContext.strokeRect(x, y, 39,39);
@@ -556,7 +571,9 @@ BattleTankGame.deps.BTankManager = class {
         const relXY = this.gameCam.getRelCoords(x, y);
         this.cpuImages[0].draw(
             relXY.x,
-            relXY.y
+            relXY.y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
         );
         // this.drawContext.strokeStyle="#f00";
         // this.drawContext.strokeRect(x, y, 39,39);
@@ -566,7 +583,9 @@ BattleTankGame.deps.BTankManager = class {
         const relXY = this.gameCam.getRelCoords(x, y);
         this.spaceBrickImages[n].draw(
             relXY.x,
-            relXY.y
+            relXY.y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
         );
     }
 
@@ -574,7 +593,9 @@ BattleTankGame.deps.BTankManager = class {
         const relXY = this.gameCam.getRelCoords(x, y);
         this.counterImage[n].draw(
             relXY.x,
-            relXY.y
+            relXY.y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
         );
     }
 
@@ -584,7 +605,7 @@ BattleTankGame.deps.BTankManager = class {
     }
 
     drawBackground() {
-        this.backgroundImage.draw(0, 0);
+        this.backgroundImage.draw(0, 0, 1000, 720);
     }
 
     showLogo() {

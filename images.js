@@ -24,10 +24,10 @@ BattleTankGame.deps.images = class {
         this.image.src = src;
     }
 
-    draw(x, y, delayParam, onDelayEnd) {
+    draw(x, y, dw, dh, delayParam, onDelayEnd) {
         // const delay = delayParam || 0;
         if (this.loaded) {
-            this.BTankInst.drawContext.drawImage(this.image, x, y);
+            this.BTankInst.drawContext.drawImage(this.image, x, y, dw, dh);
             // let startTime = 0;
 
             // const delayedDraw = function (timestamp) {
