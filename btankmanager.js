@@ -386,8 +386,8 @@ BattleTankGame.deps.BTankManager = class {
         //     image.height = 30;
         // }
         return {
-            width: this.CONST.CELLSIZES.MAXX, // image.width,
-            height: this.CONST.CELLSIZES.MAXY // image.height,
+            width: image.width, // this.CONST.CELLSIZES.MAXX
+            height: image.height, // this.CONST.CELLSIZES.MAXY
         };
     }
 
