@@ -1,5 +1,7 @@
 console.log("BTankManager!");
 
+// TODO: check before actual draw if object is within the visible region
+
 BattleTankGame.deps.const = {
     MAXLIFES: 10,
     MAXSPEED: 0,
@@ -12,6 +14,8 @@ BattleTankGame.deps.const = {
         SHIP: 0,
         OBSTACLE: 1,
         SPACEBRICK: 2,
+        COUNTER: 3,
+        BORDER: 4,
     },
 
     CELLSIZES: {
@@ -19,10 +23,20 @@ BattleTankGame.deps.const = {
         MAXY: 40,
     },
 
-    MAXX: 50,
-    MAXY: 36,
-    BEGX: 20,
-    BEGY: 20,
+    SCALE: {
+        X: 1,
+        Y: 1
+    },
+
+    MAXX: 100,
+    MAXY: 100,
+    SCREENMAXX: 25,
+    SCREENMAXY: 18,
+
+    CAM: {
+        CENTERX: 500,
+        CENTERY: 360,
+    },
 
     RIGHT: 0,
     DOWN: 1,
@@ -46,100 +60,74 @@ BattleTankGame.deps.BTankManager = class {
     constructor(
         CONST,
         csw,
+        player,
         cswAI,
         obstacle,
         staticShip,
         spaceBrick,
         bullet,
-        images
+        counter,
+        camera,
+        border,
+        images,
+        delayedPic
     ) {
         // TODO: dependencies in parameters are completely redundant! (CONST, csw, bullet, images)
         // TODO: write the full paths to classes
         this.cswArr = [];
+        this.ghosts = [];
+        this.bulletsArr = [];
+        this.delayedPics = [];
         this.drawContext = null;
         this.infoContext = null;
         this.againBtn = null;
         this.gameOverBlock = null;
-        this.playerImage = null;
         this.crashImage = null;
         this.backgroundImage = null;
+        this.counterImage = null;
 
         this.CONST = CONST;
-        this.csw = csw;
+        this.player = player;
         this.cswAI = cswAI;
         this.obstacle = obstacle;
-        this.staticShip = staticShip;
         this.spaceBrick = spaceBrick;
         this.bullet = bullet;
+        this.counter = counter;
+        this.camera = camera;
+        this.border = border;
         this.images = images;
-        this.baseCoords = new BattleTankGame.deps.baseCoordinates();
+        this.delayedPic = delayedPic;
     }
 
     init() {
         const gameField = document.getElementById("gameField");
-        gameField.height = this.CONST.MAXY * 20;
-        gameField.width = this.CONST.MAXX * 20;
+        // TODO: change 20 to CELLSIZES !!
+        gameField.height = this.CONST.SCREENMAXY * this.CONST.CELLSIZES.MAXY;
+        gameField.width = this.CONST.SCREENMAXX * this.CONST.CELLSIZES.MAXX;
 
         // TODO: create new ui class and move these things to it
         this.gameInfo = document.getElementById("gameInfo");
         this.againBtn = document.querySelector("#playAgainBtn");
         this.gameOverBlock = document.querySelector("#gameOverBlock");
         this.titleBlock = document.querySelector("#titleBlock");
-        this.editorBlock = document.querySelector("#editorBlock");
-        this.editorCurrentObject = document.querySelector(
-            "#editorCurrentObject"
-        );
-        this.editorPlayBtn = document.querySelector("#editorPlayBtn");
-        this.editorSaveBtn = document.querySelector("#editorSaveBtn");
-        this.editorLoadBtn = document.querySelector("#editorLoadBtn");
         this.gameFieldBlock = gameField;
-        window.__editor_load_str = "";
 
         this.drawContext = gameField.getContext("2d");
         this.infoContext = this.gameInfo.getContext("2d");
 
         // TODO: make separate editor class?
         // current object chosen to place on the map
-        this.editorCurrentObjectBrush = {
-            type: this.CONST.TYPES.OBSTACLE,
-            imageUrl: "url('images/obstacle1bigger.png')",
-        };
-        this.editorMode = false;
-        this.editorUnits = [];
         this.playerImages = {};
         this.cpuImages = {};
         this.crashImage = null;
         this.backgroundImage = null;
         this.obstacleImage = null;
+        this.borderImage = null;
         this.spaceBrickImages = [];
+        this.counterImage = [];
+        this.gameCam = new this.camera(this.CONST, this);
 
-        const loadImage = function (imagePath, onLoad) {
-            return new Promise(
-                function (resolve) {
-                    onLoad.call(
-                        this,
-                        new this.images(this, imagePath, function () {
-                            resolve();
-                        })
-                    );
-                }.bind(this)
-            );
-        };
-
-        this.editorPlayBtn.addEventListener(
-            "click",
-            this.playTheEditorLevel.bind(this)
-        );
-
-        this.editorSaveBtn.addEventListener(
-            "click",
-            this.saveTheEditorLevel.bind(this)
-        );
-
-        this.editorLoadBtn.addEventListener(
-            "click",
-            this.loadTheEditorLevel.bind(this)
-        );
+        const loadImage = this.images.loadImage;
 
         // TODO: it should be a function which will preload images.
         // First it should collect paths to images from classes (csw, cswai, obstacle, etc.)
@@ -196,9 +184,7 @@ BattleTankGame.deps.BTankManager = class {
                 this.backgroundImage = image;
             }),
 
-            loadImage.call(this, "images/obstacle1bigger.png", function (
-                image
-            ) {
+            loadImage.call(this, "images/obstacle2.png", function (image) {
                 this.obstacleImage = image;
             }),
 
@@ -221,61 +207,103 @@ BattleTankGame.deps.BTankManager = class {
             loadImage.call(this, "images/space_brick-4.png", function (image) {
                 this.spaceBrickImages[0] = image;
             }),
+
+            loadImage.call(this, "images/border.png", function (image) {
+                this.borderImage = image;
+            }),
+
+            loadImage.call(this, "images/counter-0.png", function (image) {
+                this.counterImage[0] = image;
+            }),
+
+            loadImage.call(this, "images/counter-1.png", function (image) {
+                this.counterImage[1] = image;
+            }),
+
+            loadImage.call(this, "images/counter-2.png", function (image) {
+                this.counterImage[2] = image;
+            }),
+
+            loadImage.call(this, "images/counter-3.png", function (image) {
+                this.counterImage[3] = image;
+            }),
+
+            loadImage.call(this, "images/counter-4.png", function (image) {
+                this.counterImage[4] = image;
+            }),
+
+            loadImage.call(this, "images/counter-5.png", function (image) {
+                this.counterImage[5] = image;
+            }),
+
+            loadImage.call(this, "images/counter-6.png", function (image) {
+                this.counterImage[6] = image;
+            }),
+
+            loadImage.call(this, "images/counter-7.png", function (image) {
+                this.counterImage[7] = image;
+            }),
+
+            loadImage.call(this, "images/counter-8.png", function (image) {
+                this.counterImage[8] = image;
+            }),
+            loadImage.call(this, "images/counter-9.png", function (image) {
+                this.counterImage[9] = image;
+            }),
         ];
         return Promise.all(promises);
     }
 
-    playTheEditorLevel() {
-        const player = this.cswArr[0];
-        this.destroyAll();
+    placeBorders() {
+        for (var x = 0; x < this.CONST.MAXX + 2; x++) {
+            this.createCSW(
+                (x - 1) * this.CONST.CELLSIZES.MAXX,
+                -1 * this.CONST.CELLSIZES.MAXY,
+                this.CONST.COMPUTER,
+                0,
+                this.CONST.TYPES.OBSTACLE,
+                true
+            );
+            this.createCSW(
+                (x - 1) * this.CONST.CELLSIZES.MAXX,
+                this.CONST.MAXY * this.CONST.CELLSIZES.MAXY,
+                this.CONST.COMPUTER,
+                0,
+                this.CONST.TYPES.OBSTACLE,
+                true
+            );
+        }
 
-        // TODO: add player1 to the empty array
-        this.cswArr.push(player);
-        this.editorUnits.forEach(function (unit) {
-            if (unit.type === this.CONST.TYPES.SHIP) {
-                this.createCSW(unit.x, unit.y, this.CONST.COMPUTER, 0);
-            }
-            if (unit.type === this.CONST.TYPES.OBSTACLE) {
-                this.createCSW(
-                    unit.x,
-                    unit.y,
-                    this.CONST.COMPUTER,
-                    0,
-                    this.CONST.TYPES.OBSTACLE
-                );
-            }
-            if (unit.type === this.CONST.TYPES.SPACEBRICK) {
-                this.createCSW(
-                    unit.x,
-                    unit.y,
-                    this.CONST.COMPUTER,
-                    0,
-                    this.CONST.TYPES.SPACEBRICK
-                );
-            }
-        }, this);
-
-        this.toggleEditorControls();
+        for (var y = 0; y < this.CONST.MAXY + 1; y++) {
+            this.createCSW(
+                -1 * this.CONST.CELLSIZES.MAXX,
+                (y - 1) * this.CONST.CELLSIZES.MAXY,
+                this.CONST.COMPUTER,
+                0,
+                this.CONST.TYPES.OBSTACLE,
+                true
+            );
+            this.createCSW(
+                this.CONST.MAXX * this.CONST.CELLSIZES.MAXX,
+                (y - 1) * this.CONST.CELLSIZES.MAXY,
+                this.CONST.COMPUTER,
+                0,
+                this.CONST.TYPES.OBSTACLE,
+                true
+            );
+        }
     }
 
-    saveTheEditorLevel() {
-        window.__editor_save_str = this.editorUnits.reduce(function (
-            prev,
-            curr
-        ) {
-            return prev + curr.type + "," + curr.x + "," + curr.y + "|";
-        },
-        "");
+    pushNewObject(obj, ghost) {
+        if (ghost) {
+            this.ghosts.push(obj);
+        } else {
+            this.cswArr.push(obj);
+        }
     }
 
-    loadTheEditorLevel() {
-        window.__editor_load_str =
-            "1,0,480|1,40,480|1,80,480|1,120,480|1,120,440|1,120,400|1,120,360|1,120,320|1,280,280|1,320,280|1,360,280|1,520,200|1,560,200|1,600,200|1,640,200|1,360,400|1,400,400|1,440,400|1,480,400|1,640,320|1,640,360|1,640,400|1,680,400|1,720,400|1,760,400|1,800,200|1,840,200|1,880,200|1,880,160|1,920,160|1,920,120|1,920,80|1,320,120|1,360,120|1,400,120|1,440,120|2,160,440|2,160,400|2,200,400|2,240,400|2,280,400|2,320,400|2,280,440|2,240,440|2,240,480|2,280,480|2,320,480|2,320,520|2,360,520|2,400,520|2,520,400|2,560,400|2,600,400|2,600,360|2,600,320|2,560,320|2,560,360|2,560,440|2,560,480|2,600,480|2,600,440|2,520,440|2,480,440|2,360,440|2,320,440|2,760,440|2,800,440|2,840,440|2,840,400|2,880,440|2,920,440|2,920,400|2,960,400|2,960,440|2,880,400|2,880,360|2,920,360|2,960,360|2,960,320|2,400,280|2,440,280|2,440,240|2,480,240|2,480,200|2,440,200|2,400,240|2,400,200|2,360,200|2,680,200|2,720,200|2,760,200|2,920,200|2,960,200|2,960,160|2,960,120|2,960,80|2,120,280|2,80,280|2,40,280|2,40,240|2,40,200|2,80,240|2,120,240|2,120,200|2,280,120|2,240,120|2,200,120|2,200,160|2,160,160|1,160,200|1,160,240|1,200,240|1,200,200|1,480,520|1,520,520|1,520,560|1,560,560|1,600,560|0,760,40|0,720,40|0,680,40|0,640,40|0,600,40|0,560,40|0,520,40|0,480,40|0,440,40|0,400,40|0,360,40|0,320,40|0,280,40|0,240,40|0,200,40|0,200,80|0,160,80|0,120,80|0,120,40|0,80,40|0,40,40|0,40,0|0,0,0|0,80,0|0,120,0|0,160,40|0,200,0|0,240,0|0,280,0|0,320,0|0,360,0|0,400,0|0,440,0|0,480,0|0,520,0|0,560,0|0,600,0|0,640,-40|0,680,-40|0,680,0|0,720,0|0,760,0|0,800,0|0,840,0|0,880,0|0,920,0|0,960,0|0,960,40|0,920,40|0,880,40|0,840,40|0,800,40|0,640,0|0,400,80|0,360,80|0,320,80|0,280,80|0,240,80|0,440,80|0,480,80|0,520,80|0,560,80|0,600,80|0,640,80|0,680,80|0,720,80|0,760,80|0,800,80|0,840,80|0,NaN,NaN|2,320,680|2,320,640|2,360,640|2,360,600|2,400,600|2,440,600|2,480,600|2,480,640|2,520,640|2,520,680|2,560,680|2,480,680|2,520,600|2,560,640|2,440,640|2,400,640|2,400,680|2,360,680|2,440,680|";
-        //"1,320,200|1,320,160|1,320,120|1,360,120|1,360,80|1,400,80|1,440,80|1,480,80|1,480,120|1,520,120|1,520,160|1,520,200|1,520,240|1,480,240|1,480,280|1,440,280|1,400,280|1,360,280|1,360,240|1,320,240|0,400,120|0,400,160|0,440,160|0,440,120|0,480,160|0,480,200|0,440,200|0,400,200|0,360,200|0,360,160|0,400,240|0,440,240|";
-        window.__editor_load_str.split("|").forEach(function (objStr) {
-            var fields = objStr.split(",");
-            this.createEditorUnit(+fields[1], +fields[2], +fields[0]);
-        }, this);
+    getGameCam() {
+        return this.gameCam;
     }
 
     // TODO: is it good that BTankManager knows which fields CSW class contains ?
@@ -284,14 +312,15 @@ BattleTankGame.deps.BTankManager = class {
         y,
         who, // TODO: this field should be in ship class (csw or cswai or obstacle)
         delay,
-        typeParam
+        typeParam,
+        ghost
     ) {
         let c1 = null;
         const type = typeParam || this.CONST.TYPES.SHIP;
         if (who === this.CONST.USER) {
-            c1 = new this.csw(this.CONST, this.bullet);
+            c1 = new this.player(this.CONST, this.bullet);
             c1.init(x, y, who, this);
-            this.cswArr.push(c1);
+            this.pushNewObject(c1, ghost);
             return c1;
         } else if (who === this.CONST.COMPUTER) {
             // TODO: make delayed parameter as a field in class so BTankManager should decide from this field how to create new instance
@@ -302,7 +331,7 @@ BattleTankGame.deps.BTankManager = class {
                     if (type === this.CONST.TYPES.SHIP) {
                         c1 = new this.cswAI(this.CONST, this.bullet);
                         c1.init(x, y, who, this);
-                        this.cswArr.push(c1);
+                        this.pushNewObject(c1, ghost);
                     }
                 }.bind(this),
                 delay
@@ -311,52 +340,21 @@ BattleTankGame.deps.BTankManager = class {
             if (type === this.CONST.TYPES.OBSTACLE) {
                 c1 = new this.obstacle(this.CONST, this.bullet);
                 c1.init(x, y, who, this);
-                this.cswArr.push(c1);
+                this.pushNewObject(c1, ghost);
             }
 
             if (type === this.CONST.TYPES.SPACEBRICK) {
                 c1 = new this.spaceBrick(this.CONST, this.bullet);
                 c1.init(x, y, who, this);
-                this.cswArr.push(c1);
+                this.pushNewObject(c1, ghost);
+            }
+
+            if (type === this.CONST.TYPES.COUNTER) {
+                c1 = new this.counter(this.CONST, this);
+                c1.init(x, y, who, this);
+                this.pushNewObject(c1);
             }
         }
-        // const c1 =
-        //     who === this.CONST.USER
-        //         ? new this.csw(this.CONST, this.bullet)
-        //         : new this.cswAI(this.CONST, this.bullet);
-    }
-
-    createEditorUnit(x, y, type) {
-        let newUnit = null;
-        const who = this.CONST.COMPUTER;
-        if (
-            this.editorUnits.some(function (unit) {
-                return unit.x === x && unit.y === y;
-            })
-        ) {
-            return;
-        }
-        if (type === this.CONST.TYPES.OBSTACLE) {
-            newUnit = new this.obstacle(this.CONST, this.bullet);
-            newUnit.init(x, y, who, this);
-            this.editorUnits.push(newUnit);
-        }
-        if (type === this.CONST.TYPES.SHIP) {
-            newUnit = new this.staticShip(this.CONST, this.bullet);
-            newUnit.init(x, y, who, this);
-            this.editorUnits.push(newUnit);
-        }
-        if (type === this.CONST.TYPES.SPACEBRICK) {
-            newUnit = new this.spaceBrick(this.CONST, this.bullet);
-            newUnit.init(x, y, who, this);
-            this.editorUnits.push(newUnit);
-        }
-    }
-
-    removeEditorObjectAt(x, y) {
-        this.editorUnits = this.editorUnits.filter(function (unit) {
-            return !(unit.x === x && unit.y === y);
-        });
     }
 
     // x, y - coordinates of pixels, not cells
@@ -388,17 +386,9 @@ BattleTankGame.deps.BTankManager = class {
         //     image.height = 30;
         // }
         return {
-            width: image.width,
-            height: image.height,
+            width: image.width, // this.CONST.CELLSIZES.MAXX
+            height: image.height, // this.CONST.CELLSIZES.MAXY
         };
-    }
-
-    checkCSW(x, y) {
-        const result =
-            this.cswArr.filter(function (csw) {
-                return csw.x == x && csw.y == y;
-            }).length > 0;
-        return result.length > 0;
     }
 
     checkIfTwoShipsCross(nx, ny, whoAsks, typeToCheckParam) {
@@ -426,15 +416,12 @@ BattleTankGame.deps.BTankManager = class {
         width--;
         height--;
 
-        // || (typeToCheckParam === undefined && csw.type !== typeToCheckParam)
-
         const tArr = this.cswArr.filter(function (csw) {
             if (whoAsks === csw) {
                 return false;
             }
 
-            const checkResult =
-                checkSquare(csw, nx, ny) ||
+            const checkResult = checkSquare(csw, nx, ny) ||
                 checkSquare(csw, nx + width, ny) ||
                 checkSquare(csw, nx, ny + height) ||
                 checkSquare(csw, nx + width, ny + height) ||
@@ -448,23 +435,17 @@ BattleTankGame.deps.BTankManager = class {
         return tArr.length > 0 ? tArr[0] : null;
     }
 
-    getBulletWithPixelPrecision(x, y, whoAsks) {
-        const tArr = this.cswArr.filter(function (csw) {
-            return !(csw.type !== this.CONST.TYPES.SHIP || whoAsks === csw);
-        }, this).reduce(function (csw1, csw2) {
-            // const { width, height } = csw.dimensions[csw.d];
-            const bullets = csw2.bulletsArray.filter(function (b) { return b.isfire; });
-            const collidedBullets = bullets.filter(function (b) {
-                return (
-                    x >= b.x &&
-                    x <= b.x + 4 &&
-                    y >= b.y &&
-                    y <= b.y + 4
-                );
-            });
-            return csw1.concat(collidedBullets);
-        }, []);
-
+    getBulletWithPixelPrecision(x, y, parentShip, bulletInst) {
+        const tArr = this.bulletsArr.filter(function (b) {
+            return (
+                b.parentShip !== parentShip &&
+                b !== bulletInst &&
+                x >= b.x &&
+                x <= b.x + 4 &&
+                y >= b.y &&
+                y <= b.y + 4
+            );
+        });
         return tArr.length ? tArr[0] : null;
     }
 
@@ -486,28 +467,49 @@ BattleTankGame.deps.BTankManager = class {
         return tArr.length ? tArr[0] : null;
     }
 
+    getAllGhosts() {
+        return this.ghosts;
+    }
+
     getAllShips() {
         return this.cswArr;
     }
 
-    getCPUs() {
-        return this.cswArr.filter(function (c) {
-            return c.iam === c.CONST.COMPUTER;
+    getAllBullets() {
+        return this.bulletsArr;
+    }
+
+    addShip(ship) {
+        this.cswArr.push(ship);
+    }
+
+    createDelayedPic(x, y) {
+        const dp = new this.delayedPic(this.CONST);
+        const relXY = this.gameCam.getRelCoords(x, y);
+        dp.init(relXY.x, relXY.y, this);
+        this.delayedPics.push(dp);
+    }
+
+    removeDelayedPic(dpObj) {
+        this.delayedPics = this.delayedPics.filter(function (dp) {
+            return dp !== dpObj;
+        });
+    }
+
+    getAllDelayedPics() {
+        return this.delayedPics;
+    }
+
+    removeBullet(bullet) {
+        this.bulletsArr = this.bulletsArr.filter(function (b) {
+            return b !== bullet;
         });
     }
 
     removeShip(ship) {
-        let ca = 0;
-        while (1) {
-            if (this.cswArr[ca] === ship) {
-                this.cswArr.splice(ca, 1);
-                break;
-            }
-            ca++;
-            if (ca == this.cswArr.length) {
-                break;
-            }
-        }
+        this.cswArr = this.cswArr.filter(function (s) {
+            return s !== ship;
+        });
     }
 
     destroyAll() {
@@ -515,8 +517,14 @@ BattleTankGame.deps.BTankManager = class {
     }
 
     // user
+    // TODO: move entirely to the player class
     drawcswmt9(x, y, d) {
-        this.playerImages[d].draw(x, y);
+        this.playerImages[d].draw(
+            x,
+            y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
+        );
         // this.drawContext.strokeStyle="#f00";
         // this.drawContext.strokeRect(Math.floor(x), Math.floor(y), 39,39);
         // this.drawContext.lineWidth=0.1;
@@ -524,102 +532,80 @@ BattleTankGame.deps.BTankManager = class {
 
     // cpu
     drawcswmt5(x, y, d) {
-        this.cpuImages[d].draw(x, y);
+        const relXY = this.gameCam.getRelCoords(x, y);
+        this.cpuImages[d].draw(
+            relXY.x,
+            relXY.y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
+        );
         // this.drawContext.strokeStyle="#f00";
         // this.drawContext.strokeRect(x, y, 39,39);
     }
 
     drawObstacle(x, y) {
-        this.obstacleImage.draw(x, y);
+        const relXY = this.gameCam.getRelCoords(x, y);
+        this.obstacleImage.draw(
+            relXY.x,
+            relXY.y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
+        );
+        // this.drawContext.strokeStyle="#f00";
+        // this.drawContext.strokeRect(x, y, 39,39);
+    }
+
+    drawBorder(x, y) {
+        const relXY = this.gameCam.getRelCoords(x, y);
+        this.borderImage.draw(
+            relXY.x,
+            relXY.y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
+        );
         // this.drawContext.strokeStyle="#f00";
         // this.drawContext.strokeRect(x, y, 39,39);
     }
 
     drawStaticShip(x, y) {
-        this.cpuImages[0].draw(x, y);
+        const relXY = this.gameCam.getRelCoords(x, y);
+        this.cpuImages[0].draw(
+            relXY.x,
+            relXY.y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
+        );
         // this.drawContext.strokeStyle="#f00";
         // this.drawContext.strokeRect(x, y, 39,39);
     }
 
     drawSpaceBrick(x, y, n) {
-        this.spaceBrickImages[n].draw(x, y);
-    }
-
-    DrawBlack(x, y) {
-        this.drawContext.clearRect(x, y, 20, 20);
-    }
-
-    DrawCrash(x, y, onDelayEnd) {
-        this.crashImage.draw(x, y, 100, onDelayEnd);
-        // this.crashImage.draw(x, y, 0, onDelayEnd);
-    }
-
-    drawGameField() {
-        this.drawContext.strokeStyle = "#000";
-        this.drawContext.strokeRect(
-            0,
-            0,
-            this.CONST.MAXX * 20, // TODO: use CONST.CELLSIZES.MAXX instead of magic number!
-            this.CONST.MAXY * 20
+        const relXY = this.gameCam.getRelCoords(x, y);
+        this.spaceBrickImages[n].draw(
+            relXY.x,
+            relXY.y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
         );
     }
 
+    drawCounter(x, y, n) {
+        const relXY = this.gameCam.getRelCoords(x, y);
+        this.counterImage[n].draw(
+            relXY.x,
+            relXY.y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
+        );
+    }
+
+    DrawCrash(x, y, onDelayEnd) {
+        this.crashImage.draw(x, y, 1000, onDelayEnd);
+        // this.crashImage.draw(x, y, 0, onDelayEnd);
+    }
+
     drawBackground() {
-        this.backgroundImage.draw(0, 0);
-    }
-
-    setCurrentEditorBrushObject(brushObjectType) {
-        switch (brushObjectType) {
-            case this.CONST.TYPES.SHIP: {
-                this.editorCurrentObjectBrush = {
-                    type: brushObjectType,
-                    imageUrl: "url('images/csw-mt5bigger2x_0.png')",
-                };
-                break;
-            }
-            case this.CONST.TYPES.OBSTACLE: {
-                this.editorCurrentObjectBrush = {
-                    type: brushObjectType,
-                    imageUrl: "url('images/obstacle1bigger.png')",
-                };
-                break;
-            }
-            case this.CONST.TYPES.SPACEBRICK: {
-                this.editorCurrentObjectBrush = {
-                    type: brushObjectType,
-                    imageUrl: "url('images/space_brick-0.png')",
-                };
-                break;
-            }
-            case this.CONST.TYPES.ERASER: {
-                this.editorCurrentObjectBrush = {
-                    type: brushObjectType,
-                    imageUrl: "",
-                };
-                break;
-            }
-            default:
-                break;
-        }
-        this.editorCurrentObject.style.backgroundImage = this.editorCurrentObjectBrush.imageUrl;
-    }
-
-    toggleEditorControls() {
-        this.editorMode = !this.editorMode;
-        if (this.editorMode) {
-            this.gameInfo.style.display = "none";
-
-            this.editorBlock.style.display = "flex";
-            this.editorBlock.style.justifyContent = "center";
-
-            this.editorCurrentObject.style.backgroundImage = this.editorCurrentObjectBrush.imageUrl;
-            this.editorCurrentObject.style.width = "40px";
-            this.editorCurrentObject.style.height = "40px";
-        } else {
-            this.gameInfo.style.display = "";
-            this.gameInfo.style.textAlign = "center";
-            this.editorBlock.style.display = "none";
-        }
+        this.backgroundImage.draw(0, 0, 1000, 720);
     }
 
     showLogo() {

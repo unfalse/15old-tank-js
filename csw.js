@@ -3,13 +3,10 @@ console.log("csw!");
 // TODO: csw: cosmo ship war, the old title
 // TODO: rename csw to something more understandable - tank? SpaceShip ?
 // TODO: maybe the CPU and player should have separate classes? And several base classes.
-// BattleTankGame.deps.csw = function (CONST, bullet) {
-//     BattleTankGame.deps.baseCoordinates.call(this);
 BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
     constructor(CONST, bullet) {
         super();
         this.lastBulletTimeStamp = 0;
-        this.bulletsArray = [];
         // this.CSWSPEED = 4;
         this.CSWSPEED = 0;
         // this.accel = 0;
@@ -22,8 +19,8 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         this.inertiaTimerIsRunning = false;
         this.d = 0; // direction
         this.stopAccel = true;
-        this.PLAYER_BULLETS_INTERVAL = 600;
-        this.MAXIMUM_ACCELERATION = 8;
+        // this.PLAYER_BULLETS_INTERVAL = 600;
+        this.MAXIMUM_ACCELERATION = 20;
         this.dimensions = {};
 
         this.CONST = CONST;
@@ -32,142 +29,34 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         this.Utils = BattleTankGame.deps.utils;
     }
 
-    // BattleTankGame.deps.csw.prototype = Object.create(
-    //     BattleTankGame.deps.baseCoordinates.prototype
-    // );
-    // BattleTankGame.deps.csw.prototype.constructor = BattleTankGame.deps.csw;
-
     // TODO: place code from init above!
     init(mx, my, who, BTankInst) {
         this.initCoords(mx, my, 0);
         this.iam = who;
-        this.maxlife = this.iam === this.CONST.USER ? 3 : 5;
+        this.maxlife = 5;
         this.life = this.maxlife;
-        this.speed = 0; // make speed more precise
-        this.crashed = false;
-        this.bulletsCount = 0;
         this.bulletsAmountOnFire = this.CONST.MAXBULLETS;
-        this.type =
-            this.iam === this.CONST.USER ? this.CONST.TYPES.SHIP : this.type;
-
         this.BTankInst = BTankInst;
-
-        for (let bc = 0; bc < this.bulletsAmountOnFire; bc++) {
-            const newBullet = new this.bullet(this.CONST, this.BTankInst);
-            newBullet.init(mx, my, 0, this, bc);
-            this.bulletsArray.push(newBullet);
-        }
-
         this.dimensions = {
             0: BTankInst.getShipDimensions(0, who, this.type),
             1: BTankInst.getShipDimensions(1, who, this.type),
             2: BTankInst.getShipDimensions(2, who, this.type),
             3: BTankInst.getShipDimensions(3, who, this.type),
         };
-    }
-
-    setCrash() {
-        this.crashed = true;
-    }
-
-    setAccel(value) {
-        this.accel = value;
-    }
-
-    addAccel(value) {
-        this.accel += value;
-    }
-
-    getAccel() {
-        return this.accel;
-    }
-
-    collide() {
-        return { ux: 0, uy: 0 };
+        //this.ghost = !!ghost; // only display this object
     }
 
     draw() {
-        if (this.crashed) {
-            this.BTankInst.DrawCrash(
-                this.x,
-                this.y,
-                function () {
-                    this.crashed = false;
-                }.bind(this)
-            );
-        } else {
-            if (this.iam === this.CONST.USER) {
-                this.BTankInst.drawcswmt9(this.x, this.y, this.d);
-            } else {
-                this.BTankInst.drawcswmt5(this.x, this.y, this.d);
-            }
-        }
+        this.BTankInst.drawcswmt5(this.x, this.y, this.d);
     }
 
-    erase() {
-        this.BTankInst.DrawBlack(this.x, this.y);
-    }
-
-    createNewBullet(startX, startY, startD) {
-        const freeBullet = this.bulletsArray.find((b) => !b.isfire);
-
-        if (freeBullet) {
-            freeBullet.setCoords(startX, startY, startD);
-            freeBullet.isfire = true;
-        }
-    }
-
-    fire(timestamp) {
-        // if (this.life <= 0) {
-        //     return;
-        // }
-        if (this.iam === this.CONST.COMPUTER) {
-            if (this.fireStartTime === -1) {
-                this.fireStartTime = timestamp;
-            }
-            if (timestamp - this.fireStartTime >= 1000) {
-                this.fireStartTime = timestamp;
-                this.createNewBullet(this.x, this.y, this.d);
-            }
-        }
-        if (
-            timestamp - this.lastBulletTimeStamp >=
-                this.PLAYER_BULLETS_INTERVAL &&
-            this.iam === this.CONST.USER
-        ) {
-            this.lastBulletTimeStamp = timestamp;
-            this.createNewBullet(this.x, this.y, this.d);
-        }
-    }
-
-    updateBullets() {
-        this.bulletsArray.forEach((b) => {
-            if (b.isfire) {
-                b.fly();
-            }
-        });
-    }
-
-    // TODO: maybe move acceleration, direction and inertia control functions into the separate class
-    setDirectionAndAddAccel(d, accel) {
-        this.d = d;
-
-        if (this.inertiaDirections[this.CONST.DIR_OPPOSITES[d]] > 0) {
-            this.inertiaDirections[this.CONST.DIR_OPPOSITES[d]] -= accel;
-            if (this.inertiaDirections[this.CONST.DIR_OPPOSITES[d]] < 0) {
-                this.inertiaDirections[this.CONST.DIR_OPPOSITES[d]] = 0;
-            }
-        } else {
-            if (this.inertiaDirections[d] + accel > this.MAXIMUM_ACCELERATION) {
-                return;
-            }
-            this.inertiaDirections[d] += accel;
-        }
-        // this.inertiaDirections[d] += accel;
-    }
-
-    setInertiaValue(d, v) {
-        this.inertiaDirections[d] = v;
+    createNewBullet(startX, startY, startD, whoFire) {
+        if (this.BTankInst.bulletsArr.filter(function(b){
+            return b.parentShip === this }.bind(this)).length === this.bulletsAmountOnFire
+        ) return;
+        const newBullet = new this.bullet(this.CONST, this.BTankInst, whoFire);
+        newBullet.init(startX, startY, startD, this, 0);
+        this.BTankInst.bulletsArr.push(newBullet);
     }
 
     setDirectionAndAccel(d, accel, ms) {
@@ -225,7 +114,6 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
 
     waitAndCall(callback, ms, waitStart) {
         const doThings = function (timestamp) {
-            // console.log(timestamp);
             if (waitStart == null) {
                 waitStart = timestamp;
             }
@@ -238,8 +126,6 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
             }
         };
         window.requestAnimationFrame(doThings.bind(this));
-        // doThings();
-        // this.waitStart =
     }
 
     inertiaStartAttempt() {
@@ -291,31 +177,31 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         width--;
         height--;
 
-        if (this.x + ux + width > this.CONST.MAXX * 20 || this.x + ux < 0) {
+        // TODO: use this.CONST.CELLSIZES.MAXX instead of 20 !!!
+        if (this.x + ux + width > this.CONST.MAXX * this.CONST.CELLSIZES.MAXX || this.x + ux < 0) {
             if (this.x + ux < 0) this.x = 0;
-            if (this.x + ux + width > this.CONST.MAXX * 20)
-                this.x = this.CONST.MAXX * 20 - width;
+            if (this.x + ux + width > this.CONST.MAXX * this.CONST.CELLSIZES.MAXX)
+                this.x = this.CONST.MAXX * this.CONST.CELLSIZES.MAXX - width;
             ux = 0;
             this.inertiaDirections[direction] = 0;
         }
 
-        if (this.y + uy + height > this.CONST.MAXY * 20 || this.y + uy < 0) {
+        if (this.y + uy + height > this.CONST.MAXY * this.CONST.CELLSIZES.MAXY || this.y + uy < 0) {
             if (this.y + uy < 0) this.y = 0;
-            if (this.y + uy + height > this.CONST.MAXY * 20)
-                this.y = this.CONST.MAXY * 20 - height;
+            if (this.y + uy + height > this.CONST.MAXY * this.CONST.CELLSIZES.MAXY)
+                this.y = this.CONST.MAXY * this.CONST.CELLSIZES.MAXY - height;
             uy = 0;
             this.inertiaDirections[direction] = 0;
         }
 
         // checking if the ship is on the other ship already
-        // const isOnTheOtherShip = this.BTankInst.checkIfTwoShipsCross(
-        //     this.x,
-        //     this.y,
-        //     this
-        // );
+        const isOnTheOtherShip = this.BTankInst.checkIfTwoShipsCross(
+            this.x,
+            this.y,
+            this
+        );
 
-        // if (!isOnTheOtherShip) {
-        if (true) {
+        if (!isOnTheOtherShip) {
             if (ux != 0 || uy != 0) {
                 const found = this.BTankInst.checkIfTwoShipsCross(
                     this.x + ux, //Math.floor(ux), //Math.ceil(ux),
@@ -336,11 +222,9 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
                     this.inertiaDirections[direction] = 0;
                 }
             }
+            this.x = this.x + ux;
+            this.y = this.y + uy;
         }
-        // console.log([this.x, this.y]);
-        this.x = this.x + ux;
-        this.y = this.y + uy;
-        // this.draw();
     }
 
     update(timestamp) {
@@ -348,7 +232,6 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
             this.BTankInst.removeShip(this);
         }
 
-        this.updateBullets();
         this.inertiaStartAttempt();
 
         if (!this.stopAccel) {
@@ -357,28 +240,8 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
             }
         }
 
-        if (this.iam === this.CONST.COMPUTER && this.life > 0) {
-            this.draw();
-        }
-
-        if (this.iam === this.CONST.USER) {
-            this.draw();
-            // console.log([this.x, this.y]);
-        }
+        this.draw();
     }
 
-    hitByBullet(bulletInstance) {
-        // if (this === bulletInstance.parentShip) {
-        if (bulletInstance.parentShip.iam === this.CONST.USER) {
-            if (this.iam === this.CONST.COMPUTER) {
-                this.life--;
-            }
-        }
-        if (bulletInstance.parentShip.iam === this.CONST.COMPUTER) {
-            if (this.iam === this.CONST.USER) {
-                this.life--;
-            }
-        }
-        // }
-    }
+    hitByBullet(bulletInstance) {}
 };
