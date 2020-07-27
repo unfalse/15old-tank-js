@@ -113,7 +113,12 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
     this.editorCycle = function (timestamp) {
         Editor.editorUnits.forEach(function (unit) {
             this.detectEditorMovement(timestamp);
-            unit.update(timestamp);
+            //unit.update(timestamp);
+            unit.draw();
+        }, this);
+
+        Editor.editorGhosts.forEach(function (ghost) {
+            ghost.draw();
         }, this);
     };
 

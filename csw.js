@@ -195,13 +195,13 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         }
 
         // checking if the ship is on the other ship already
-        const isOnTheOtherShip = this.BTankInst.checkIfTwoShipsCross(
-            this.x,
-            this.y,
-            this
-        );
+        // const isOnTheOtherShip = this.BTankInst.checkIfTwoShipsCross(
+        //     this.x,
+        //     this.y,
+        //     this
+        // );
 
-        if (!isOnTheOtherShip) {
+        // if (!isOnTheOtherShip) {
             if (ux != 0 || uy != 0) {
                 const found = this.BTankInst.checkIfTwoShipsCross(
                     this.x + ux, //Math.floor(ux), //Math.ceil(ux),
@@ -224,7 +224,7 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
             }
             this.x = this.x + ux;
             this.y = this.y + uy;
-        }
+        // }
     }
 
     update(timestamp) {
