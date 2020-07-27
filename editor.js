@@ -27,6 +27,7 @@ BattleTankGame.deps.editor = class {
         };
         this.editorMode = false;
         this.editorUnits = [];
+        this.editorGhosts = [];
 
         this.editorPlayBtn.addEventListener(
             "click",
@@ -104,7 +105,15 @@ BattleTankGame.deps.editor = class {
         }, this);
     }
 
-    createEditorUnit(x, y, type) {
+    pushNewObject(obj, ghost) {
+        if (ghost) {
+            this.editorGhosts.push(obj);
+        } else {
+            this.editorUnits.push(obj);
+        }
+    }
+
+    createEditorUnit(x, y, type, ghost) {
         let newUnit = null;
         const who = this.CONST.COMPUTER;
         if (
@@ -117,22 +126,26 @@ BattleTankGame.deps.editor = class {
         if (type === this.CONST.TYPES.OBSTACLE) {
             newUnit = new this.obstacle(this.CONST);
             newUnit.init(x, y, who, this.BTankInst);
-            this.editorUnits.push(newUnit);
+            // this.editorUnits.push(newUnit);
+            this.pushNewObject(newUnit, ghost);
         }
         if (type === this.CONST.TYPES.SHIP) {
             newUnit = new this.staticShip(this.CONST, this.bullet);
             newUnit.init(x, y, who, this.BTankInst);
-            this.editorUnits.push(newUnit);
+            // this.editorUnits.push(newUnit);
+            this.pushNewObject(newUnit, ghost);
         }
         if (type === this.CONST.TYPES.SPACEBRICK) {
             newUnit = new this.spaceBrick(this.CONST, this.bullet);
             newUnit.init(x, y, who, this.BTankInst);
-            this.editorUnits.push(newUnit);
+            //this.editorUnits.push(newUnit);
+            this.pushNewObject(newUnit, ghost);
         }
         if (type === this.CONST.TYPES.BORDER) {
             newUnit = new this.border(this.CONST);
             newUnit.init(x, y, who, this.BTankInst);
-            this.editorUnits.push(newUnit);
+            //this.editorUnits.push(newUnit);
+            this.pushNewObject(newUnit, ghost);
         }
     }
 
@@ -184,11 +197,13 @@ BattleTankGame.deps.editor = class {
                 (x - 1) * this.CONST.CELLSIZES.MAXX,
                 -1 * this.CONST.CELLSIZES.MAXY,
                 this.CONST.TYPES.BORDER,
+                true
             );
             this.createEditorUnit(
                 (x - 1) * this.CONST.CELLSIZES.MAXX,
                 this.CONST.MAXY * this.CONST.CELLSIZES.MAXY,
                 this.CONST.TYPES.BORDER,
+                true
             );
         }
 
@@ -197,11 +212,13 @@ BattleTankGame.deps.editor = class {
                 -1 * this.CONST.CELLSIZES.MAXX,
                 (y - 1) * this.CONST.CELLSIZES.MAXY,
                 this.CONST.TYPES.BORDER,
+                true
             );
             this.createEditorUnit(
                 this.CONST.MAXX * this.CONST.CELLSIZES.MAXX,
                 (y - 1) * this.CONST.CELLSIZES.MAXY,
                 this.CONST.TYPES.BORDER,
+                true
             );
         }
     }

@@ -12,6 +12,11 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
         this.BTankInst = BTankInst;
     }
 
+    init(nx, ny, nd, parentShip) {
+        this.parentShip = parentShip;
+        this.setCoords(nx, ny, nd);
+    }
+
     setCoords(nx, ny, nd) {
         const { width, height } = this.parentShip.dimensions[typeof nd === 'number' ? nd : 0];
         let x = 0,
@@ -19,17 +24,17 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
         if (typeof nd === 'number') {
             switch (nd) {
                 case 0: {
-                    x = nx + width;
+                    x = nx + width - 1;
                     y = ny + height / 2;
                     break;
                 }
                 case 1: {
                     x = nx + width / 2;
-                    y = ny + height + 1;
+                    y = ny + height - 1;
                     break;
                 }
                 case 2: {
-                    x = nx - 1;
+                    x = nx + 1;
                     y = ny + height / 2;
                     break;
                 }
@@ -111,10 +116,5 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
             this.BTankInst.removeBullet(this);
             // this.BTankInst.createDelayedPic(this.x - 10, this.y - 10);
         }
-    }
-
-    init(nx, ny, nd, parentShip) {
-        this.parentShip = parentShip;
-        this.setCoords(nx, ny, nd);
     }
 };

@@ -485,8 +485,9 @@ BattleTankGame.deps.BTankManager = class {
 
     createDelayedPic(x, y) {
         const dp = new this.delayedPic(this.CONST);
-        const relXY = this.gameCam.getRelCoords(x, y);
-        dp.init(relXY.x, relXY.y, this);
+        // const relXY = this.gameCam.getRelCoords(x, y);
+        // dp.init(relXY.x, relXY.y, this);
+        dp.init(x, y, this);
         this.delayedPics.push(dp);
     }
 
@@ -600,7 +601,13 @@ BattleTankGame.deps.BTankManager = class {
     }
 
     DrawCrash(x, y, onDelayEnd) {
-        this.crashImage.draw(x, y, 1000, onDelayEnd);
+        const relXY = this.gameCam.getRelCoords(x, y);
+        this.crashImage.draw(
+            relXY.x,
+            relXY.y,
+            20 * this.CONST.SCALE.X,
+            20 * this.CONST.SCALE.Y
+        );
         // this.crashImage.draw(x, y, 0, onDelayEnd);
     }
 

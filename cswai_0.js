@@ -125,8 +125,8 @@ BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.cpuBase {
         super.init(mx, my, who, BTankInst);
         this.msCount = 0;
         this.msArray = [1000, 1200, 2000, 5000];
-        this.accels = [6,6,4,4,4,5,5,4,4,5,5,5,6,4,4,5,5];
-        this.dirs = [3,0,2,1];
+        this.accels = [6, 6, 4, 4, 4, 5, 5, 4, 4, 5, 5, 5, 6, 4, 4, 5, 5];
+        this.dirs = [3, 0, 2, 1];
     }
 
     AI_generateNewPath() {
@@ -135,9 +135,13 @@ BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.cpuBase {
         return {
             // d: this.Utils.getRandomInt(0, 3),
             // accel: this.Utils.getRandomInt(0, 3),
-            d: this.dirs[this.Utils.getRandomInt(0, this.dirs.length-1)],
-            accel: this.accels[this.Utils.getRandomInt(0, this.accels.length-1)],
-            ms: this.msArray[this.Utils.getRandomInt(0, this.msArray.length-1)]
+            d: this.dirs[this.Utils.getRandomInt(0, this.dirs.length - 1)],
+            accel: this.accels[
+                this.Utils.getRandomInt(0, this.accels.length - 1)
+            ],
+            ms: this.msArray[
+                this.Utils.getRandomInt(0, this.msArray.length - 1)
+            ],
             // ms: this.Utils.getRandomInt(0, 6) * 1000
         };
     }
@@ -192,6 +196,58 @@ BattleTankGame.deps.cswAI_1 = class extends BattleTankGame.deps.cpuBase {
         // this.baseUpdate(timestamp);
     }
 };
+////////////////////////////////////////////////////////// cswAI_customPaths
+
+console.log("csw AI_customPaths!");
+
+BattleTankGame.deps.cswAI_customPaths = class extends BattleTankGame.deps
+    .cpuBase {
+    constructor(CONST, bullet) {
+        super(CONST, bullet);
+        this.type = CONST.TYPES.SHIP;
+        this.wpCounter = 0;
+    }
+
+    init(mx, my, who, BTankInst, wayPoints) {
+        super.init(mx, my, who, BTankInst);
+        const FIRST_PATH = [
+            [80, 0],
+            [0, 0],
+            [0, 80],
+            [80, 80],
+        ];
+        this.wayPoints = wayPoints || FIRST_PATH;
+    }
+
+    update(timestamp) {
+        let currentWp = this.wayPoints[this.wpCounter];
+        let d = 0;
+        if (this.x === currentWp[0] && this.y === currentWp[1]) {
+            this.wpCounter++;
+            if (this.wpCounter > this.wayPoints.length) this.wpCounter = 0;
+            currentWp = this.wayPoints[this.wpCounter];
+        }
+        if (this.x === currentWp[0] && this.y < currentWp[1]) {
+            d = 1;
+        }
+        if (this.x > currentWp[0] && this.y === currentWp[1]) {
+            d = 2;
+        }
+        if (this.x === currentWp[0] && this.y < currentWp[1]) {
+            d = 1;
+        }
+        if (this.x < currentWp[0] && this.y === currentWp[1]) {
+            d = 0;
+        }
+        if (this.d != d) {
+            this.setDirectionAndAccel(d, 0, 0);
+        }
+        this.d = d;
+        this.setDirectionAndAccel(d, 1, 500);
+        super.update(timestamp);
+    }
+};
+
 ////////////////////////////////////////////////////////// obstacle
 
 console.log("obstacle!");
