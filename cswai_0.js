@@ -206,44 +206,61 @@ BattleTankGame.deps.cswAI_customPaths = class extends BattleTankGame.deps
         super(CONST, bullet);
         this.type = CONST.TYPES.SHIP;
         this.wpCounter = 0;
+        this.wpStartTime = -1;
     }
 
     init(mx, my, who, BTankInst, wayPoints) {
         super.init(mx, my, who, BTankInst);
         const FIRST_PATH = [
             [80, 0],
-            [0, 0],
-            [0, 80],
             [80, 80],
+            [0, 80],
+            [0, 0],
         ];
         this.wayPoints = wayPoints || FIRST_PATH;
     }
 
     update(timestamp) {
         let currentWp = this.wayPoints[this.wpCounter];
-        let d = 0;
-        if (this.x === currentWp[0] && this.y === currentWp[1]) {
-            this.wpCounter++;
-            if (this.wpCounter > this.wayPoints.length) this.wpCounter = 0;
-            currentWp = this.wayPoints[this.wpCounter];
+        if (timestamp - this.wpStartTime <= 2000) {
+            console.log('set! ', timestamp - this.wpStartTime);
+            this.setDirectionAndAccel(this.d, 1);    
+        } else {
+            console.log('change dir!');
+            let d = 0;
+            if (this.x === currentWp[0] && this.y === currentWp[1]) {
+                this.wpCounter++;
+                if (this.wpCounter > this.wayPoints.length) this.wpCounter = 0;
+                currentWp = this.wayPoints[this.wpCounter];
+            }
+        // direction {
+        //   >  0 - right
+        //   v  1 - down
+        //   <  2 - left
+        //   ^  3 - up
+
+            if (this.x === currentWp[0] && this.y < currentWp[1]) {
+                d = 1;
+            }
+            if (this.x > currentWp[0] && this.y === currentWp[1]) {
+                d = 2;
+            }
+            if (this.x === currentWp[0] && this.y > currentWp[1]) {
+                d = 3;
+            }
+            if (this.x < currentWp[0] && this.y === currentWp[1]) {
+                d = 0;
+            }
+            if (this.d != d) {
+                this.setDirectionAndAccel(0, 0, 0);
+                this.setDirectionAndAccel(1, 0, 0);
+                this.setDirectionAndAccel(2, 0, 0);
+                this.setDirectionAndAccel(3, 0, 0);
+            }
+            this.d = d;
+            this.wpStartTime = timestamp;
         }
-        if (this.x === currentWp[0] && this.y < currentWp[1]) {
-            d = 1;
-        }
-        if (this.x > currentWp[0] && this.y === currentWp[1]) {
-            d = 2;
-        }
-        if (this.x === currentWp[0] && this.y < currentWp[1]) {
-            d = 1;
-        }
-        if (this.x < currentWp[0] && this.y === currentWp[1]) {
-            d = 0;
-        }
-        if (this.d != d) {
-            this.setDirectionAndAccel(d, 0, 0);
-        }
-        this.d = d;
-        this.setDirectionAndAccel(d, 1, 500);
+        
         super.update(timestamp);
     }
 };

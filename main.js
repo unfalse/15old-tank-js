@@ -158,7 +158,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
 
             gameOver = true;
         }
-        console.log('cswArr = ', BTank.cswArr.length);
+        //console.log('cswArr = ', BTank.cswArr.length);
     };
 
     this.editorMouseDownHandler = function (event) {
@@ -290,7 +290,8 @@ BattleTankGame.gameInstance = new BattleTankGame.deps.game(
         BattleTankGame.deps.const,
         BattleTankGame.deps.csw,
         BattleTankGame.deps.player,
-        BattleTankGame.deps.cswAI_1,
+        //BattleTankGame.deps.cswAI_1,
+        BattleTankGame.deps.cswAI_customPaths,
         BattleTankGame.deps.obstacle,
         BattleTankGame.deps.staticShip,
         BattleTankGame.deps.spaceBrick,
