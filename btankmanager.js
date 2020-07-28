@@ -85,6 +85,7 @@ BattleTankGame.deps.BTankManager = class {
         this.crashImage = null;
         this.backgroundImage = null;
         this.counterImage = null;
+        this.playerInstance = null;
 
         this.CONST = CONST;
         this.player = player;
@@ -319,6 +320,7 @@ BattleTankGame.deps.BTankManager = class {
         const type = typeParam || this.CONST.TYPES.SHIP;
         if (who === this.CONST.USER) {
             c1 = new this.player(this.CONST, this.bullet);
+            this.playerInstance = c1;
             c1.init(x, y, who, this);
             this.pushNewObject(c1, ghost);
             return c1;

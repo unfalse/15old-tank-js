@@ -37,32 +37,140 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
                 BTank.createCSW(10, 10, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
                 BTank.createCSW(50, 10, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
                 BTank.createCSW(90, 10, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(130, 10, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(170, 10, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(210, 10, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(250, 10, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(290, 10, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(330, 10, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
+                BTank.createCSW(
+                    130,
+                    10,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
+                BTank.createCSW(
+                    170,
+                    10,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
+                BTank.createCSW(
+                    210,
+                    10,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
+                BTank.createCSW(
+                    250,
+                    10,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
+                BTank.createCSW(
+                    290,
+                    10,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
+                BTank.createCSW(
+                    330,
+                    10,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
 
                 BTank.createCSW(10, 50, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
                 BTank.createCSW(50, 50, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
                 BTank.createCSW(90, 50, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(130, 50, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(170, 50, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(210, 50, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(250, 50, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(290, 50, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(330, 50, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
+                BTank.createCSW(
+                    130,
+                    50,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
+                BTank.createCSW(
+                    170,
+                    50,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
+                BTank.createCSW(
+                    210,
+                    50,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
+                BTank.createCSW(
+                    250,
+                    50,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
+                BTank.createCSW(
+                    290,
+                    50,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
+                BTank.createCSW(
+                    330,
+                    50,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
 
                 BTank.createCSW(10, 90, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
                 BTank.createCSW(50, 90, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
                 BTank.createCSW(90, 90, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(130, 90, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(170, 90, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(210, 90, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(250, 90, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(290, 90, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
-                BTank.createCSW(330, 90, CONST.COMPUTER, 0, CONST.TYPES.COUNTER);
+                BTank.createCSW(
+                    130,
+                    90,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
+                BTank.createCSW(
+                    170,
+                    90,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
+                BTank.createCSW(
+                    210,
+                    90,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
+                BTank.createCSW(
+                    250,
+                    90,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
+                BTank.createCSW(
+                    290,
+                    90,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
+                BTank.createCSW(
+                    330,
+                    90,
+                    CONST.COMPUTER,
+                    0,
+                    CONST.TYPES.COUNTER
+                );
 
                 BTank.placeBorders();
 
@@ -111,10 +219,13 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
     };
 
     this.editorCycle = function (timestamp) {
+        this.detectEditorMovement(timestamp);
+        // player1.update();
+        // gameCam.setCoords(player1.x, player1.y);
+
         Editor.editorUnits.forEach(function (unit) {
-            this.detectEditorMovement(timestamp);
-            //unit.update(timestamp);
-            unit.draw();
+            unit.update(timestamp);
+            // unit.draw();
         }, this);
 
         Editor.editorGhosts.forEach(function (ghost) {
@@ -143,7 +254,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
 
         BTank.getAllGhosts().forEach(function (ghost) {
             ghost.draw();
-        })
+        });
 
         BTank.displayLifeBar(player1);
 
@@ -169,10 +280,12 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
             };
             const x = event.offsetX + leftTop.x,
                 y = event.offsetY + leftTop.y;
-            
+
             // const relXY = BTank.gameCam.getRelCoords(x, y);
-            const cellx = Math.floor(x / CONST.CELLSIZES.MAXX) * CONST.CELLSIZES.MAXX;
-            const celly = Math.floor(y / CONST.CELLSIZES.MAXY) * CONST.CELLSIZES.MAXY;
+            const cellx =
+                Math.floor(x / CONST.CELLSIZES.MAXX) * CONST.CELLSIZES.MAXX;
+            const celly =
+                Math.floor(y / CONST.CELLSIZES.MAXY) * CONST.CELLSIZES.MAXY;
 
             if (Editor.editorCurrentObjectBrush.type !== CONST.TYPES.ERASER) {
                 Editor.createEditorUnit(
@@ -232,20 +345,21 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
     };
 
     this.detectEditorMovement = function (timestamp) {
+        const DX = 26;
         // TODO: move the screen
         if (keys[Utils.KEY_CODE.UP]) {
-            gameCam.setCoords(BTank.gameCam.x, BTank.gameCam.y-0.1);
+            gameCam.setCoords(BTank.gameCam.x, BTank.gameCam.y - DX);
         }
         if (keys[Utils.KEY_CODE.LEFT]) {
-            gameCam.setCoords(BTank.gameCam.x-0.1, BTank.gameCam.y);
+            gameCam.setCoords(BTank.gameCam.x - DX, BTank.gameCam.y);
         }
         if (keys[Utils.KEY_CODE.RIGHT]) {
-            gameCam.setCoords(BTank.gameCam.x+0.1, BTank.gameCam.y);
+            gameCam.setCoords(BTank.gameCam.x + DX, BTank.gameCam.y);
         }
         if (keys[Utils.KEY_CODE.DOWN]) {
-            gameCam.setCoords(BTank.gameCam.x, BTank.gameCam.y+0.1);
+            gameCam.setCoords(BTank.gameCam.x, BTank.gameCam.y + DX);
         }
-    }
+    };
 
     this.detectMovement = function (timestamp) {
         // code here must change ONLY DIRECTION
@@ -290,7 +404,7 @@ BattleTankGame.gameInstance = new BattleTankGame.deps.game(
         BattleTankGame.deps.const,
         BattleTankGame.deps.csw,
         BattleTankGame.deps.player,
-        //BattleTankGame.deps.cswAI_1,
+        // BattleTankGame.deps.cswAI_1,
         BattleTankGame.deps.cswAI_customPaths,
         BattleTankGame.deps.obstacle,
         BattleTankGame.deps.staticShip,

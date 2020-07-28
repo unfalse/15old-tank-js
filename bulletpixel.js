@@ -6,7 +6,8 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
     // BattleTankGame.deps.baseCoordinates.call(this);
     constructor(CONST, BTankInst, whoFire) {
         super();
-        this.BULLETSPEED = whoFire ? (whoFire.type === CONST.USER ? 2.5 : 2.5) : 2.5;
+        //this.BULLETSPEED = whoFire ? (whoFire.type === CONST.USER ? 2.5 : 2.5) : 2.5;
+        this.BULLETSPEED = whoFire ? (whoFire.type === CONST.USER ? 10 : 5) : 5;
 
         this.CONST = CONST;
         this.BTankInst = BTankInst;
