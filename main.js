@@ -231,6 +231,15 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
         Editor.editorGhosts.forEach(function (ghost) {
             ghost.draw();
         }, this);
+
+        if (Editor.currentShipWithWaypoints) {
+            Editor.currentShipWithWaypoints.wayPoints.forEach(function (
+                wp,
+                wpIndex
+            ) {
+                BTank.drawWayPoint(wp[0], wp[1], wpIndex + 1);
+            });
+        }
     };
 
     this.gameCycle = function (timestamp) {
@@ -287,14 +296,37 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
             const celly =
                 Math.floor(y / CONST.CELLSIZES.MAXY) * CONST.CELLSIZES.MAXY;
 
-            if (Editor.editorCurrentObjectBrush.type !== CONST.TYPES.ERASER) {
+            if (
+                ![
+                    CONST.TYPES.ERASER,
+                    CONST.TYPES.WAYPOINTERASER,
+                    CONST.TYPES.WAYPOINT,
+                ].includes(Editor.editorCurrentObjectBrush.type)
+            ) {
                 Editor.createEditorUnit(
                     cellx,
                     celly,
                     Editor.editorCurrentObjectBrush.type
                 );
-            } else {
+            }
+            if (Editor.editorCurrentObjectBrush.type === CONST.TYPES.WAYPOINT) {
+                if (!Editor.currentShipWithWaypoints) {
+                    const unit = Editor.getEditorUnitAt(cellx, celly);
+                    Editor.setCurrentShipWithWaypoints(unit);
+                } else {
+                    if (!Editor.getEditorWaypointAt(cellx, celly)) {
+                        Editor.addEditorWaypoint(cellx, celly);
+                    }
+                }
+            }
+            if (Editor.editorCurrentObjectBrush.type === CONST.TYPES.ERASER) {
                 Editor.removeEditorObjectAt(cellx, celly);
+            }
+            if (
+                Editor.editorCurrentObjectBrush.type ===
+                CONST.TYPES.WAYPOINTERASER
+            ) {
+                Editor.removeEditorWaypointAt(cellx, celly);
             }
         }
     };
@@ -340,6 +372,15 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
             }
             if (kc === Utils.KEY_CODE.N4_KEY) {
                 Editor.setCurrentEditorBrushObject(CONST.TYPES.SPACEBRICK);
+            }
+            if (kc === Utils.KEY_CODE.N4_KEY) {
+                Editor.setCurrentEditorBrushObject(CONST.TYPES.SPACEBRICK);
+            }
+            if (kc === Utils.KEY_CODE.N5_KEY) {
+                Editor.setCurrentEditorBrushObject(CONST.TYPES.WAYPOINT);
+            }
+            if (kc === Utils.KEY_CODE.N6_KEY) {
+                Editor.setCurrentEditorBrushObject(CONST.TYPES.WAYPOINTERASER);
             }
         }
     };

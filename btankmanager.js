@@ -16,6 +16,8 @@ BattleTankGame.deps.const = {
         SPACEBRICK: 2,
         COUNTER: 3,
         BORDER: 4,
+        WAYPOINT: 5,
+        WAYPOINTERASER: 6
     },
 
     CELLSIZES: {
@@ -314,7 +316,8 @@ BattleTankGame.deps.BTankManager = class {
         who, // TODO: this field should be in ship class (csw or cswai or obstacle)
         delay,
         typeParam,
-        ghost
+        ghost,
+        wayPoints
     ) {
         let c1 = null;
         const type = typeParam || this.CONST.TYPES.SHIP;
@@ -332,7 +335,7 @@ BattleTankGame.deps.BTankManager = class {
                     // TODO: implement some pattern to not write thousands if-s
                     if (type === this.CONST.TYPES.SHIP) {
                         c1 = new this.cswAI(this.CONST, this.bullet);
-                        c1.init(x, y, who, this);
+                        c1.init(x, y, who, this, wayPoints);
                         this.pushNewObject(c1, ghost);
                     }
                 }.bind(this),
@@ -585,6 +588,16 @@ BattleTankGame.deps.BTankManager = class {
     drawSpaceBrick(x, y, n) {
         const relXY = this.gameCam.getRelCoords(x, y);
         this.spaceBrickImages[n].draw(
+            relXY.x,
+            relXY.y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
+        );
+    }
+
+    drawWayPoint(x, y, n) {
+        const relXY = this.gameCam.getRelCoords(x, y);
+        this.counterImage[n].draw(
             relXY.x,
             relXY.y,
             this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
