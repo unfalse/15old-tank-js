@@ -208,6 +208,7 @@ BattleTankGame.deps.cswAI_customPaths = class extends BattleTankGame.deps
         this.wpCounter = -1;
         this.wpStartTime = -1;
         this.currentWp = null;
+        this.wayPoints = [];
     }
 
     init(mx, my, who, BTankInst, wayPoints) {
@@ -218,7 +219,7 @@ BattleTankGame.deps.cswAI_customPaths = class extends BattleTankGame.deps
             [0, 80],
             [0, 0],
         ];
-        this.wayPoints = wayPoints || FIRST_PATH;
+        this.wayPoints = wayPoints || [];
     }
 
     // stop() {
@@ -254,7 +255,7 @@ BattleTankGame.deps.cswAI_customPaths = class extends BattleTankGame.deps
             d = this.CONST.RIGHT;
         }
 
-        const scanResult = this.plusShapedScan(5);
+        const scanResult = this.plusShapedScan(10);
         if (scanResult > -1) {
             this.stop();
             this.setDirectionAndAccel(scanResult, 0);
@@ -264,7 +265,7 @@ BattleTankGame.deps.cswAI_customPaths = class extends BattleTankGame.deps
                 this.stop();
             }
             this.d = d >= 0 ? d : this.d;
-            this.setDirectionAndAccel(this.d, 1);
+            this.setDirectionAndAccel(this.d, 8);
         }
 
         super.update(timestamp);
@@ -313,6 +314,12 @@ BattleTankGame.deps.staticShip = class extends BattleTankGame.deps.csw {
     constructor(CONST, bullet) {
         super(CONST, bullet);
         this.type = CONST.TYPES.SHIP;
+        this.wayPoints = [];
+    }
+
+    init(mx, my, who, BTankInst, wayPoints) {
+        super.init(mx, my, who, BTankInst);
+        this.wayPoints = wayPoints || [];
     }
 
     draw() {

@@ -32,6 +32,7 @@ BattleTankGame.deps.cpuBase = class extends BattleTankGame.deps.csw {
     // distance is an amount of cells in 4 directions from the ship which is scanning
     plusShapedScan(distance) {
         const player = this.BTankInst.playerInstance;
+        if (player.life <= 0) return -1;
         const { width, height } = this.dimensions[this.d];
         distance *= this.CONST.CELLSIZES.MAXX;
         if (
