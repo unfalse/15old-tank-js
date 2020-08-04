@@ -6,11 +6,13 @@ BattleTankGame.deps.delayedPic = class extends BattleTankGame.deps
         super();
     }
 
-    init(nx, ny, BTankInst) {
+    init(nx, ny, BTankInst, framesLength) {
         this.initCoords(nx, ny, 0);
         this.show = true;
         this.timerStarted = false;
         this.BTankInst = BTankInst;
+        this.frameCounter = 0;
+        this.framesLength = framesLength;
     }
 
     setCoords(x, y) {
@@ -20,17 +22,27 @@ BattleTankGame.deps.delayedPic = class extends BattleTankGame.deps
     }
 
     draw() {
-        this.BTankInst.DrawCrash(this.x, this.y);
-        if (!this.timerStarted && this.show) {
-            this.timerStarted = true;
+        this.BTankInst.DrawCrash(this.x, this.y, this.frameCounter);
+
+        function setDelay() {
             setTimeout(
                 function () {
-                    this.show = false;
-                    this.timerStarted = false;
-                    this.BTankInst.removeDelayedPic(this);
+                    if (this.frameCounter + 1 === this.framesLength) {
+                        this.show = false;
+                        this.timerStarted = false;
+                        this.BTankInst.removeDelayedPic(this);
+                    } else {
+                        this.frameCounter++;
+                        setDelay.call(this);
+                    }
                 }.bind(this),
-                300
+                80
             );
+        }
+
+        if (!this.timerStarted && this.show) {
+            this.timerStarted = true;
+            setDelay.call(this);
         }
     }
 };

@@ -245,7 +245,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
     this.gameCycle = function (timestamp) {
         if (player1.life > 0) {
             this.detectMovement(timestamp);
-            player1.update();
+            player1.update(timestamp);
             gameCam.setCoords(player1.x, player1.y);
         }
 

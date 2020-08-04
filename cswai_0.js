@@ -241,17 +241,18 @@ BattleTankGame.deps.cswAI_customPaths = class extends BattleTankGame.deps
             this.currentWp = this.wayPoints[this.wpCounter];
             currentWp = this.currentWp;
         }
-
-        if (this.x === currentWp[0] && this.y < currentWp[1]) {
+        const x = Math.floor(this.x);
+        const y = Math.floor(this.y);
+        if (x === currentWp[0] && y < currentWp[1]) {
             d = this.CONST.DOWN;
         }
-        if (this.x > currentWp[0] && this.y === currentWp[1]) {
+        if (x > currentWp[0] && y === currentWp[1]) {
             d = this.CONST.LEFT;
         }
-        if (this.x === currentWp[0] && this.y > currentWp[1]) {
+        if (x === currentWp[0] && y > currentWp[1]) {
             d = this.CONST.UP;
         }
-        if (this.x < currentWp[0] && this.y === currentWp[1]) {
+        if (x < currentWp[0] && y === currentWp[1]) {
             d = this.CONST.RIGHT;
         }
 

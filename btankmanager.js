@@ -84,7 +84,7 @@ BattleTankGame.deps.BTankManager = class {
         this.infoContext = null;
         this.againBtn = null;
         this.gameOverBlock = null;
-        this.crashImage = null;
+        this.crashImages = [];
         this.backgroundImage = null;
         this.counterImage = null;
         this.playerInstance = null;
@@ -122,7 +122,7 @@ BattleTankGame.deps.BTankManager = class {
         // current object chosen to place on the map
         this.playerImages = {};
         this.cpuImages = {};
-        this.crashImage = null;
+        this.crashImage = [];
         this.backgroundImage = null;
         this.obstacleImage = null;
         this.borderImage = null;
@@ -180,7 +180,27 @@ BattleTankGame.deps.BTankManager = class {
             }),
 
             loadImage.call(this, "images/crash.png", function (image) {
-                this.crashImage = image;
+                this.crashImages[0] = image;
+            }),
+
+            loadImage.call(this, "images/crash1.png", function (image) {
+                this.crashImages[1] = image;
+            }),
+
+            loadImage.call(this, "images/crash2.png", function (image) {
+                this.crashImages[2] = image;
+            }),
+
+            loadImage.call(this, "images/crash3.png", function (image) {
+                this.crashImages[3] = image;
+            }),
+
+            loadImage.call(this, "images/crash4.png", function (image) {
+                this.crashImages[4] = image;
+            }),
+
+            loadImage.call(this, "images/crash5.png", function (image) {
+                this.crashImages[5] = image;
             }),
 
             loadImage.call(this, "images/background.png", function (image) {
@@ -492,7 +512,7 @@ BattleTankGame.deps.BTankManager = class {
         const dp = new this.delayedPic(this.CONST);
         // const relXY = this.gameCam.getRelCoords(x, y);
         // dp.init(relXY.x, relXY.y, this);
-        dp.init(x, y, this);
+        dp.init(x, y, this, this.crashImages.length);
         this.delayedPics.push(dp);
     }
 
@@ -615,13 +635,13 @@ BattleTankGame.deps.BTankManager = class {
         );
     }
 
-    DrawCrash(x, y, onDelayEnd) {
+    DrawCrash(x, y, frameCounter) {
         const relXY = this.gameCam.getRelCoords(x, y);
-        this.crashImage.draw(
+        this.crashImages[frameCounter].draw(
             relXY.x,
             relXY.y,
-            20 * this.CONST.SCALE.X,
-            20 * this.CONST.SCALE.Y
+            20 * this.CONST.SCALE.X*2,
+            20 * this.CONST.SCALE.Y*2
         );
         // this.crashImage.draw(x, y, 0, onDelayEnd);
     }
