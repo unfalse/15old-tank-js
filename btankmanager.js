@@ -17,7 +17,7 @@ BattleTankGame.deps.const = {
         COUNTER: 3,
         BORDER: 4,
         WAYPOINT: 5,
-        WAYPOINTERASER: 6
+        WAYPOINTERASER: 6,
     },
 
     CELLSIZES: {
@@ -27,7 +27,7 @@ BattleTankGame.deps.const = {
 
     SCALE: {
         X: 1,
-        Y: 1
+        Y: 1,
     },
 
     MAXX: 100,
@@ -131,6 +131,7 @@ BattleTankGame.deps.BTankManager = class {
         this.gameCam = new this.camera(this.CONST, this);
 
         const loadImage = this.images.loadImage;
+        const loadManyImages = this.images.loadManyImages;
 
         // TODO: it should be a function which will preload images.
         // First it should collect paths to images from classes (csw, cswai, obstacle, etc.)
@@ -179,28 +180,39 @@ BattleTankGame.deps.BTankManager = class {
                 this.cpuImages[2] = image;
             }),
 
-            loadImage.call(this, "images/crash.png", function (image) {
-                this.crashImages[0] = image;
-            }),
+            // loadImage.call(this, "images/crash.png", function (image) {
+            //     this.crashImages[0] = image;
+            // }),
 
-            loadImage.call(this, "images/crash1.png", function (image) {
-                this.crashImages[1] = image;
-            }),
+            // loadImage.call(this, "images/crash1.png", function (image) {
+            //     this.crashImages[1] = image;
+            // }),
 
-            loadImage.call(this, "images/crash2.png", function (image) {
-                this.crashImages[2] = image;
-            }),
+            // loadImage.call(this, "images/crash2.png", function (image) {
+            //     this.crashImages[2] = image;
+            // }),
 
-            loadImage.call(this, "images/crash3.png", function (image) {
-                this.crashImages[3] = image;
-            }),
+            // loadImage.call(this, "images/crash3.png", function (image) {
+            //     this.crashImages[3] = image;
+            // }),
 
-            loadImage.call(this, "images/crash4.png", function (image) {
-                this.crashImages[4] = image;
-            }),
+            // loadImage.call(this, "images/crash4.png", function (image) {
+            //     this.crashImages[4] = image;
+            // }),
 
-            loadImage.call(this, "images/crash5.png", function (image) {
-                this.crashImages[5] = image;
+            // loadImage.call(this, "images/crash5.png", function (image) {
+            //     this.crashImages[5] = image;
+            // }),
+
+            loadManyImages.call(this, [
+                "images/crash.png",
+                "images/crash1.png",
+                "images/crash2.png",
+                "images/crash3.png",
+                "images/crash4.png",
+                "images/crash5.png",
+            ]).then(images => {
+                images.forEach((im, i) => { this.crashImages[i] = im; });
             }),
 
             loadImage.call(this, "images/background.png", function (image) {
@@ -446,7 +458,8 @@ BattleTankGame.deps.BTankManager = class {
                 return false;
             }
 
-            const checkResult = checkSquare(csw, nx, ny) ||
+            const checkResult =
+                checkSquare(csw, nx, ny) ||
                 checkSquare(csw, nx + width, ny) ||
                 checkSquare(csw, nx, ny + height) ||
                 checkSquare(csw, nx + width, ny + height) ||
@@ -640,8 +653,8 @@ BattleTankGame.deps.BTankManager = class {
         this.crashImages[frameCounter].draw(
             relXY.x,
             relXY.y,
-            20 * this.CONST.SCALE.X*2,
-            20 * this.CONST.SCALE.Y*2
+            20 * this.CONST.SCALE.X * 2,
+            20 * this.CONST.SCALE.Y * 2
         );
         // this.crashImage.draw(x, y, 0, onDelayEnd);
     }

@@ -50,7 +50,7 @@ BattleTankGame.deps.images = class {
     }
 };
 
-BattleTankGame.deps.images.loadImage = function(imagePath, onLoad) {
+BattleTankGame.deps.images.loadImage = function (imagePath, onLoad) {
     return new Promise(
         function (resolve) {
             onLoad.call(
@@ -61,4 +61,20 @@ BattleTankGame.deps.images.loadImage = function(imagePath, onLoad) {
             );
         }.bind(this)
     );
-}
+};
+
+BattleTankGame.deps.images.loadManyImages = function (imagePaths, onLoad) {
+    // fix: add new Promise and onLoad call inside!
+    const ps = imagePaths.map(
+        (ip) =>
+            new Promise(
+                function (resolve) {
+                    this,
+                        new this.images(this, ip, function () {
+                            resolve();
+                        });
+                }.bind(this)
+            )
+    );
+    return Promise.all(ps);
+};
