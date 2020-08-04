@@ -229,7 +229,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
         }, this);
 
         Editor.editorGhosts.forEach(function (ghost) {
-            ghost.draw();
+            ghost.draw(true);
         }, this);
 
         if (Editor.currentShipWithWaypoints) {
@@ -382,6 +382,9 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
             if (kc === Utils.KEY_CODE.N6_KEY) {
                 Editor.setCurrentEditorBrushObject(CONST.TYPES.WAYPOINTERASER);
             }
+            if (kc === Utils.KEY_CODE.N7_KEY) {
+                Editor.setCurrentEditorBrushObject(CONST.TYPES.PLAYER);
+            }
         }
     };
 
@@ -462,7 +465,8 @@ BattleTankGame.gameInstance = new BattleTankGame.deps.game(
         BattleTankGame.deps.obstacle,
         BattleTankGame.deps.staticShip,
         BattleTankGame.deps.spaceBrick,
-        BattleTankGame.deps.border
+        BattleTankGame.deps.border,
+        BattleTankGame.deps.player
     ),
     BattleTankGame.deps.utils
 );

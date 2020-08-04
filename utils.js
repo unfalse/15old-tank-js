@@ -1,6 +1,5 @@
 console.log("utils!");
 BattleTankGame.deps.utils = new (function () {
-
     this.KEY_CODE = {
         LEFT: 37,
         UP: 38,
@@ -14,7 +13,8 @@ BattleTankGame.deps.utils = new (function () {
         N3_KEY: 51,
         N4_KEY: 52,
         N5_KEY: 53,
-        N6_KEY: 54
+        N6_KEY: 54,
+        N7_KEY: 55,
     };
 
     // event.type должен быть keypress

@@ -96,7 +96,7 @@ BattleTankGame.deps.bulletPixel = class extends BattleTankGame.deps
         if (collidedShips) {
             if (collidedShips.hitByBullet) {
                 collidedShips.hitByBullet(this);
-                this.BTankInst.createDelayedPic(this.x - 10, this.y - 10);
+                this.BTankInst.createDelayedPic(this.x - 20, this.y - 20);
             }
             this.BTankInst.removeBullet(this);
         }

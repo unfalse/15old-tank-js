@@ -51,9 +51,14 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
     }
 
     createNewBullet(startX, startY, startD, whoFire) {
-        if (this.BTankInst.bulletsArr.filter(function(b){
-            return b.parentShip === this }.bind(this)).length === this.bulletsAmountOnFire
-        ) return;
+        if (
+            this.BTankInst.bulletsArr.filter(
+                function (b) {
+                    return b.parentShip === this;
+                }.bind(this)
+            ).length === this.bulletsAmountOnFire
+        )
+            return;
         const newBullet = new this.bullet(this.CONST, this.BTankInst, whoFire);
         newBullet.init(startX, startY, startD, this, 0);
         this.BTankInst.bulletsArr.push(newBullet);
@@ -104,7 +109,7 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
                 }
                 this.move(d);
             }
-            this.draw();
+            // this.draw();
             // setTimeout(this.inertia.bind(this), 10);
             this.waitAndCall(this.inertia.bind(this), 10, this.waitInertia);
         } else {
@@ -178,17 +183,30 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         height--;
 
         // TODO: use this.CONST.CELLSIZES.MAXX instead of 20 !!!
-        if (this.x + ux + width > this.CONST.MAXX * this.CONST.CELLSIZES.MAXX || this.x + ux < 0) {
+        if (
+            this.x + ux + width > this.CONST.MAXX * this.CONST.CELLSIZES.MAXX ||
+            this.x + ux < 0
+        ) {
             if (this.x + ux < 0) this.x = 0;
-            if (this.x + ux + width > this.CONST.MAXX * this.CONST.CELLSIZES.MAXX)
+            if (
+                this.x + ux + width >
+                this.CONST.MAXX * this.CONST.CELLSIZES.MAXX
+            )
                 this.x = this.CONST.MAXX * this.CONST.CELLSIZES.MAXX - width;
             ux = 0;
             this.inertiaDirections[direction] = 0;
         }
 
-        if (this.y + uy + height > this.CONST.MAXY * this.CONST.CELLSIZES.MAXY || this.y + uy < 0) {
+        if (
+            this.y + uy + height >
+                this.CONST.MAXY * this.CONST.CELLSIZES.MAXY ||
+            this.y + uy < 0
+        ) {
             if (this.y + uy < 0) this.y = 0;
-            if (this.y + uy + height > this.CONST.MAXY * this.CONST.CELLSIZES.MAXY)
+            if (
+                this.y + uy + height >
+                this.CONST.MAXY * this.CONST.CELLSIZES.MAXY
+            )
                 this.y = this.CONST.MAXY * this.CONST.CELLSIZES.MAXY - height;
             uy = 0;
             this.inertiaDirections[direction] = 0;
@@ -202,28 +220,35 @@ BattleTankGame.deps.csw = class extends BattleTankGame.deps.baseCoordinates {
         // );
 
         // if (!isOnTheOtherShip) {
-            if (ux != 0 || uy != 0) {
-                const found = this.BTankInst.checkIfTwoShipsCross(
-                    this.x + ux, //Math.floor(ux), //Math.ceil(ux),
-                    this.y + uy, //Math.floor(uy),//Math.ceil(uy),
-                    this
-                );
-                if (found) {
-                    if (direction === this.CONST.RIGHT)
-                        this.x = found.x - width - 1;
-                    if (direction === this.CONST.UP)
-                        this.y = found.y + found.dimensions[found.d].height;
-                    if (direction === this.CONST.LEFT)
-                        this.x = found.x + found.dimensions[found.d].width;
-                    if (direction === this.CONST.DOWN)
-                        this.y = found.y - height - 1;
-                    ux = 0;
-                    uy = 0;
-                    this.inertiaDirections[direction] = 0;
-                }
+        if (ux != 0 || uy != 0) {
+            const found = this.BTankInst.checkIfTwoShipsCross(
+                this.x + ux, //Math.floor(ux), //Math.ceil(ux),
+                this.y + uy, //Math.floor(uy),//Math.ceil(uy),
+                this
+            );
+            if (found) {
+                // if (this.iam === this.CONST.USER) {
+                //     console.log(["a:", this.x, this.y, ux, uy]);
+                // }
+                // if (direction === this.CONST.RIGHT)
+                //     this.x = found.x - width - 1;
+                // if (direction === this.CONST.UP)
+                //     this.y = found.y + found.dimensions[found.d].height+2;
+                // if (direction === this.CONST.LEFT)
+                //     this.x = found.x + found.dimensions[found.d].width;
+                // if (direction === this.CONST.DOWN)
+                //     this.y = found.y - height - 1;
+                // if (this.iam === this.CONST.USER) {
+                //     console.log(["b:", this.x, this.y, ux, uy]);
+                // }
+                ux = 0;
+                uy = 0;
+                this.inertiaDirections[direction] = 0;
             }
-            this.x = this.x + ux;
-            this.y = this.y + uy;
+        }
+        this.x = this.x + ux;
+        this.y = this.y + uy;
+        // console.log(["c:", this.x, this.y, ux, uy]);
         // }
     }
 

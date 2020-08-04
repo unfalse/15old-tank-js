@@ -63,7 +63,10 @@ BattleTankGame.deps.images.loadImage = function (imagePath, onLoad) {
     );
 };
 
-BattleTankGame.deps.images.loadManyImages = function (imagePaths, targetImages) {
+BattleTankGame.deps.images.loadManyImages = function (
+    imagePaths,
+    targetImages
+) {
     return new Promise((allResolved) => {
         const ps = imagePaths.map(
             (ip) =>

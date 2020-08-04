@@ -18,6 +18,7 @@ BattleTankGame.deps.const = {
         BORDER: 4,
         WAYPOINT: 5,
         WAYPOINTERASER: 6,
+        PLAYER: 7
     },
 
     CELLSIZES: {
@@ -181,6 +182,9 @@ BattleTankGame.deps.BTankManager = class {
                 this.obstacleImage = image;
             }),
 
+            // loadImage.call(this, "images/background.png", this.backgroundImage),
+            // loadImage.call(this, "images/obstacle2.png", this.obstacleImage),
+
             loadManyImages.call(
                 this,
                 [
@@ -196,6 +200,8 @@ BattleTankGame.deps.BTankManager = class {
             loadImage.call(this, "images/border.png", function (image) {
                 this.borderImage = image;
             }),
+
+            // loadImage.call(this, "images/border.png", this.borderImage),
 
             loadManyImages.call(
                 this,
@@ -486,6 +492,7 @@ BattleTankGame.deps.BTankManager = class {
     // user
     // TODO: move entirely to the player class
     drawcswmt9(x, y, d) {
+        // console.log(["gamecam:", this.gameCam.x, this.gameCam.y]);
         this.playerImages[d].draw(
             x,
             y,
@@ -495,6 +502,16 @@ BattleTankGame.deps.BTankManager = class {
         // this.drawContext.strokeStyle="#f00";
         // this.drawContext.strokeRect(Math.floor(x), Math.floor(y), 39,39);
         // this.drawContext.lineWidth=0.1;
+    }
+
+    drawcswmt9ghost(x, y, d) {
+        const relXY = this.gameCam.getRelCoords(x, y);
+        this.playerImages[d].draw(
+            relXY.x,
+            relXY.y,
+            this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
+            this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y
+        );
     }
 
     // cpu

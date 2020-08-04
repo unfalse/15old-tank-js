@@ -18,8 +18,20 @@ BattleTankGame.deps.player = class extends BattleTankGame.deps.csw {
         this.accel += value;
     }
 
-    draw() {
-        this.BTankInst.drawcswmt9(this.CONST.CAM.CENTERX, this.CONST.CAM.CENTERY, this.d);
+    draw(ghost) {
+        if (ghost) {
+            this.BTankInst.drawcswmt9ghost(
+                this.x,
+                this.y,
+                this.d
+            );
+        } else {
+            this.BTankInst.drawcswmt9(
+                this.CONST.CAM.CENTERX,
+                this.CONST.CAM.CENTERY,
+                this.d
+            );
+        }
     }
 
     fire(timestamp) {
