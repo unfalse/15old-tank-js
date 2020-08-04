@@ -63,18 +63,21 @@ BattleTankGame.deps.images.loadImage = function (imagePath, onLoad) {
     );
 };
 
-BattleTankGame.deps.images.loadManyImages = function (imagePaths, onLoad) {
-    // fix: add new Promise and onLoad call inside!
-    const ps = imagePaths.map(
-        (ip) =>
-            new Promise(
-                function (resolve) {
-                    this,
-                        new this.images(this, ip, function () {
-                            resolve();
-                        });
-                }.bind(this)
-            )
-    );
-    return Promise.all(ps);
+BattleTankGame.deps.images.loadManyImages = function (imagePaths, targetImages) {
+    return new Promise((allResolved) => {
+        const ps = imagePaths.map(
+            (ip) =>
+                new Promise((resolve) => {
+                    const newImage = new this.images(this, ip, function () {
+                        resolve(newImage);
+                    });
+                })
+        );
+        Promise.all(ps).then((images) => {
+            images.forEach((im, i) => {
+                targetImages[i] = im;
+            });
+            allResolved();
+        });
+    });
 };

@@ -231,6 +231,7 @@ BattleTankGame.deps.cswAI_customPaths = class extends BattleTankGame.deps
 
     update(timestamp) {
         let currentWp = this.currentWp;
+        let accel = 8;
         let d = -1;
         if (
             !currentWp ||
@@ -244,15 +245,20 @@ BattleTankGame.deps.cswAI_customPaths = class extends BattleTankGame.deps
         const x = Math.floor(this.x);
         const y = Math.floor(this.y);
         if (x === currentWp[0] && y < currentWp[1]) {
+            // to make corrections if player moved thip ship (not working!)
+            // accel = Math.abs(y - currentWp[1]) <= accel ? 1 : accel;
             d = this.CONST.DOWN;
         }
         if (x > currentWp[0] && y === currentWp[1]) {
+            // accel = Math.abs(x - currentWp[0]) <= accel ? 1 : accel;
             d = this.CONST.LEFT;
         }
         if (x === currentWp[0] && y > currentWp[1]) {
+            // accel = Math.abs(y - currentWp[1]) <= accel ? 1 : accel;
             d = this.CONST.UP;
         }
         if (x < currentWp[0] && y === currentWp[1]) {
+            // accel = Math.abs(x - currentWp[0]) <= accel ? 1 : accel;
             d = this.CONST.RIGHT;
         }
 
@@ -266,7 +272,7 @@ BattleTankGame.deps.cswAI_customPaths = class extends BattleTankGame.deps
                 this.stop();
             }
             this.d = d >= 0 ? d : this.d;
-            this.setDirectionAndAccel(this.d, 8);
+            this.setDirectionAndAccel(this.d, accel);
         }
 
         super.update(timestamp);

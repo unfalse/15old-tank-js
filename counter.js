@@ -20,7 +20,7 @@ BattleTankGame.deps.counter = class extends BattleTankGame.deps.csw {
 
     update(timestamp) {
       this.counter++;
-      this.counter = this.counter > 1 ? 0 : this.counter;
+      this.counter = this.counter > 9 ? 0 : this.counter;
       super.update(timestamp);
     }
   };

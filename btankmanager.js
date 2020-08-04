@@ -86,7 +86,7 @@ BattleTankGame.deps.BTankManager = class {
         this.gameOverBlock = null;
         this.crashImages = [];
         this.backgroundImage = null;
-        this.counterImage = null;
+        this.counterImages = null;
         this.playerInstance = null;
 
         this.CONST = CONST;
@@ -127,7 +127,7 @@ BattleTankGame.deps.BTankManager = class {
         this.obstacleImage = null;
         this.borderImage = null;
         this.spaceBrickImages = [];
-        this.counterImage = [];
+        this.counterImages = [];
         this.gameCam = new this.camera(this.CONST, this);
 
         const loadImage = this.images.loadImage;
@@ -138,82 +138,40 @@ BattleTankGame.deps.BTankManager = class {
         // Every class will have a variable with image. Now it can only call the "draw" function.
         // Image field should be in csw class. This way player should have a separate class.
         const promises = [
-            loadImage.call(this, "images/csw-mt9bigger2x_0.png", function (
-                image
-            ) {
-                this.playerImages[3] = image;
-            }),
-            loadImage.call(this, "images/csw-mt9bigger2x_90.png", function (
-                image
-            ) {
-                this.playerImages[0] = image;
-            }),
-            loadImage.call(this, "images/csw-mt9bigger2x_180.png", function (
-                image
-            ) {
-                this.playerImages[1] = image;
-            }),
-            loadImage.call(this, "images/csw-mt9bigger2x_270.png", function (
-                image
-            ) {
-                this.playerImages[2] = image;
-            }),
+            loadManyImages.call(
+                this,
+                [
+                    "images/csw-mt9bigger2x_90.png",
+                    "images/csw-mt9bigger2x_180.png",
+                    "images/csw-mt9bigger2x_270.png",
+                    "images/csw-mt9bigger2x_0.png",
+                ],
+                this.playerImages
+            ),
 
-            loadImage.call(this, "images/csw-mt5bigger2x_0.png", function (
-                image
-            ) {
-                this.cpuImages[3] = image;
-            }),
-            loadImage.call(this, "images/csw-mt5bigger2x_90.png", function (
-                image
-            ) {
-                this.cpuImages[0] = image;
-            }),
-            loadImage.call(this, "images/csw-mt5bigger2x_180.png", function (
-                image
-            ) {
-                this.cpuImages[1] = image;
-            }),
-            loadImage.call(this, "images/csw-mt5bigger2x_270.png", function (
-                image
-            ) {
-                this.cpuImages[2] = image;
-            }),
+            loadManyImages.call(
+                this,
+                [
+                    "images/csw-mt5bigger2x_90.png",
+                    "images/csw-mt5bigger2x_180.png",
+                    "images/csw-mt5bigger2x_270.png",
+                    "images/csw-mt5bigger2x_0.png",
+                ],
+                this.cpuImages
+            ),
 
-            // loadImage.call(this, "images/crash.png", function (image) {
-            //     this.crashImages[0] = image;
-            // }),
-
-            // loadImage.call(this, "images/crash1.png", function (image) {
-            //     this.crashImages[1] = image;
-            // }),
-
-            // loadImage.call(this, "images/crash2.png", function (image) {
-            //     this.crashImages[2] = image;
-            // }),
-
-            // loadImage.call(this, "images/crash3.png", function (image) {
-            //     this.crashImages[3] = image;
-            // }),
-
-            // loadImage.call(this, "images/crash4.png", function (image) {
-            //     this.crashImages[4] = image;
-            // }),
-
-            // loadImage.call(this, "images/crash5.png", function (image) {
-            //     this.crashImages[5] = image;
-            // }),
-
-            loadManyImages.call(this, [
-                "images/crash.png",
-                "images/crash1.png",
-                "images/crash2.png",
-                "images/crash3.png",
-                "images/crash4.png",
-                "images/crash5.png",
-            ]).then(images => {
-                images.forEach((im, i) => { this.crashImages[i] = im; });
-            }),
+            loadManyImages.call(
+                this,
+                [
+                    "images/crash.png",
+                    "images/crash1.png",
+                    "images/crash2.png",
+                    "images/crash3.png",
+                    "images/crash4.png",
+                    "images/crash5.png",
+                ],
+                this.crashImages
+            ),
 
             loadImage.call(this, "images/background.png", function (image) {
                 this.backgroundImage = image;
@@ -223,68 +181,38 @@ BattleTankGame.deps.BTankManager = class {
                 this.obstacleImage = image;
             }),
 
-            loadImage.call(this, "images/space_brick-0.png", function (image) {
-                this.spaceBrickImages[4] = image;
-            }),
-
-            loadImage.call(this, "images/space_brick-1.png", function (image) {
-                this.spaceBrickImages[3] = image;
-            }),
-
-            loadImage.call(this, "images/space_brick-2.png", function (image) {
-                this.spaceBrickImages[2] = image;
-            }),
-
-            loadImage.call(this, "images/space_brick-3.png", function (image) {
-                this.spaceBrickImages[1] = image;
-            }),
-
-            loadImage.call(this, "images/space_brick-4.png", function (image) {
-                this.spaceBrickImages[0] = image;
-            }),
+            loadManyImages.call(
+                this,
+                [
+                    "images/space_brick-4.png",
+                    "images/space_brick-3.png",
+                    "images/space_brick-2.png",
+                    "images/space_brick-1.png",
+                    "images/space_brick-0.png",
+                ],
+                this.spaceBrickImages
+            ),
 
             loadImage.call(this, "images/border.png", function (image) {
                 this.borderImage = image;
             }),
 
-            loadImage.call(this, "images/counter-0.png", function (image) {
-                this.counterImage[0] = image;
-            }),
-
-            loadImage.call(this, "images/counter-1.png", function (image) {
-                this.counterImage[1] = image;
-            }),
-
-            loadImage.call(this, "images/counter-2.png", function (image) {
-                this.counterImage[2] = image;
-            }),
-
-            loadImage.call(this, "images/counter-3.png", function (image) {
-                this.counterImage[3] = image;
-            }),
-
-            loadImage.call(this, "images/counter-4.png", function (image) {
-                this.counterImage[4] = image;
-            }),
-
-            loadImage.call(this, "images/counter-5.png", function (image) {
-                this.counterImage[5] = image;
-            }),
-
-            loadImage.call(this, "images/counter-6.png", function (image) {
-                this.counterImage[6] = image;
-            }),
-
-            loadImage.call(this, "images/counter-7.png", function (image) {
-                this.counterImage[7] = image;
-            }),
-
-            loadImage.call(this, "images/counter-8.png", function (image) {
-                this.counterImage[8] = image;
-            }),
-            loadImage.call(this, "images/counter-9.png", function (image) {
-                this.counterImage[9] = image;
-            }),
+            loadManyImages.call(
+                this,
+                [
+                    "images/counter-0.png",
+                    "images/counter-1.png",
+                    "images/counter-2.png",
+                    "images/counter-3.png",
+                    "images/counter-4.png",
+                    "images/counter-5.png",
+                    "images/counter-6.png",
+                    "images/counter-7.png",
+                    "images/counter-8.png",
+                    "images/counter-9.png",
+                ],
+                this.counterImages
+            ),
         ];
         return Promise.all(promises);
     }
@@ -630,7 +558,7 @@ BattleTankGame.deps.BTankManager = class {
 
     drawWayPoint(x, y, n) {
         const relXY = this.gameCam.getRelCoords(x, y);
-        this.counterImage[n].draw(
+        this.counterImages[n].draw(
             relXY.x,
             relXY.y,
             this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
@@ -640,7 +568,7 @@ BattleTankGame.deps.BTankManager = class {
 
     drawCounter(x, y, n) {
         const relXY = this.gameCam.getRelCoords(x, y);
-        this.counterImage[n].draw(
+        this.counterImages[n].draw(
             relXY.x,
             relXY.y,
             this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X,
