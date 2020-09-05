@@ -1,10 +1,24 @@
 {
-  "name": "space-town-editor-server",
+  "name": "15old-tank",
   "version": "1.0.0",
-  "dependencies": {
-    "express": "^4.17.1"
-  },
+  "description": "This is somehow simplified and rewritten on Javascript version of [Battle Tank (Ufa edition)](https://github.com/unfalse/Battle-Tank--TP-7.0-).",
+  "main": "server/index.js",
   "scripts": {
-    "start-server": "node server/main.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "node server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unfalse/15old-tank-js.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/unfalse/15old-tank-js/issues"
+  },
+  "homepage": "https://github.com/unfalse/15old-tank-js#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
   }
 }

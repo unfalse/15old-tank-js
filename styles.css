@@ -36,3 +36,19 @@ body {
     width: 40px;
     height: 40px;
 }
+
+#editorFileList {
+    position: absolute;
+    top: 60px;
+    background-color: blue;
+    border: 1px yellow solid;
+    display: none;
+}
+
+#editorFileList ul li:hover {
+    border: 1px white solid;
+}
+
+#editorFileList ul {
+    list-style: none;
+}

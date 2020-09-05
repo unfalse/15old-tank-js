@@ -38,6 +38,9 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
 
     //let cpus = [];
 
+//     fetch('http://localhost:8080').then(r => { console.log(r); });
+//     fetch('http://localhost:8080/list').then(r => { console.log(r); return r.json(); }).then(r => { console.log(r); });
+    
     this.start = function () {
         BTank.init().then(
             function () {
