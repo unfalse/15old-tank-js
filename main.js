@@ -22,6 +22,20 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
     // TODO: move player1 into BTankManager
     let player1 = null;
     let gameCam = null;
+
+    const gameField = document.getElementById("gameField");
+    const touchHandler = (e) => {
+        if (e.touches) {
+            player1.setDirectionAndAddAccel(
+                controlsMap[Utils.KEY_CODE.UP],
+                0.3
+            );
+            e.preventDefault();
+        }
+    };
+    gameField.addEventListener("touchstart", touchHandler);
+    gameField.addEventListener("touchmove", touchHandler);
+
     //let cpus = [];
 
     this.start = function () {
