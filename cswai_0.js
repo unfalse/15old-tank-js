@@ -233,33 +233,37 @@ BattleTankGame.deps.cswAI_customPaths = class extends BattleTankGame.deps
         let currentWp = this.currentWp;
         let accel = 8;
         let d = -1;
-        if (
-            !currentWp ||
-            (this.x === currentWp[0] && this.y === currentWp[1])
-        ) {
-            this.wpCounter++;
-            if (this.wpCounter === this.wayPoints.length) this.wpCounter = 0;
-            this.currentWp = this.wayPoints[this.wpCounter];
-            currentWp = this.currentWp;
-        }
-        const x = Math.floor(this.x);
-        const y = Math.floor(this.y);
-        if (x === currentWp[0] && y < currentWp[1]) {
-            // to make corrections if player moved thip ship (not working!)
-            // accel = Math.abs(y - currentWp[1]) <= accel ? 1 : accel;
-            d = this.CONST.DOWN;
-        }
-        if (x > currentWp[0] && y === currentWp[1]) {
-            // accel = Math.abs(x - currentWp[0]) <= accel ? 1 : accel;
-            d = this.CONST.LEFT;
-        }
-        if (x === currentWp[0] && y > currentWp[1]) {
-            // accel = Math.abs(y - currentWp[1]) <= accel ? 1 : accel;
-            d = this.CONST.UP;
-        }
-        if (x < currentWp[0] && y === currentWp[1]) {
-            // accel = Math.abs(x - currentWp[0]) <= accel ? 1 : accel;
-            d = this.CONST.RIGHT;
+
+        if (this.wayPoints.length !== 0) {
+
+            if (
+                !currentWp ||
+                (this.x === currentWp[0] && this.y === currentWp[1])
+            ) {
+                this.wpCounter++;
+                if (this.wpCounter === this.wayPoints.length) this.wpCounter = 0;
+                this.currentWp = this.wayPoints[this.wpCounter];
+                currentWp = this.currentWp;
+            }
+            const x = Math.floor(this.x);
+            const y = Math.floor(this.y);
+            if (x === currentWp[0] && y < currentWp[1]) {
+                // to make corrections if player moved thip ship (not working!)
+                // accel = Math.abs(y - currentWp[1]) <= accel ? 1 : accel;
+                d = this.CONST.DOWN;
+            }
+            if (x > currentWp[0] && y === currentWp[1]) {
+                // accel = Math.abs(x - currentWp[0]) <= accel ? 1 : accel;
+                d = this.CONST.LEFT;
+            }
+            if (x === currentWp[0] && y > currentWp[1]) {
+                // accel = Math.abs(y - currentWp[1]) <= accel ? 1 : accel;
+                d = this.CONST.UP;
+            }
+            if (x < currentWp[0] && y === currentWp[1]) {
+                // accel = Math.abs(x - currentWp[0]) <= accel ? 1 : accel;
+                d = this.CONST.RIGHT;
+            }
         }
 
         const scanResult = this.plusShapedScan(10);

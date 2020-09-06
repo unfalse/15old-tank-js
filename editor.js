@@ -8,6 +8,11 @@ BattleTankGame.deps.editor = class {
         this.spaceBrick = spaceBrick;
         this.border = border;
         this.player = player;
+        this.currentLevelObj = {
+            id: null,
+            name: '',
+            data: ''
+        };
     }
 
     init(BTankInst) {
@@ -17,8 +22,10 @@ BattleTankGame.deps.editor = class {
         this.editorCurrentObject = document.querySelector(
             "#editorCurrentObject"
         );
+        this.editorNewBtn  = document.querySelector("#editorNewBtn");
         this.editorPlayBtn = document.querySelector("#editorPlayBtn");
         this.editorSaveBtn = document.querySelector("#editorSaveBtn");
+        this.editorSaveAsBtn = document.querySelector("#editorSaveAsBtn");
         this.editorLoadBtn = document.querySelector("#editorLoadBtn");
         this.editorFileListContainer = document.querySelector("#editorFileList");
         window.__editor_load_str = "";
@@ -33,23 +40,37 @@ BattleTankGame.deps.editor = class {
         this.currentShipWithWaypoints = null;
         this.playerCell = { x: 0, y: 0 };
 
+        this.editorNewBtn.addEventListener(
+            "click",
+            this.newEditorLevel.bind(this)
+        );
+
         this.editorPlayBtn.addEventListener(
             "click",
-            this.playTheEditorLevel.bind(this)
+            this.playEditorLevel.bind(this)
         );
 
         this.editorSaveBtn.addEventListener(
             "click",
-            this.saveTheEditorLevel.bind(this)
+            this.saveEditorLevel.bind(this)
+        );
+
+        this.editorSaveAsBtn.addEventListener(
+            "click",
+            this.saveAsEditorLevel.bind(this)
         );
 
         this.editorLoadBtn.addEventListener(
             "click",
-            this.loadTheEditorLevel.bind(this)
+            this.showLevelChooseDialog.bind(this)
         );
     }
 
-    playTheEditorLevel() {
+    newEditorLevel() {
+
+    }
+
+    playEditorLevel() {
         const player = this.BTankInst.getAllShips()[0];
         this.BTankInst.destroyAll();
 
@@ -97,10 +118,11 @@ BattleTankGame.deps.editor = class {
         this.toggleEditorControls();
     }
 
-    saveTheEditorLevel() {
-        window.__editor_save_str =
-            [this.playerCell.x, this.playerCell.y].join(";") + "|";
-        window.__editor_save_str += this.editorUnits.reduce(
+    prepareLevelForSaving() {
+        // window.__editor_save_str =
+        let levelData = [this.playerCell.x, this.playerCell.y].join(";") + "|";
+        //window.__editor_save_str 
+        levelData += this.editorUnits.reduce(
             function (prev, curr) {
                 let wayPoints = "";
                 // if (curr.iam === this.CONST.USER)
@@ -123,18 +145,45 @@ BattleTankGame.deps.editor = class {
             }.bind(this),
             ""
         );
+        this.currentLevelObj.data = levelData;
+    }
+
+    uploadLevel() {
+        fetch("http://localhost:8080/save", {
+            method: "post",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+
+            //make sure to serialize your JSON body
+            body: JSON.stringify({
+                ...this.currentLevelObj
+            })
+        })
+        .then( (response) => { 
+            //do something awesome that makes the world a better place
+        });
+    }
+
+    saveEditorLevel() {
+        this.prepareLevelForSaving();
+        this.uploadLevel();
+    }
+
+    saveAsEditorLevel() {
+        // TODO: show an input to enter the new name and ok and cancel buttons
     }
 
     setCurrentShipWithWaypoints(ship) {
         this.currentShipWithWaypoints = ship;
     }
 
-    loadTheEditorLevel() {
+    showLevelChooseDialog() {
         fetch('http://localhost:8080/list')
             .then(r => r.json())
             .then(r => {
                 this.editorFileListContainer.style.display = "block";
-                console.log(r);
                 const ul = document.createElement('ul');
                 const title = document.createElement('span');
                 title.innerText = 'Which level to open?';
@@ -145,7 +194,10 @@ BattleTankGame.deps.editor = class {
                     li.addEventListener(
                         'click',
                         (function() {
-                            this.createMapFromLevelString(level.id);
+                            this.currentLevelObj = {
+                                ...level
+                            };
+                            this.loadTheEditorLevel(level.id);
                             this.editorFileListContainer.style.display = "none";
                             this.editorFileListContainer.removeChild(ul);
                         }).bind(this)
@@ -156,7 +208,7 @@ BattleTankGame.deps.editor = class {
             });
     }
 
-    createMapFromLevelString(id) {
+    loadTheEditorLevel(id) {
         const DATA_SEPARATOR = '|';
         fetch('http://localhost:8080/level?id='+id)
             .then(r => r.json())
@@ -175,11 +227,12 @@ BattleTankGame.deps.editor = class {
                     }
                     if (strIndex > 0 && objStr !== "") {
                         if (objStr !== "") {
-                            if (fields.length === 3) {
+                            if (fields.length === 1) {
+                                const splitted = fields[0].split(',');
                                 this.createEditorUnit(
-                                    +fields[1], // x
-                                    +fields[2], // y
-                                    +fields[0] // type
+                                    +splitted[1], // x
+                                    +splitted[2], // y
+                                    +splitted[0] // type
                                 );
                             } else {
                                 this.createEditorUnit(

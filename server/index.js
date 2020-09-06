@@ -8,6 +8,7 @@ const filename = 'levels.json';
 
 // создаем объект приложения
 const app = express();
+app.use(express.json());
 app.use(cors());
 app.options('*', cors());
 
@@ -31,6 +32,10 @@ app.get("/level", function(request, response) {
     const id = request.query.id;
     const level = contents.levels.find(level => level.id === id);
     response.send(level);
+});
+
+app.post("/save", function(request, response) {
+    
 });
 
 // начинаем прослушивать подключения на 3000 порту

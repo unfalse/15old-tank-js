@@ -10,7 +10,7 @@ BattleTankGame.deps.player = class extends BattleTankGame.deps.csw {
     // TODO: move BTankInst to a the constructor
     init(mx, my, who, BTankInst) {
         super.init(mx, my, who, BTankInst);
-        this.maxlife = 10;
+        this.maxlife = 10000;
         this.life = this.maxlife;
     }
 
