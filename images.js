@@ -24,28 +24,13 @@ BattleTankGame.deps.images = class {
         this.image.src = src;
     }
 
-    draw(x, y, dw, dh, delayParam, onDelayEnd) {
-        // const delay = delayParam || 0;
+    draw(sx, sy, sw, sh, dx, dy, dw, dh) {
         if (this.loaded) {
-            this.BTankInst.drawContext.drawImage(this.image, x, y, dw, dh);
-            // let startTime = 0;
-
-            // const delayedDraw = function (timestamp) {
-            //     if (!startTime) startTime = timestamp;
-
-            //     const timePassed = timestamp - startTime;
-
-            //     this.BTankInst.drawContext.drawImage(this.image, x, y);
-
-            //     if (delay > 0 && timePassed <= delay) {
-            //         console.log('req!');
-            //         window.requestAnimationFrame(delayedDraw.bind(this));
-            //     } else {
-            //         if (onDelayEnd) onDelayEnd();
-            //     }
-            // };
-
-            // delayedDraw.call(this, 0);
+            if (!dx && !dy && !dw && !dh) {
+                this.BTankInst.drawContext.drawImage(this.image, sx, sy, sw, sh);
+            } else {
+                this.BTankInst.drawContext.drawImage(this.image, sx, sy, sw, sh, dx, dy, dw, dh);
+            }
         }
     }
 };

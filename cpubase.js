@@ -22,11 +22,11 @@ BattleTankGame.deps.cpuBase = class extends BattleTankGame.deps.csw {
     }
 
     hitByBullet(bulletInstance) {
-        if (bulletInstance.parentShip.iam === this.CONST.USER) {
-            if (this.iam === this.CONST.COMPUTER) {
+        //if (bulletInstance.parentShip.iam === this.CONST.USER) {
+        //    if (this.iam === this.CONST.COMPUTER) {
                 this.life--;
-            }
-        }
+        //    }
+        // }
     }
 
     // distance is an amount of cells in 4 directions from the ship which is scanning

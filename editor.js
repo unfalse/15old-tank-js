@@ -163,6 +163,7 @@ BattleTankGame.deps.editor = class {
         })
         .then( (response) => { 
             //do something awesome that makes the world a better place
+            alert('Level has been saved!');
         });
     }
 
@@ -199,6 +200,7 @@ BattleTankGame.deps.editor = class {
                             };
                             this.loadTheEditorLevel(level.id);
                             this.editorFileListContainer.style.display = "none";
+                            title.innerText = '';
                             this.editorFileListContainer.removeChild(ul);
                         }).bind(this)
                     );
@@ -429,9 +431,9 @@ BattleTankGame.deps.editor = class {
 
     toggleEditorControls() {
         this.editorMode = !this.editorMode;
-        const gameInfo = this.BTankInst.gameInfo;
+        //const gameInfo = this.BTankInst.gameInfo;
         if (this.editorMode) {
-            gameInfo.style.display = "none";
+            //gameInfo.style.display = "none";
 
             this.editorBlock.style.display = "flex";
             this.editorBlock.style.justifyContent = "center";
@@ -441,8 +443,8 @@ BattleTankGame.deps.editor = class {
             this.editorCurrentObject.style.height = "40px";
             this.placeBorders();
         } else {
-            gameInfo.style.display = "";
-            gameInfo.style.textAlign = "center";
+            //gameInfo.style.display = "";
+            //gameInfo.style.textAlign = "center";
             this.editorBlock.style.display = "none";
         }
     }

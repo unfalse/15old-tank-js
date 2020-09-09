@@ -1,23 +1,14 @@
 #!/usr/bin/env nodejs
 const cors = require('cors');
 
-// подключение express
 const express = require("express");
 const fs = require('fs');
 const filename = 'levels.json';
 
-// создаем объект приложения
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.options('*', cors());
-
-// определяем обработчик для маршрута "/"
-// app.get("/", function(request, response){
-//      
-//     // отправляем ответ
-//     response.send("<h2>Привет Express!</h2>");
-// });
 
 const getFileContents = () => JSON.parse(fs.readFileSync(process.cwd() + "/server/" + filename).toString());
 
@@ -35,8 +26,17 @@ app.get("/level", function(request, response) {
 });
 
 app.post("/save", function(request, response) {
-    
+    const newLevel = request.body;
+    const contents = getFileContents();
+    const newLevels = contents.levels.map(level => {
+        if (level.id === newLevel.id) {
+            level.data = newLevel.data;
+        }
+        return level;
+    });
+    const newContents = { levels: newLevels };
+    fs.writeFileSync(process.cwd() + "/server/" + filename, JSON.stringify(newContents));
+    response.sendStatus(200);    
 });
 
-// начинаем прослушивать подключения на 3000 порту
 app.listen(8080);

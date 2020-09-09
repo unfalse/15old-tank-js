@@ -10,6 +10,7 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
     let keys = {};
     let timeCount = 0;
     // let editor = false;
+    // globalCom
 
     const controlsMap = {
         [Utils.KEY_CODE.UP]: 3,

@@ -106,8 +106,8 @@ BattleTankGame.deps.BTankManager = class {
     init() {
         const gameField = document.getElementById("gameField");
         // TODO: change 20 to CELLSIZES !!
-        gameField.height = this.CONST.SCREENMAXY * this.CONST.CELLSIZES.MAXY;
-        gameField.width = this.CONST.SCREENMAXX * this.CONST.CELLSIZES.MAXX;
+        gameField.height = this.CONST.SCREENMAXY * this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y;
+        gameField.width = this.CONST.SCREENMAXX * this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X;
 
         // TODO: create new ui class and move these things to it
         this.gameInfo = document.getElementById("gameInfo");
@@ -117,7 +117,7 @@ BattleTankGame.deps.BTankManager = class {
         this.gameFieldBlock = gameField;
 
         this.drawContext = gameField.getContext("2d");
-        this.infoContext = this.gameInfo.getContext("2d");
+        //this.infoContext = this.gameInfo.getContext("2d");
 
         // TODO: make separate editor class?
         // current object chosen to place on the map
@@ -125,6 +125,7 @@ BattleTankGame.deps.BTankManager = class {
         this.cpuImages = {};
         this.crashImage = [];
         this.backgroundImage = null;
+        this.blackbackgroundImage = null;
         this.obstacleImage = null;
         this.borderImage = null;
         this.spaceBrickImages = [];
@@ -178,12 +179,13 @@ BattleTankGame.deps.BTankManager = class {
                 this.backgroundImage = image;
             }),
 
+            loadImage.call(this, "images/blackbackground.png", function (image) {
+                this.blackbackgroundImage = image;
+            }),
+
             loadImage.call(this, "images/obstacle2.png", function (image) {
                 this.obstacleImage = image;
             }),
-
-            // loadImage.call(this, "images/background.png", this.backgroundImage),
-            // loadImage.call(this, "images/obstacle2.png", this.obstacleImage),
 
             loadManyImages.call(
                 this,
@@ -357,8 +359,8 @@ BattleTankGame.deps.BTankManager = class {
         //     image.height = 30;
         // }
         return {
-            width: image.width, // this.CONST.CELLSIZES.MAXX
-            height: image.height, // this.CONST.CELLSIZES.MAXY
+            width: image.width * this.CONST.SCALE.X, // this.CONST.CELLSIZES.MAXX
+            height: image.height * this.CONST.SCALE.Y, // this.CONST.CELLSIZES.MAXY
         };
     }
 
@@ -605,21 +607,55 @@ BattleTankGame.deps.BTankManager = class {
     }
 
     drawBackground() {
-        this.backgroundImage.draw(0, 0, 1000, 720);
+        const relXY = this.gameCam.getRelCoords(0, 0);
+        const blackHeight = this.CONST.SCREENMAXY * this.CONST.CELLSIZES.MAXY * this.CONST.SCALE.Y;
+        const blackWidth = this.CONST.SCREENMAXX * this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X;
+        this.blackbackgroundImage.draw(0, 0, blackWidth, blackHeight);
+
+        const bWidth = 1920, bHeight = 1080;
+        const backgroundCountX = (this.CONST.MAXX * this.CONST.CELLSIZES.MAXX) / bWidth;
+        const backgroundCountY = (this.CONST.MAXY * this.CONST.CELLSIZES.MAXY) / bHeight;
+        const truncX = Math.trunc(backgroundCountX);
+        const truncY = Math.trunc(backgroundCountY);
+        const frX = backgroundCountX % 1;
+        const frY = backgroundCountY % 1;
+        for(let cx = 0; cx <= truncX; cx++) {
+            for(let cy = 0; cy <= truncY; cy++) {
+                if (cx === truncX || cy === truncY) {
+                    this.backgroundImage.draw(
+                        0, 0,
+                        cx === truncX ? bWidth * frX : bWidth,
+                        cy === truncY ? bHeight * frY : bHeight,
+                        relXY.x + (bWidth * cx),
+                        relXY.y + (bHeight * cy),
+                        cx === truncX ? bWidth * frX : bWidth,
+                        cy === truncY ? bHeight * frY : bHeight
+                    );
+                } else {
+                    this.backgroundImage.draw(
+                        relXY.x + (bWidth * cx),
+                        relXY.y + (bHeight * cy),
+                        bWidth,
+                        bHeight
+                    );    
+                }
+            }    
+        }
+        // this.backgroundImage.draw(relXY.x, relXY.y, 1920, 1080);
     }
 
     showLogo() {
-        this.infoContext.fillStyle = "lightgreen";
-        this.infoContext.strokeStyle = "#F00";
-        this.infoContext.font = "30pt Arial";
-        this.infoContext.fillText("Space Town!", 0, 30);
+        // this.infoContext.fillStyle = "lightgreen";
+        // this.infoContext.strokeStyle = "#F00";
+        // this.infoContext.font = "30pt Arial";
+        // this.infoContext.fillText("Space Town!", 0, 30);
     }
 
     showNames() {
-        this.infoContext.fillStyle = "gray";
-        this.infoContext.strokeStyle = "#F00";
-        this.infoContext.font = "20pt Arial";
-        this.infoContext.fillText("p1 life:", 0, 60);
+        // this.infoContext.fillStyle = "gray";
+        // this.infoContext.strokeStyle = "#F00";
+        // this.infoContext.font = "20pt Arial";
+        // this.infoContext.fillText("p1 life:", 0, 60);
 
         // this.infoContext.fillStyle = "gray";
         // this.infoContext.strokeStyle = "#F00";
@@ -640,6 +676,7 @@ BattleTankGame.deps.BTankManager = class {
     }
 
     displayLifeBar(player) {
+        return;
         const LIFEBARMAXWIDTH = 200;
         const onePercent = player.maxlife / LIFEBARMAXWIDTH;
         if (player.iam) {
