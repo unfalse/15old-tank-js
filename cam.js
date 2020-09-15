@@ -15,8 +15,8 @@ BattleTankGame.deps.camera = class extends BattleTankGame.deps
 
       getRelCoords(x, y) {
         return {
-          x: x - this.BTankInst.gameCam.x + this.CONST.CAM.CENTERX,
-          y: y - this.BTankInst.gameCam.y + this.CONST.CAM.CENTERY,
+          x: Math.round(x - this.BTankInst.gameCam.x + this.CONST.CAM.CENTERX),
+          y: Math.round(y - this.BTankInst.gameCam.y + this.CONST.CAM.CENTERY),
         }
       }
 }

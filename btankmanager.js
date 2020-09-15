@@ -31,8 +31,8 @@ BattleTankGame.deps.const = {
         Y: 1,
     },
 
-    MAXX: 100,
-    MAXY: 100,
+    MAXX: 500,
+    MAXY: 500,
     SCREENMAXX: 25,
     SCREENMAXY: 18,
 
@@ -175,9 +175,13 @@ BattleTankGame.deps.BTankManager = class {
                 this.crashImages
             ),
 
-            loadImage.call(this, "images/background.png", function (image) {
+            loadImage.call(this, "images/background-cats.jpg", function (image) {
                 this.backgroundImage = image;
             }),
+
+            // loadImage.call(this, "images/background.png", function (image) {
+            //     this.backgroundImage = image;
+            // }),
 
             loadImage.call(this, "images/blackbackground.png", function (image) {
                 this.blackbackgroundImage = image;
@@ -612,7 +616,8 @@ BattleTankGame.deps.BTankManager = class {
         const blackWidth = this.CONST.SCREENMAXX * this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X;
         this.blackbackgroundImage.draw(0, 0, blackWidth, blackHeight);
 
-        const bWidth = 1920, bHeight = 1080;
+    //    const bWidth = 1920, bHeight = 1080;
+        const bWidth = 1024, bHeight = 1024;
         const backgroundCountX = (this.CONST.MAXX * this.CONST.CELLSIZES.MAXX) / bWidth;
         const backgroundCountY = (this.CONST.MAXY * this.CONST.CELLSIZES.MAXY) / bHeight;
         const truncX = Math.trunc(backgroundCountX);
@@ -624,15 +629,17 @@ BattleTankGame.deps.BTankManager = class {
                 if (cx === truncX || cy === truncY) {
                     this.backgroundImage.draw(
                         0, 0,
-                        cx === truncX ? bWidth * frX : bWidth,
-                        cy === truncY ? bHeight * frY : bHeight,
+                        cx === truncX ? Math.round(bWidth * frX) : bWidth,
+                        cy === truncY ? Math.round(bHeight * frY) : bHeight,
                         relXY.x + (bWidth * cx),
                         relXY.y + (bHeight * cy),
-                        cx === truncX ? bWidth * frX : bWidth,
-                        cy === truncY ? bHeight * frY : bHeight
+                        cx === truncX ? Math.round(bWidth * frX) : bWidth,
+                        cy === truncY ? Math.round(bHeight * frY) : bHeight,
                     );
                 } else {
                     this.backgroundImage.draw(
+                        // Math.round(relXY.x) + (bWidth * cx),
+                        // Math.round(relXY.y) + (bHeight * cy),
                         relXY.x + (bWidth * cx),
                         relXY.y + (bHeight * cy),
                         bWidth,
