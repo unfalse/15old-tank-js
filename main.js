@@ -8,7 +8,6 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
     let gameOver = false;
     let win = false;
     let keys = {};
-    let timeCount = 0;
     // let editor = false;
     // globalCom
 
@@ -319,8 +318,18 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
                     CONST.TYPES.ERASER,
                     CONST.TYPES.WAYPOINTERASER,
                     CONST.TYPES.WAYPOINT,
+                    CONST.TYPES.PLAYER
                 ].includes(Editor.editorCurrentObjectBrush.type)
             ) {
+                // place a level object (ship/obstacle/brick)
+                Editor.createEditorUnit(
+                    cellx,
+                    celly,
+                    Editor.editorCurrentObjectBrush.type
+                );
+            }
+            if (Editor.editorCurrentObjectBrush.type === CONST.TYPES.PLAYER) {
+                
                 Editor.createEditorUnit(
                     cellx,
                     celly,
@@ -352,7 +361,6 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
     this.keyUpHandler = function (kc) {
         // TODO: keysUp array for keys that are up to know which direction isn't getting acceleration
         player1.stopAccel = true;
-        timeCount = 0;
 
         if (kc === Utils.KEY_CODE.F1_KEY) {
             //BTank.toggleEditorControls();
@@ -387,9 +395,6 @@ BattleTankGame.deps.game = function (CONST, BTank, Editor, Utils) {
             }
             if (kc === Utils.KEY_CODE.N3_KEY) {
                 Editor.setCurrentEditorBrushObject(CONST.TYPES.SHIP);
-            }
-            if (kc === Utils.KEY_CODE.N4_KEY) {
-                Editor.setCurrentEditorBrushObject(CONST.TYPES.SPACEBRICK);
             }
             if (kc === Utils.KEY_CODE.N4_KEY) {
                 Editor.setCurrentEditorBrushObject(CONST.TYPES.SPACEBRICK);

@@ -175,19 +175,19 @@ BattleTankGame.deps.BTankManager = class {
                 this.crashImages
             ),
 
-            loadImage.call(this, "images/background-cats.jpg", function (image) {
-                this.backgroundImage = image;
-            }),
-
-            // loadImage.call(this, "images/background.png", function (image) {
+            // loadImage.call(this, "images/background-cats.jpg", function (image) {
             //     this.backgroundImage = image;
             // }),
+
+            loadImage.call(this, "images/background.png", function (image) {
+                this.backgroundImage = image;
+            }),
 
             loadImage.call(this, "images/blackbackground.png", function (image) {
                 this.blackbackgroundImage = image;
             }),
 
-            loadImage.call(this, "images/obstacle2.png", function (image) {
+            loadImage.call(this, "images/obstacle3.png", function (image) {
                 this.obstacleImage = image;
             }),
 
@@ -616,8 +616,8 @@ BattleTankGame.deps.BTankManager = class {
         const blackWidth = this.CONST.SCREENMAXX * this.CONST.CELLSIZES.MAXX * this.CONST.SCALE.X;
         this.blackbackgroundImage.draw(0, 0, blackWidth, blackHeight);
 
-    //    const bWidth = 1920, bHeight = 1080;
-        const bWidth = 1024, bHeight = 1024;
+        const bWidth = 1920, bHeight = 1080;
+        // const bWidth = 1024, bHeight = 1024;
         const backgroundCountX = (this.CONST.MAXX * this.CONST.CELLSIZES.MAXX) / bWidth;
         const backgroundCountY = (this.CONST.MAXY * this.CONST.CELLSIZES.MAXY) / bHeight;
         const truncX = Math.trunc(backgroundCountX);

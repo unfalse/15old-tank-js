@@ -67,7 +67,26 @@ BattleTankGame.deps.editor = class {
     }
 
     newEditorLevel() {
+        this.prepareLevelForSaving();
+    }
 
+    uploadNewLevel() {
+        fetch("http://localhost:8080/new", {
+            method: "post",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+
+            //make sure to serialize your JSON body
+            body: JSON.stringify({
+                ...this.currentLevelObj
+            })
+        })
+        .then( (response) => { 
+            //do something awesome that makes the world a better place
+            alert('Level has been added!');
+        });
     }
 
     playEditorLevel() {
@@ -119,14 +138,10 @@ BattleTankGame.deps.editor = class {
     }
 
     prepareLevelForSaving() {
-        // window.__editor_save_str =
         let levelData = [this.playerCell.x, this.playerCell.y].join(";") + "|";
-        //window.__editor_save_str 
         levelData += this.editorUnits.reduce(
             function (prev, curr) {
                 let wayPoints = "";
-                // if (curr.iam === this.CONST.USER)
-                //     return "";
                 if (curr.type === this.CONST.TYPES.SHIP)
                     wayPoints = JSON.stringify(curr.wayPoints);
                 return (
@@ -328,6 +343,10 @@ BattleTankGame.deps.editor = class {
         this.editorUnits = this.editorUnits.filter(function (unit) {
             return !(unit.x === x && unit.y === y);
         });
+    }
+
+    getFirstEditorObjectByType(type) {
+        
     }
 
     removeEditorWaypointAt(x, y) {

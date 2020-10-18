@@ -18,6 +18,21 @@ app.get("/list", function(request, response) {
     response.send(names);
 });
 
+app.get("/new", function(request, response) {
+    const newLevelData = request.body;
+    const contents = getFileContents();
+    const lastId = contents.levels.slice(-1)[0];
+    const newId = lastId === undefined ? 0 : +lastId + 1;
+    const levelData = {
+        id: newId,
+        name: 'level' + newId,
+        data: newLevelData
+    };
+
+    const newContents = { levels: levels.concat([levelData]) };
+    fs.writeFileSync(process.cwd() + "/server/" + "levelsTest.json", JSON.stringify(newContents));
+});
+
 app.get("/level", function(request, response) {
     const contents = getFileContents();
     const id = request.query.id;
